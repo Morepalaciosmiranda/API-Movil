@@ -1,11 +1,14 @@
 <?php
-$servername = getenv('MYSQLHOST');
-$username = getenv('MYSQLUSER');
-$password = getenv('MYSQLPASSWORD');
-$dbname = getenv('MYSQLDATABASE');
-$port = getenv('MYSQLPORT') ?: '3306'; // Usa 3306 como valor predeterminado si MYSQLPORT no está configurado
+// Extraer los datos de la URL de conexión pública
+$url = parse_url(getenv('MYSQL_PUBLIC_URL'));
 
-// Agrega estas líneas para depuración
+$servername = $url['host'];
+$username = $url['user'];
+$password = $url['pass'];
+$dbname = substr($url['path'], 1); // Elimina la barra inicial del nombre de la base de datos
+$port = $url['port'];
+
+// Depuración para asegurarse de que las variables de entorno están configuradas correctamente
 error_log("Servername: $servername");
 error_log("Username: $username");
 error_log("DB Name: $dbname");
