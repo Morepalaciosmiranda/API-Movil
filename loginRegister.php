@@ -80,7 +80,7 @@
             </div>
         </div>
 
-     
+
         <div class="form-col-image">
             <img src="./img/LogoExterminio.png" alt="">
             <!-- <h1>EXTERMINIO</h1> -->
@@ -193,7 +193,11 @@
                                 'contrasena': password
                             })
                         })
-                        .then(response => response.json())
+                        .then(response => response.text()) // Usa .text() para ver la respuesta cruda
+                        .then(text => {
+                            console.log('Respuesta del servidor:', text); // Verifica el contenido de la respuesta
+                            return JSON.parse(text); // Intenta parsear el texto a JSON
+                        })
                         .then(data => {
                             if (data.status === 'error') {
                                 Swal.fire({
@@ -241,6 +245,7 @@
                                 text: 'Ocurrió un error en el servidor. Por favor, inténtelo de nuevo más tarde.',
                             });
                         });
+
                 }
             }
 
