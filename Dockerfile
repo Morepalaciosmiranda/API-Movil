@@ -7,8 +7,8 @@ WORKDIR /var/www/html
 # Copia el código fuente de tu aplicación al contenedor.
 COPY . .
 
-# Copia un archivo de configuración personalizado para Apache si es necesario.
-# COPY ./config/apache2.conf /etc/apache2/apache2.conf
+# Copia el archivo de configuración personalizado para Apache
+COPY ./config/apache2.conf /etc/apache2/apache2.conf
 
 # Instala las extensiones necesarias de PHP. (añade más si tu proyecto las requiere)
 RUN docker-php-ext-install mysqli pdo pdo_mysql
