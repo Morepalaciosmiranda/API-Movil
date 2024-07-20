@@ -1,0 +1,512 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+TZ:wght@100..400&display=swap" rel="stylesheet');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 18px; /* Tamaño del texto, ajusta según necesites */
+    line-height: 1.6; /* Espaciado entre líneas */
+    background-color: #000000; /* Fondo negro */
+}
+
+
+.navbar {
+    background-color: #e77122;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 3rem;
+    padding: 2.5rem 3rem;
+    color: #ffffff;
+    width: 100%;
+    position: fixed;
+    z-index: 3;
+}
+
+.logo img {
+    width: 130px; /* Tamaño del logo */
+    float: left; /* Posiciona la imagen a la izquierda */
+    margin-right: 100%; /* Ajusta el espacio a la derecha */
+}
+
+
+.nav-links {
+    list-style: none;
+    display: flex;
+}
+
+.nav-links li {
+    margin-right: 20px; /* Espaciado entre elementos */
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #fff; /* Color del texto */
+}
+
+.nav-links li a:hover {
+    color: #ff6600; /* Color al pasar el cursor */
+}
+
+.container {
+    width: 1055px;
+    height: 480px;
+    background-color: #fff;
+    position: absolute;
+    left: 580px;
+    top: 100px;
+    border: 2px solid black;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto; /* Centra el contenedor horizontalmente */
+
+}
+
+.inputs-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.inputs-column {
+    width: 48%; /* Ajusta el ancho de cada columna */
+    margin-top: 50px; /* Agrega un margen superior a los inputs */
+}
+
+.inputs-column input {
+    display: block;
+    margin-bottom: 20px; /* Ajusta el margen inferior */
+    width: 100%;
+    padding: 20px;
+    font-size: 18px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    outline: none;
+    background-color: transparent;
+}
+
+.title {
+    position: absolute;
+    top: 20px;
+    left: 20px; /* Ajuste de la posición hacia la izquierda */
+    /*transform: translateX(-50%);*/
+    background-color: transparent; /* Fondo transparente para el título */
+}
+
+.title h2 {
+    text-align: center;
+    color: rgb(0, 0, 0); /* Color negro para el texto */
+    font-size: 18px !important; /* Tamaño de fuente reducido */
+}
+
+.container2 {
+    width: 250px;
+    height: 380px;
+    background-color: #fff;
+    position: absolute;
+    left: 310px;
+    top: 100px;
+    border: 2px solidblack;
+}
+
+.navigation {
+    padding: 20px;
+}
+
+.navigation h3 {
+    margin-bottom: 20px; /* Ajusta el margen inferior para separar más los elementos */
+    font-size: 16px;
+    border-bottom: 1px solid #ccc; /* Agrega un borde inferior */
+    padding-bottom: 5px; /* Ajusta el espacio entre el texto y la línea */
+    color: black; /* Color inicial del texto */
+    transition: color 0.3s; /* Transición suave para el cambio de color */
+    cursor: pointer;
+}
+
+.navigation h3:hover {
+    color: orange; /* Cambia el color del texto a naranja al pasar el cursor sobre él */
+}
+
+
+.input-container {
+    position: relative;
+    margin: 20px 20px 50px; /* Add a bottom margin of 10px */
+}
+
+
+.input-field {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    outline: none;
+    background-color: transparent;
+}
+
+
+.input-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 16px;
+    color: rgba(204, 204, 204, 0);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+
+.input-highlight {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: 60px;
+    height: 2px;
+    width: 0;
+    background-color: #ff7300;
+    transition: all 0.3s ease;
+}
+
+
+.input-field:focus + .input-label {
+    top: -10px;
+    font-size: 12px;
+    color: #ff7300;
+}
+
+.input-field:focus + .input-label + .input-highlight {
+    width: 100%;
+}
+
+
+.input-container i {
+    position: absolute;
+    top: 30%;
+    right: 15px;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #ff6600;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .input-container i:hover {
+    color: #000000;
+  }
+
+
+  .button-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+  }
+
+  .update-button {
+    background-color: #e74919;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .update-button:hover {
+    background-color: #000000;
+  }
+
+
+  .modal {
+    display: none; /* Oculta la modal por defecto */
+    position: fixed; /* Mantiene la modal en una posición fija */
+    z-index: 1000; /* Asegura que la modal esté por encima de otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Permite el scroll si el contenido es demasiado grande */
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo negro semi-transparente */
+}
+
+/* Estilos para el contenido de la modal */
+.modal-content {
+    background-color: #000000;
+    margin: 10% auto; /* Centra la modal verticalmente y horizontalmente */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Ancho de la modal */
+    max-width: 500px; /* Máximo ancho de la modal */
+    border-radius: 10px; /* Esquinas redondeadas */
+    position: relative; /* Para posicionar el botón de cierre */
+    animation: fadeIn 0.5s; /* Animación de aparición */
+}
+
+/* Animación de aparición */
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+/* Estilos para el botón de cierre */
+.close {
+    color: #ff4901;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Estilos para el título de la modal */
+.modal-content h2 {
+    color: #ff6600; /* Color naranja */
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Estilos para los formularios dentro de la modal */
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="password"] {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.modal-content button {
+    background-color: #ff6600; /* Fondo naranja */
+    color: #fff; /* Texto blanco */
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Transición suave para el fondo */
+}
+
+.modal-content button:hover {
+    background-color: #e65c00; /* Fondo naranja oscuro al pasar el cursor */
+}
+
+.cancelar-button{
+    background-color: #ee540d; /* Color de fondo */
+    color: #ffffff; /* Color del texto */
+    border: none; /* Sin borde */
+    padding: 10px 20px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de fuente */
+    border-radius: 5px; /* Borde redondeado */
+    cursor: pointer; /* Cursor al pasar por encima */
+    transition: background-color 0.3s; /* Transición suave del color de fondo */
+}
+
+
+.containerPedidos {
+    width: 90%;
+    max-width: 1200px;
+    background-color: #fff;
+    position: absolute;
+    left: 1180px;
+    top: 100px;
+    transform: translateX(-50%); 
+    border: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    margin-bottom: 20px; /* Agregar margen inferior */
+}
+
+
+
+.titlePedido {
+    font-size: 20px; /* Tamaño de la fuente */
+    font-weight: bold; /* Grosor de la fuente */
+    color: #000000; /* Color del texto */
+    margin-bottom: 20px; /* Margen inferior para separarlo del contenido */
+    text-transform: uppercase; /* Convertir el texto a mayúsculas */
+    /* Otros estilos que desees agregar */
+
+    /* Posicionamiento */
+    position: absolute; /* Se posiciona de forma absoluta */
+    top: 35px; /* Puedes ajustar la posición vertical */
+    left: 30px; /* O ajustar la posición horizontal */
+}
+
+.subtitle {
+    font-size: 12px; /* Tamaño de la fuente */
+    font-weight: bold; /* Grosor de la fuente */
+    color: #525151; /* Color del texto */
+    margin-bottom: 20px; /* Margen inferior para separarlo del contenido */
+    text-transform: uppercase; /* Convertir el texto a mayúsculas */
+    /* Otros estilos que desees agregar */
+
+    /* Posicionamiento */
+    position: absolute; /* Se posiciona de forma absoluta */
+    top: 80px; /* Puedes ajustar la posición vertical */
+    left: 30px; /* O ajustar la posición horizontal */
+}
+
+.pedidos-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 35px;
+    width: 90%;
+    margin-top: 140px;
+    margin-left: 45px;
+    margin-bottom: 50px; /* Ajustar margen inferior */
+}
+
+
+.pedido-item {
+    background-color: #e77122;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pedido-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.pedido-header, .pedido-body, .pedido-footer {
+    margin-bottom: 10px;
+}
+
+.pedido-header p, .pedido-body p {
+    margin: 5px 0;
+    color: #fff;
+}
+
+.pedido-header p strong, .pedido-body p strong {
+    color: #000000;
+}
+
+.detalle-button {
+    background-color: var(--secondary);
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.detalle-button:hover {
+    background-color: var(--secondary-light);
+}
+
+
+/* Estilos para los iconos */
+.fa {
+    font-size: 20px; /* Tamaño base para los iconos */
+}
+
+.fa-trash {
+    color: red; /* Color personalizado para el icono de eliminar */
+}
+
+.fa-pencil {
+    color: blue; /* Color personalizado para el icono de editar */
+}
+
+.fa-user-plus {
+    color: green; /* Color personalizado para el icono de asignar rol */
+}
+
+.ticon {
+    font-size: 100px; /* Tamaño de icono en las celdas de la tabla */
+}
+
+.hicon {
+    font-size: 22px; /* Tamaño de icono en la barra superior */
+}
+
+.search {
+    padding: 5px;
+    display: none;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid black;
+}
+
+.pe {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background: red;
+    border-radius: 10px;
+    left: 10px;
+    top: 37px;
+    transform: scale(0.5);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 1);
+    animation: pulse-red 2s infinite;
+    cursor: pointer;
+}
+
+.de {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background: green;
+    border-radius: 10px;
+    left: 10px;
+    top: 37px;
+    transform: scale(0.5);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 1);
+    animation: pulse-green 2s infinite;
+    cursor: pointer;
+}
+
+
+.swal2-popup {
+    background-color: rgb(0, 0, 0) !important;
+}
+
+.swal2-title,
+.swal2-content,
+.swal2-html-container {
+    color: white !important;
+}
+
+.swal2-confirm {
+    background-color: #ec6e19 !important;
+    color: white !important;
+}
+
+@keyframes pulse-green {
+    0% {
+        transform: scale(0.85);
+        box-shadow: 0 0 0 0 rgba(82, 255, 82, 0.7);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 25px rgba(82, 255, 82, 0);
+    }
+
+    100% {
+        transform: scale(0.85);
+        box-shadow: 0 0 0 0 rgba(82, 255, 82, 0);
+    }
+}
+

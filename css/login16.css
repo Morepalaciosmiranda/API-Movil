@@ -1,0 +1,481 @@
+/* ////////// FONT ////////// */
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+TZ:wght@100..400&display=swap" rel="stylesheet');
+
+/* ////////// VARIABLES ////////// */
+:root {
+    /* //////// colors //////// */
+    --form-red-color : #000000;
+    --page-background-color: #181717;
+    --form-orange-color : #ec6e19;
+    --form-gray-color : #020202;
+    --form-input-color : #000000;
+    --form-facebook-color : #000000; 
+    --form-whatsapp-color : #105702;
+    --form-linkedin-color : #000000;
+}
+
+/* ////////// BASIC ////////// */
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 18px; /* Tamaño del texto, ajusta según necesites */
+    line-height: 1.6; /* Espaciado entre líneas */
+    background-color: var(--page-background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Modificación: centrar verticalmente */
+    height: 100vh; /* Modificación: establecer altura al 100% de la ventana */
+}
+
+a {
+    text-decoration: none;
+}
+
+/* //////// FORM BOX //////// */
+.form-box {
+    background-color: var(--form-orange-color);
+    width: 100%;
+    max-width: 1300px;
+    height: 700px;
+    margin: 0 auto;
+    border-radius: 15px;
+    display: flex;
+    -webkit-box-shadow: 0px 0px 62px -23px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 62px -23px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 62px -23px rgba(0,0,0,0.75);
+    position: fixed; /* Cambia la posición a fija */
+    top: 50%; /* Lo coloca en el centro vertical */
+    left: 50%; /* Lo coloca en el centro horizontal */
+    transform: translate(-50%, -50%); /* Centra el formulario */
+}
+
+.form-col-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.swal2-popup {
+    background-color: rgb(0, 0, 0) !important;
+}
+.swal2-title,
+.swal2-content,
+.swal2-html-container {
+    color: white !important;
+}
+.swal2-confirm {
+    background-color:#ec6e19 !important;
+    color: white !important;
+}
+/* Add this CSS if not already present */
+.modal {
+    display: none; /* Hide the modal initially */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+/* The modal content */
+.modal-content {
+    background-color: #ec6e19;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #000000;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+}
+
+/* Título de la modal */
+.modal-title {
+    color: #000; /* Negro */
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+/* Subtítulo de la modal */
+.modal-subtitle {
+    color: #fff; /* Blanco */
+    font-size: 16px;
+    margin-bottom: 20px;
+    background-color: #000000; /* Fondo oscuro para el subtítulo */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Close button */
+.modal .close {
+    color: #000000;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.modal .close:hover,
+.modal .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+/* Estilos para el input de correo */
+.modal-content input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Estilos para el botón de enviar */
+.modal-button {
+    background-color: #000000;
+    color: white;
+    padding: 15px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+}
+
+.modal-button:hover {
+    background-color: #105702;
+}
+
+
+.form-col-image {
+    background-image: url("../img/negro.avif");
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 0px 15px 15px 0px;
+    width: 50%;
+    height: 100%;
+}
+
+/* //////// IMAGE BOX //////// */
+.form-col-image #logo {
+    color: var(--form-orange-color);
+    font-size: 150px;
+}
+
+.form-col-image h1 {
+    color: var(--form-orange-color);
+    font-size: 30px;
+    margin-bottom: 25px;
+}
+
+.form-col-image p {
+    color: var(--form-orange-color) ;
+    padding: 0px 50px;
+    line-height: 25px;
+    text-align: center;
+}
+
+
+
+
+
+/* //////// FORM HEADER SECTION //////// */
+.form-top-box p {
+    text-align: center;
+    color: var(--form-gray-color);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 5px;
+}
+
+.form-top-box .title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 30px;
+}
+
+.form-top-box .title i {
+    color: var(--form-red-color);
+    font-size: 70px;
+}
+
+.form-top-box h2 {
+    color: var(--form-red-color);
+    font-size: 40px;
+    padding-left: 0px;
+}
+
+.form-col-image img {
+    width: 20%; /* Ajusta el tamaño de la imagen */
+    position: absolute;
+    top: 90px; /* Ajusta la posición vertical */
+    left: 945px; /* Ajusta la posición horizontal */
+}
+
+/* //////// LOGIN FORM //////// */
+.login-forms {
+    position: relative;
+    height: 350px;
+}
+
+.login-register,
+.login-create {
+    width: 100%;
+    padding: 0px 20px;
+    animation-duration: 0.5s;
+    animation-name: form-animate;
+}
+
+@keyframes form-animate {
+    0% {
+        transform: scale(1,1);
+    }
+
+    50% {
+        transform: scale(1.1,1.1);
+    }
+
+    100% {
+        transform: scale(1,1);
+    }
+}
+
+.form-title {
+    color: var(--form-gray-color);
+    font-size: 25px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+.inp-box {
+    display: flex;
+    align-items: center;
+    margin: 10px 0px;
+    padding: 10px 15px;
+    border: 1px var(--form-input-color) solid;
+    border-radius: 20px;
+}
+
+.inp-box .login-icon {
+    color: var(--form-gray-color);
+    font-size: 25px;
+    padding-right: 5px;
+}
+
+.inp-box input {
+    border: none;
+    outline: none;
+    font-size: 17px;
+    width: 90%;
+    color: var(--form-gray-color);
+}
+
+.login-forget {
+    color: var(--form-gray-color);
+}
+
+.form-button {
+    color: var(--form-orange-color);
+    font-size: 20px;
+    letter-spacing: 3px;
+    background-color: var(--form-red-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0px;
+    border-radius: 20px;
+    transition: 0.4s;
+    padding: 10px;
+    width: 100%;
+}
+
+.form-button:hover {
+    -webkit-box-shadow: 0px 0px 25px -3px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 25px -3px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 25px -3px rgba(0,0,0,0.75);
+}
+
+.form-desc {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.inp-box input:focus {
+    border-bottom: 2px solid var(--form-orange-color); /* Cambia el color del subrayado al color naranja deseado */
+}
+
+.inp-box input {
+    background-color: var(--form-orange-color); /* Cambia el color de fondo del área de entrada a naranja */
+    color: var(--form-gray-color); /* Asegura que el texto sea visible */
+}
+
+.inp-box input::placeholder {
+    color: var(--form-gray-color); /* Cambia el color del texto del placeholder al color gris */
+    opacity: 1; /* Asegúrate de que el color del placeholder sea completamente visible */
+}
+
+.login-signin,
+.login-signup {
+    color: var(--form-red-color);
+    cursor: pointer;
+    font-weight: 600;
+    padding-left: 5px;
+}
+
+
+.block {
+    display: block;
+}
+
+
+.none {
+    display: none;
+}
+
+.social-box {
+    border-top: 1px var(--form-gray-color);
+    padding-top: 20px;
+    margin-top: 25px;
+}
+
+.social-title {
+    color: var(--form-gray-color);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.social-icons-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 40px;
+}
+
+.social-item {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 50%;
+    -webkit-box-shadow: 0px 0px 25px -3px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 25px -3px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 25px -3px rgba(0,0,0,0.75);
+    transition: 0.5s;
+}
+
+.social-item:hover {
+    background-color: #ffffff;
+}
+
+.social-item:hover i {
+    color: var(--form-orange-color);
+}
+
+
+.whatsapp-item {
+    margin-left: 70px; 
+}
+
+.whatsapp {
+    color: var(--form-twitter-color);
+    font-size: 30px;
+    transition: 0.5s;
+}
+
+
+
+.alert-text-color {
+    color: #ffff !important; /* Color del texto deseado */
+}
+
+
+.spinner {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 3px solid #ec6e19;
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 10px;
+}
+
+.inp-box {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 18px;
+    top: 53%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.7rem; 
+}
+
+.inp-box {
+    position: relative;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* //////// RESPONSIVE //////// */
+@media only screen and (max-width: 1200px) {
+   body {
+    padding: 0px 100px;
+   }
+
+   .form-box {
+    margin: 0;
+    width: 100%;
+   }
+
+   .form-col-content {
+    width: 100%;
+   }
+
+   .form-col-image {
+    display: none;
+   }
+}
+
+@media only screen and (max-width: 768px) {
+  .login-account,
+  .login-signup,
+  .login-signin {
+    font-weight: 100;
+    font-size: 14px;
+  }
+}

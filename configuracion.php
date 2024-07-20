@@ -1,0 +1,236 @@
+<?php
+include './includes/conexion.php';
+session_start();
+
+if (!isset($_SESSION['correo_electronico'])) {
+    header("Location: loginRegister.php");
+    exit();
+}
+
+if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
+
+    header('Location: loginRegister.php');
+    exit();
+}
+
+if ($_SESSION['rol'] !== 'Usuario') {
+
+    header('Location: ./no_autorizado.php');
+    exit();
+}
+
+$correo_usuario = $_SESSION['correo_electronico'];
+
+$sql = "SELECT nombre_usuario, correo_electronico, contrasena, id_usuario FROM usuarios WHERE correo_electronico = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $correo_usuario);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $nombre_usuario = $row['nombre_usuario'];
+    $correo_electronico = $row['correo_electronico'];
+    $id_usuario = $row['id_usuario'];
+    $contraseña_mascara = '*******';
+} else {
+    echo "Error: Usuario no encontrado.";
+    exit();
+}
+
+$sql_pedidos = "SELECT pedidos.id_pedido, pedidos.fecha_pedido, pedidos.precio_domicilio, pedidos.estado_pedido, usuarios.nombre_usuario, SUM(detalle_pedido.subtotal) as subtotal_cliente 
+                FROM pedidos 
+                JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario 
+                JOIN detalle_pedido ON pedidos.id_pedido = detalle_pedido.id_pedido
+                WHERE pedidos.id_usuario = ?
+                GROUP BY pedidos.id_pedido";
+
+$stmt_pedidos = $conn->prepare($sql_pedidos);
+$stmt_pedidos->bind_param("i", $id_usuario);
+$stmt_pedidos->execute();
+$result_pedidos = $stmt_pedidos->get_result();
+
+$pedidos = [];
+while ($row_pedido = $result_pedidos->fetch_assoc()) {
+    $pedidos[] = $row_pedido;
+}
+
+$cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['cancelado_exitosamente'] : [];
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración</title>
+    <link rel="stylesheet" href="./css/configuracion12.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="./img/LogoExterminio.png" alt="Logo">
+        </div>
+    </nav>
+    <div class="container" id="ajustes-container">
+        <div class="title">
+            <h2>Información de la cuenta</h2>
+        </div>
+        <div class="inputs-container">
+            <div class="inputs-column">
+                <div class="input-container">
+                    <input placeholder="Nombre" class="input-field" type="text" value="<?php echo $nombre_usuario; ?>" id="nombre_usuario" readonly>
+                    <label for="nombre_usuario" class="input-label">Nombre</label>
+                    <span class="input-highlight"></span>
+                    <button class="edit-button" data-target="name-modal"><i class="fas fa-pencil-alt"></i></button>
+                </div>
+                <div class="input-container">
+                    <input placeholder="Correo electrónico" class="input-field" type="text" value="<?php echo $correo_electronico; ?>" id="correo_electronico" readonly>
+                    <label for="correo_electronico" class="input-label">Correo electrónico</label>
+                    <span class="input-highlight"></span>
+                    <button class="edit-button" data-target="email-modal"><i class="fas fa-pencil-alt"></i></button>
+                </div>
+            </div>
+            <div class="inputs-column">
+                <div class="input-container">
+                    <input placeholder="Contraseña" class="input-field" type="password" value="<?php echo $contraseña_mascara; ?>" id="contrasena" readonly>
+                    <label for="contrasena" class="input-label">Contraseña</label>
+                    <span class="input-highlight"></span>
+                    <button class="edit-button" data-target="password-modal"><i class="fas fa-pencil-alt"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="name-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Editar nombre</h2>
+            <form id="name-form">
+                <input type="text" name="name" id="name" value="<?php echo $nombre_usuario; ?>">
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="email-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Editar correo electrónico</h2>
+            <form id="email-form">
+                <input type="text" name="email" id="email" value="<?php echo $correo_electronico; ?>">
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+  
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Editar contraseña</h2>
+            <form id="password-form">
+                <input type="password" name="password" id="password">
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="containerPedidos" id="pedidos-container" style="display: none;">
+        <div class="titlePedido">
+            <h2>¡Mis Pedidos!</h2>
+        </div>
+        <div class="subtitle">
+            <h3>En este apartado aparecen todos los pedidos que hagas a través de nuestra página</h3>
+        </div>
+        <div class="pedidos-lista">
+            <?php foreach ($pedidos as $pedido) : ?>
+                <div class="pedido-item">
+                    <div class="pedido-header">
+                        <p><strong>Número de pedido:</strong> <?php echo $pedido['id_pedido']; ?></p>
+                        <p><strong>Fecha:</strong> <?php echo $pedido['fecha_pedido']; ?></p>
+                        <p><strong>Nombre:</strong> <?php echo $pedido['nombre_usuario']; ?></p>
+                    </div>
+                    <div class="pedido-body">
+                        <p><strong>Precio de domicilio:</strong> <?php echo $pedido['precio_domicilio']; ?></p>
+                        <p><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></p>
+                        <p><strong>Total del pedido:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></p>
+                    </div>
+                    <div class="pedido-footer">
+                        <?php if ($pedido['estado_pedido'] != 'cancelado' && !in_array($pedido['id_pedido'], $cancelled_orders)) : ?>
+                            <form method="POST" action="./controller/cambiar_estado_pedido.php" id="cancelarForm_<?php echo $pedido['id_pedido']; ?>">
+                                <input type="hidden" name="id_pedido" value="<?php echo $pedido['id_pedido']; ?>">
+                                <input type="hidden" name="nuevo_estado" value="cancelado">
+                                <button type="button" class="cancelar-button" id="cancelarButton_<?php echo $pedido['id_pedido']; ?>" onclick="confirmCancel('<?php echo $pedido['id_pedido']; ?>')">Cancelar Pedido</button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+
+    <div class="container2">
+        <div class="navigation">
+            <h3 onclick="mostrarAjustes()"><i class="fas fa-cog fa-sm"></i> Ajustes de cuenta</h3>
+            <h3 onclick="mostrarPedidos()"><i class="fas fa-shopping-cart fa-sm"></i> Mis pedidos</h3>
+        </div>
+    </div>
+    <script src="./js/configuracion2.js"></script>
+    <script>
+        function mostrarAjustes() {
+            document.getElementById('ajustes-container').style.display = 'block';
+            document.getElementById('pedidos-container').style.display = 'none';
+        }
+
+        function mostrarPedidos() {
+            document.getElementById('ajustes-container').style.display = 'none';
+            document.getElementById('pedidos-container').style.display = 'block';
+        }
+
+        function confirmCancel(idPedido) {
+            Swal.fire({
+                title: '¿Está seguro de cancelar el pedido?',
+                text: "Esta acción no se puede deshacer.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, cancelar',
+                cancelButtonText: 'No, mantener'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('cancelarForm_' + idPedido).submit();
+                    document.getElementById('cancelarButton_' + idPedido).style.display = 'none';
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            <?php if (isset($_SESSION['cancelado_exitosamente'])) : ?>
+                // Swal.fire({
+                //     icon: 'success',
+                //     title: 'Pedido cancelado exitosamente',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // });
+
+                var cancelledOrders = <?php echo json_encode($_SESSION['cancelado_exitosamente']); ?>;
+                cancelledOrders.forEach(function(idPedidoCancelado) {
+                    var cancelButton = document.getElementById('cancelarButton_' + idPedidoCancelado);
+                    if (cancelButton) {
+                        cancelButton.style.display = 'none';
+                    }
+                });
+            <?php endif; ?>
+        });
+    </script>
+</body>
+
+</html>

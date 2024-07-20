@@ -1,0 +1,377 @@
+/* Estilos generales */
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000000;
+}
+
+.container {
+    display: flex;
+}
+
+/* Estilos de la barra lateral */
+.sidebar {
+    width: 15%;
+    padding: 15px;
+    min-height: calc(100vh - 10px);
+    background-color: #ec6e19;
+}
+
+.sidebar h1.logo {
+    text-align: center;
+    margin: 0;
+    font-size: 24px;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    padding: 0;
+    list-style-type: none;
+    color: #f2f2f2;
+}
+
+.sidebar ul li {
+    padding: 10px 20px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.3s, padding-left 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 20px 10px;
+    font-size: 18px;
+}
+
+.sidebar ul li:hover {
+    background-color: #000000 !important;
+    padding-left: 140px !important;
+}
+
+.sidebar ul li a i {
+    margin-left: -45px;
+    margin-bottom: -10px;
+    font-size: 30px;
+}
+
+/* Estilos del contenido */
+.content {
+    flex: 1;
+    padding: 20px;
+    color: #fff;
+}
+
+.content h2 {
+    margin-top: 0;
+    color: #f2f2f2;
+}
+
+/* Estilos de la tabla de usuarios */
+.content table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ec6e19;
+    border: 2px solid white;
+    table-layout: fixed;
+}
+
+.content table th,
+.content table td {
+    padding: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background-color: #ec6e19;
+}
+
+.content table th {
+    background-color: #000000;
+    font-weight: bold;
+    text-align: left;
+}
+
+.content table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.content table tr:hover {
+    background-color: #ddd;
+}
+
+/* Estilos específicos para las celdas de Estado y ID Rol */
+.content table td:nth-child(5),
+.content table td:nth-child(6) {
+    max-width: 50px;
+}
+
+/* Estilos para los botones con iconos */
+.btn {
+    background-color: transparent;
+    color: #000;
+    padding: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    color: #555;
+}
+
+.btn i {
+    color: #000;
+}
+
+.btn:hover i {
+    color: #000;
+}
+
+#btnAgregarCompra {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+#btnAgregarCompra:hover {
+    background-color: #218838;
+}
+
+.detail-btn,
+.edit-btn,
+.delete-btn {
+    margin-right: 5px;
+    padding: 5px 10px;
+    color: #0a0a0a;
+    text-decoration: none;
+}
+
+.detail-btn {
+    background-color: #ddd;
+}
+
+.edit-btn {
+    background-color: #4caf50;
+}
+
+/* .delete-btn {
+    background-color: #f44336;
+} */
+
+/* Estilos del modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #000000;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Estilos del select */
+.select-wrapper {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.select-wrapper select {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-size: 16px;
+}
+
+/* Estilos de los botones del modal */
+#confirmPermissionsBtn {
+    margin-top: 10px;
+}
+
+/* Estilos de la imagen del usuario */
+.user {
+    width: 30px;
+    float: right;
+    margin-left: 10px;
+}
+
+/* Estilos para el perfil del usuario */
+.profile-div {
+    position: relative;
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.profile-div p {
+    margin: 5px 0;
+    padding: 0;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.profile-div p:hover {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+/* Estilos específicos para el icono de usuario */
+.user {
+    width: 30px;
+    float: right;
+    margin-left: 10px;
+}
+
+/* Estilos específicos para el icono de perfil y notificaciones */
+.hicon,
+.sicon {
+    font-size: 20px;
+    margin-top: 5px;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+/* Estilos para el icono de notificaciones */
+.hicon {
+    background-color: transparent;
+}
+
+/* Estilos para el icono de búsqueda */
+.sicon {
+    background-color: #000000;
+    padding: 6px;
+    border-radius: 50%;
+}
+
+/* Estilos para la barra de búsqueda */
+.search {
+    border-radius: 4px;
+    border: 1px solid #ffffff;
+    padding: 8px 16px;
+    margin-right: 10px;
+    color: #000000;
+}
+
+.search:hover {
+    background-color: #ffffff;
+}
+
+/* Estilos para los mensajes de notificación */
+.notification-div {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    bottom: 50px;
+    right: 0;
+    width: 200px;
+    color: #000000;
+    border-radius: 4px;
+}
+
+.notification-div p {
+    margin: 5px 0;
+    padding: 0;
+    font-size: 14px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.notification-div p:hover {
+    background-color: #ffffff;
+}
+
+/* Estilos para la paginación */
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination a {
+    color: #fff;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    border: 1px solid #ffffff;
+    margin: 0 4px;
+}
+
+.pagination a.active {
+    background-color: #4CAF50;
+    color: white;
+    border: 1px solid #4CAF50;
+}
+
+.pagination a:hover:not(.active) {
+    background-color: #fa8908;
+}
+
+/* Estilos para alinear horizontalmente los botones de acción */
+.action-form {
+    display: flex;
+    align-items: center;
+}
+
+.action-btn {
+    margin-left: 10px;
+    display: inline-block;
+    font-size: 18px;
+    padding: 6px 12px;
+}
+
+.action-btn i {
+    margin-right: -20px;
+}
+
+/* Estilos para el botón de agregar compra */
+.btn-add-compra {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.btn-add-compra:hover {
+    background-color: #45a049;
+}
+
+

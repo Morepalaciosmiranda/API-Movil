@@ -1,0 +1,692 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+TZ:wght@100..400&display=swap" rel="stylesheet');
+
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000000;
+    color: #FFFFFF;
+    line-height: 1.6;
+}
+
+
+.container {
+    display: flex;
+}
+
+/* Estilos de la barra lateral */
+.sidebar {
+    width: 15%;
+    padding: 15px;
+    min-height: calc(100vh - 10px);
+    background-color: #ec6e19;
+}
+
+.sidebar h1.logo {
+    text-align: center;
+    margin: 0;
+    font-size: 24px;
+    color: #fff;
+    margin-bottom: 20px; /* Añadido para separar el logo de los elementos de la lista */
+}
+
+.sidebar ul {
+    padding: 0;
+    list-style-type: none;
+    color: #f2f2f2;
+}
+
+.sidebar ul li {
+    padding: 10px 0;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.3s, padding-left 0.3s; /* Añadimos la transición para el padding-left */
+    display: flex;
+    align-items: center;
+    padding-left: 20px; /* Añadimos un padding izquierdo */
+}
+
+.sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 20px 10px;
+    font-size: 18px; /* Aumentamos el tamaño del texto */
+    display: flex; /* Para alinear íconos y texto horizontalmente */
+    align-items: center;
+}
+
+.sidebar ul li:hover {
+    background-color: #000000 !important; /* Importante para forzar la prioridad */
+    padding-left: 65px !important; /* Ajustamos el padding izquierdo en hover */
+    padding-right: 65px !important; /* Ajustamos el padding derecho en hover */
+}
+
+.sidebar ul li a i {
+    margin-left: -20px; /* Ajusta este valor para mover los íconos a la derecha */
+    margin-right: 10px; /* Añadido para separar el icono del texto */
+    font-size: 30px; /* Aumentamos el tamaño del ícono */
+}
+
+/* Estilos del contenido */
+.content {
+    flex: 1;
+    padding: 20px;
+    color: #ffff;
+}
+
+.content h2 {
+    margin-top: 0;
+    color: #f2f2f2;
+}
+
+/* Estilos de la tabla de usuarios */
+.content table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ec6e19;
+    border: 1px solid rgb(0, 0, 0); /* Borde de la tabla */
+    border-radius: 10px; /* Borde redondeado */
+    margin-left: -20px; /* Mover la tabla hacia la izquierda */
+}
+
+.content table th,
+.content table td {
+    padding: 8px; /* Espaciado interno */
+    max-width: 150px; /* Ancho máximo para las celdas */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Texto que desborda */
+    white-space: nowrap; /* Sin salto de línea */
+    background-color: #ec6e19;
+    border-bottom: 1px solid #000; /* Línea separadora en la parte inferior */
+    border-right: 1px solid #000; /* Línea separadora a la derecha */
+}
+
+.content table th {
+    background-color: #000000;
+    font-weight: bold;
+    text-align: left;
+   
+}
+
+.content table .actions button {
+    background-color: #000000; /* Cambia el color de fondo del botón */
+    color: #ffffff; /* Cambia el color del texto del botón */
+    padding: 22px 22px; /* Ajusta el relleno del botón */
+    font-size: 14px; /* Cambia el tamaño de la fuente del botón */
+    border: none; /* Quita el borde del botón */
+    border-radius: 4px; /* Aplica borde redondeado al botón */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    margin-right: 2px; /* Ajusta el margen derecho entre botones */
+    position: relative; /* Necesario para posicionar el ícono */
+}
+
+.content table .actions button i {
+    position: absolute; /* Posiciona el ícono de manera absoluta */
+    left: 12px; /* Mueve el ícono hacia la izquierda */
+    top: 12px;
+    font-size: 20px; /* Cambia el tamaño del ícono */
+}
+
+.content table .actions button:hover {
+    background-color: #4CAF50; /* Cambia el color de fondo al pasar el ratón */
+}
+
+
+.profile-div {
+    position: absolute;
+    top: 32px !important;  /* Ajusta este valor para bajar el contenedor */
+    right: 10px !important;
+    display: inline-block;
+    margin-right: 20px;
+    z-index: 999;
+}
+
+.profile-inner-container {
+    background-color: #000000; /* Fondo negro para el contenedor */
+    padding: 16px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.title-container {
+    background-color: #000000; /* Color de fondo */
+    padding: 7px; /* Espaciado interno */
+    border-radius: 5px; /* Bordes redondeados */
+    margin-bottom: 10px; /* Margen inferior */
+    max-width: 1280px; /* Ancho máximo del contenedor */
+    margin-left: -30px; /* Alinear a la izquierda */
+    margin-right: auto; /* Alinear a la derecha */
+    margin-top: 12px;
+}
+
+.search-bar {
+        position: relative; /* Posición relativa para los elementos internos */
+        display: flex; /* Usar flexbox para alinear elementos */
+        align-items: center; /* Alinear elementos verticalmente */
+        width: 100%; /* Ancho completo */
+        max-width: 300px; /* Ancho máximo del contenedor de búsqueda */
+    }
+
+.search-bar input[type="text"] {
+        flex: 1; /* Ocupar todo el espacio disponible */
+        border: 1px solid #ccc; /* Borde */
+        border-radius: 6px; /* Bordes redondeados */
+        padding: 13px; /* Espaciado interno */
+        font-size: 12px; /* Tamaño de fuente */
+        margin-left: 1100px;
+        margin-top: -98px;
+    }
+.search-bar button {
+        background-color: transparent; /* Color de fondo del botón */
+        color: #ec6e19; /* Color del texto */
+        border: none; /* Sin borde */
+        padding: 6px 10px; /* Espaciado interno */
+        cursor: pointer; /* Cursor apuntador */
+        transition: color 0.3s ease; /* Transición suave */
+        position: absolute; /* Posición absoluta para el botón */
+        right: -970px; /* Alinear a la derecha */
+        top: -60px;
+    }
+
+.search-bar button:hover {
+        color: #000000; /* Color del texto al pasar el ratón */
+    }
+
+.profile-div p {
+    margin: 5px 0;
+    padding: 0;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    color: #ffffff; /* Color del texto */
+}
+
+.user-options-container {
+    display: none;
+    position: absolute;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding: 10px;
+    right: 10px;
+    top: 35px;
+    z-index: 9999;
+    width: 150px; /* Ancho del contenedor */
+}
+
+.user-option {
+    display: block;
+    padding: 8px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.user-option:hover {
+    background-color: #f0f0f0;
+}
+
+.user-option i {
+    margin-right: 8px;
+}
+
+.profile-div .user1 {
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 20px;
+    text-align: left;
+    cursor: pointer;
+    color: #ffffff; /* Color de texto */
+}
+
+.profile-div p:hover {
+    background-color: #bd9683; /* Fondo al hacer hover */
+    color: #ffffff; /* Color de texto al hacer hover */
+}
+
+
+/* Estilos para el modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: #000000;
+    position: absolute;
+    left: 750px;
+    top: 170px;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border: 1px solid #ffffff;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+    max-height: 80%;
+    overflow-y: auto;
+    transition: all 0.3s ease-in-out;
+    transform-origin: center;
+    opacity: 0;
+}
+
+
+.modal.show .modal-content {
+    transform: scale(1); /* Escala final para la animación */
+    opacity: 1; /* Opacidad final para la animación */
+}
+
+
+
+body.modal-open {
+    overflow: hidden; /* Evitar el desplazamiento de la página cuando el modal está abierto */
+}
+
+.modal-background-blur {
+    filter: blur(5px); /* Aplicar desenfoque al fondo */
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: #000000; /* Cambiamos el color del título */
+    font-size: 24px; /* Aumentamos el tamaño del título */
+}
+
+.modal-content ul {
+    padding-left: 20px; /* Añadimos un espacio izquierdo a la lista */
+}
+
+.modal-content ul li {
+    color: #ffffff; /* Cambiamos el color del texto de la lista */
+    font-size: 16px; /* Reducimos el tamaño del texto de la lista */
+    margin-bottom: 8px; /* Añadimos un espacio inferior entre los elementos de la lista */
+}
+
+.filter-container {
+    margin-bottom: 20px; /* Añadimos un espacio inferior para separar del contenido */
+}
+
+.filter-input {
+    width: 100%; /* Ocupa todo el ancho del contenedor */
+    padding: 8px; /* Ajustamos el relleno */
+    font-size: 16px; /* Tamaño de fuente */
+    border: 1px solid #ccc; /* Borde del input */
+    border-radius: 4px; /* Borde redondeado */
+    box-sizing: border-box; /* Incluimos el relleno y el borde en el ancho total */
+}
+
+.filter-button {
+    background-color: #4CAF50; /* Color de fondo */
+    color: white; /* Color de texto */
+    padding: 8px 12px; /* Ajustamos el relleno */
+    font-size: 16px; /* Tamaño de fuente */
+    border: none; /* Quitamos el borde */
+    border-radius: 4px; /* Borde redondeado */
+    cursor: pointer; /* Cambiamos el cursor */
+}
+
+.filter-button:hover {
+    background-color: #45a049; /* Color de fondo al pasar el ratón */
+}
+
+.close {
+    color: #ffffff;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: rgb(247, 90, 0);
+    text-decoration: none;
+}
+
+/* Estilos para los mensajes de notificación */
+.notification-div {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    bottom: 50px;
+    right: 0;
+    width: 200px;
+    color: #000000;
+    border-radius: 4px;
+}
+
+.notification-div:hover {
+    background-color: #ffffff;
+}
+
+.notification-div p {
+    margin: 5px 0;
+    padding: 0;
+    font-size: 14px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.notification-div p:hover {
+    background-color: #ffffff;
+}
+
+.profile-div {
+    position: absolute; /* Cambiamos la posición a absoluta */
+    top: 10px; /* Ajustamos la distancia desde la parte superior */
+    right: 10px; /* Ajustamos la distancia desde la derecha */
+    display: inline-block; /* Mantenemos el contenido en línea */
+    margin-right: 20px; /* Ajustamos el margen derecho si es necesario */
+    z-index: 999; /* Aseguramos que esté por encima de otros elementos */
+}
+
+.profile-div p {
+    margin: 5px 0;
+    padding: 0;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    color: #000000; /* Color de texto blanco */
+}
+
+.user-options-container {
+    display: none;
+    position: absolute;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding: 10px;
+    right: 10px;
+    top: 50px;
+    z-index: 1;
+    width: 150px; /* Ancho del contenedor */
+}
+
+.user-option {
+    display: block;
+    padding: 8px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.user-option:hover {
+    background-color: #f0f0f0;
+}
+
+.user-option i {
+    margin-right: 8px;
+}
+
+.profile-div .user1 {
+    /* Estilos específicos para el párrafo con la clase user1 dentro de profile-div */
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 20px;
+    text-align: left;
+    cursor: pointer;
+    color: #ffffff; /* Color de texto blanco */
+}
+
+/* Estilos para los botones del perfil al hacer hover */
+.profile-div p:hover {
+    background-color: #f8560b; /* Fondo negro al hacer hover */
+    color: #ffffff; /* Color de texto blanco al hacer hover */
+}
+
+/* Estilos de paginación */
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+    clear: both;
+}
+
+.pagination a {
+    color: rgb(255, 255, 255);
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #ffffff;
+    margin: 0 4px;
+}
+
+.pagination a.active {
+    background-color: #000000;
+    color: white;
+    border: 1px solid #f8560b;
+}
+
+.pagination a:hover:not(.active) {
+    background-color: #f8560b;
+}
+
+/* Estilos para el formulario de filtrado */
+form {
+    margin-bottom: 20px; /* Agregamos un espacio inferior */
+}
+
+label {
+    color: #fff; /* Cambiamos el color del texto de la etiqueta */
+    font-size: 16px; /* Tamaño de fuente */
+    margin-right: 10px; /* Añadimos un espacio derecho */
+}
+
+input[type="date"] {
+    width: 200px; /* Ancho del campo de fecha */
+    padding: 8px; /* Ajustamos el relleno */
+    font-size: 16px; /* Tamaño de fuente */
+    border: 1px solid #ccc; /* Borde del input */
+    border-radius: 4px; /* Borde redondeado */
+    box-sizing: border-box; /* Incluimos el relleno y el borde en el ancho total */
+}
+
+button[type="submit"] {
+    background-color: #4CAF50; /* Color de fondo */
+    color: white; /* Color de texto */
+    padding: 8px 12px; /* Ajustamos el relleno */
+    font-size: 16px; /* Tamaño de fuente */
+    border: none; /* Quitamos el borde */
+    border-radius: 4px; /* Borde redondeado */
+    cursor: pointer; /* Cambiamos el cursor */
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049; /* Color de fondo al pasar el ratón */
+}
+
+.detalle-separator {
+    border-top: 1px solid #ccc; 
+    margin-top: 20px; 
+    margin-bottom: 20px; 
+}
+
+.form-container {
+    max-width: 300px;
+    margin: 10px auto;
+    padding: 3px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-right: 1300px;
+    margin-top: -5px;
+}
+
+
+.form-container label {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Estilos para el input de fecha */
+.form-container input[type=date] {
+    padding: 5px;
+    width: calc(100% - 80px);
+    margin-bottom: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Estilos para el botón de filtrar */
+.form-container button[type=submit] {
+    background-color: #ec6e19;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Estilos para el hover del botón */
+.form-container button[type=submit]:hover {
+    background-color: #000000;
+}
+
+
+#modalDetallesPedido {
+    display: none; /* Ocultar modal por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: none; /* Asegurarse de que no haya desenfoque */
+}
+
+#modalDetallesPedido .modal-content {
+    background-color: #000000;
+    padding: 20px;
+    border: 1px solid #ff5a0e;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 8px;
+    margin: 0;
+}
+
+#modalDetallesPedido h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ec6e19;
+}
+
+#modalDetallesPedido .close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#modalDetallesPedido .close-btn:hover,
+#modalDetallesPedido .close-btn:focus {
+    color: #ff5a0e;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#modalEstadoPedido {
+    display: none; /* Ocultar modal por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semi-transparente */
+    overflow: auto;
+}
+
+#modalEstadoPedido .modal-state {
+    background-color: #000000; /* Fondo gris oscuro */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 10px;
+    color: #fff; /* Texto blanco */
+    width: 90%;
+    max-width: 500px;
+    max-height: 85%;
+    overflow-y: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-in-out; /* Animación de entrada */
+}
+
+#modalEstadoPedido h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #f74e00; /* Texto naranja para el título */
+}
+
+#modalEstadoPedido label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ddd; /* Texto gris claro para etiquetas */
+}
+
+#modalEstadoPedido select,
+#modalEstadoPedido textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    background-color: #444; /* Fondo gris medio para campos de entrada */
+    color: #eee; /* Texto gris claro para campos de entrada */
+}
+
+#modalEstadoPedido textarea {
+    resize: vertical; /* Permitir redimensionar verticalmente */
+}
+
+#btnGuardad {
+    background-color: #f74e00;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    text-align: center;
+}
+
+#btnGuardad:hover {
+    background-color: #ff6500;
+}
+
+#modalEstadoPedido .close {
+    color: #fff;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#modalEstadoPedido .close:hover,
+#modalEstadoPedido .close:focus {
+    color: #ff6500;
+    text-decoration: none;
+    cursor: pointer;
+}

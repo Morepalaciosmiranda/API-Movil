@@ -1,0 +1,365 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+
+:root {
+    --blue: #a85510;
+    --white: #000000;
+    --black: #ff0000;
+    --lightblue: #000000;
+    --gray: #e5e5e5;
+}
+
+* {
+    margin: 0px;
+    padding: 0px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    height: 100vh;
+    background-color: #ffffff;
+}
+
+.sidebar {
+    width: 20%;
+    float: left;
+    background: var(--blue);
+    height: 100vh;
+    position: relative;
+}
+
+.main {
+    width: 75%;
+    float: left;
+    height: 90vh;
+    padding: 30px;
+}
+
+.logo {
+    text-align: center;
+    color: var(--white);
+    margin-top: 50px;
+    font-weight: 800;
+    margin-bottom: 50px;
+}
+
+.nav {
+    margin-left: 40px;
+}
+
+.nav li {
+    list-style: none;
+    padding: 16px 19px;
+}
+
+.nav li i {
+    margin-right: 10px;
+}
+
+.nav li a {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.active {
+    background: var(--white);
+    border-radius: 27px;
+    position: relative;
+}
+
+.nav>li {
+    border-radius: 60px 0 0 60px;
+    width: 92%;
+    margin-left: -15px;
+}
+
+.nav>.active::before,
+.nav>.active::after {
+    content: "";
+    position: absolute;
+}
+
+.nav>.active::before {
+    top: -80px;
+    right: 0px;
+    height: 80px;
+    width: 62px;
+    border-bottom-right-radius: 80px;
+    box-shadow: 0 40px 0 0 var(--white);
+    transform: rotateZ(360deg);
+}
+
+.nav>.active::after {
+    top: 51px;
+    right: 0px;
+    height: 80px;
+    width: 62px;
+    border-top-right-radius: 80px;
+    box-shadow: 0 -40px 0 0 var(--white);
+    transform: rotateZ(360deg);
+}
+
+.active a {
+    color: var(--blue)!important;
+}
+
+.social {
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+}
+
+.social li {
+    list-style: none;
+    float: left;
+    padding: 10px;
+}
+
+.social li a {
+    font-size: 14px;
+    color: var(--white);
+}
+
+.clearfix {
+    clear: both;
+}
+
+.col-6 {
+    width: 50%;
+    float: left;
+}
+
+.hicon {
+    margin-right: 20px;
+    font-size: 22px !important;
+    position: relative;
+}
+
+.hicon:nth-child(1):after {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background: red;
+    border-radius: 10px;
+    left: 13px;
+    top: 7px;
+    transform: scale(0.5);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 1);
+    animation: pulse-red 2s infinite;
+    cursor: pointer;
+}
+
+.user {
+    background: var(--lightblue);
+    padding: 5px;
+    width: 30px;
+    margin-bottom: -11px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.profile-div {
+    background-color: var(--gray);
+    width: 140px;
+    border: 1px solid #ddd;
+    padding: 10px 0px;
+    right: 2%;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 9;
+    display: none;
+    top: 84px;
+    text-align: left;
+}
+
+.profile-div:after {
+    content: '';
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    background-color: var(--gray);
+    top: -6px;
+    border-left: 1px solid #000000;
+    border-top: 1px solid #ddd;
+    transform: rotate(45deg);
+    right: 10%;
+}
+
+.profile-div p {
+    margin: 0px;
+    padding: 10px 20px;
+}
+
+.profile-div p:hover {
+    margin: 0px;
+    padding: 10px 20px;
+    background-color: var(--blue);
+    border-radius: 0px;
+    color: var(--white);
+}
+
+.notification-div {
+    background-color: var(--gray);
+    width: 246px;
+    border: 1px solid #ddd;
+    padding: 10px 0px;
+    right: 9.4%;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 9;
+    display: none;
+    top: 84px;
+    text-align: left;
+}
+
+.notification-div:after {
+    content: '';
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    background-color: var(--gray);
+    top: -6px;
+    border-left: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+    transform: rotate(45deg);
+    right: 10%;
+}
+
+.notification-div p {
+    margin: 0px;
+    padding: 10px 20px;
+}
+
+.notification-div p:hover {
+    margin: 0px;
+    padding: 10px 20px;
+    background-color: var(--blue);
+    border-radius: 0px;
+    color: var(--white);
+}
+
+.search {
+    padding: 5px;
+    display: none;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid black;
+}
+
+/* Estilos para las tablas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 2px solid #ec6e19;
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #000000;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+
+
+
+/* Estilos para los iconos */
+.fa {
+    font-size: 20px; /* Aumentar el tamaño de los iconos en la tabla */
+}
+
+.fa-trash {
+    color: red; /* Color personalizado para el icono de eliminar */
+}
+
+.fa-pencil {
+    color: blue; /* Color personalizado para el icono de editar */
+}
+
+.fa-user-plus {
+    color: green; /* Color personalizado para el icono de asignar rol */
+}
+
+.ticon {
+    font-size: 20px; /* Aumentar el tamaño de los iconos en las celdas de la tabla */
+}
+
+/* Estilos para la tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 2px solid var(--blue); /* Cambié el color del borde */
+}
+
+th, td {
+    padding: 12px; /* Reduje el padding para que la tabla se vea más compacta */
+    text-align: left;
+    border-bottom: 1px solid var(--black); /* Cambié el color del borde inferior */
+}
+
+th {
+    background-color: var(--gray); /* Cambié el color de fondo del encabezado */
+    font-weight: bold; /* Añadí negrita al texto del encabezado */
+}
+
+tr:hover {
+    background-color: var(--gray); /* Cambié el color de fondo al pasar el cursor sobre las filas */
+}
+
+/* Estilos para las acciones en la tabla */
+.action-icons {
+    display: flex;
+}
+
+.action-icon {
+    margin-right: 10px; /* Espaciado entre los iconos de acciones */
+    color: var(--blue); /* Color de los iconos de acciones */
+}
+
+.action-icon:hover {
+    color: var(--gray); /* Cambio de color al pasar el cursor sobre los iconos de acciones */
+    background-color: var(--blue); /* Cambio de color de fondo al pasar el cursor sobre los iconos de acciones */
+    border-radius: 50%; /* Hacer los iconos de acciones redondos */
+    padding: 5px; /* Añadir un poco de relleno para hacer los iconos más grandes al pasar el cursor */
+}
+
+th, td {
+    padding: 22px; /* Aumentado el padding para hacer la tabla más ancha */
+    text-align: left;
+    border-bottom: 1px solid var(--black);
+  }
+
+
+  .action-icons {
+    display: flex;
+    justify-content: flex-end; /* Agregado esta propiedad para alinear los iconos a la derecha */
+  }
+  
+  .action-icon {
+    margin-right: 10px;
+    color: var(--blue);
+  }
+  
+  .action-icon:hover {
+    color: var(--gray);
+    background-color: var(--blue);
+    border-radius: 50%;
+    padding: 5px;
+  }
+
+  th, td {
+    padding: 5px 8px; /* Reducir el padding en la parte superior e inferior y en los lados */
+    font-size: 16px; /* Mantener el tamaño de la letra */
+    text-align: left;
+    border-bottom: 1px solid var(--black);
+}
