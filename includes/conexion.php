@@ -1,17 +1,14 @@
 <?php
-$servername = getenv('MYSQLHOST');
-$username = getenv('MYSQLUSER');
-$password = getenv('MYSQLPASSWORD');
-$dbname = getenv('MYSQLDATABASE');
-$port = getenv('MYSQLPORT');
+$url = parse_url(getenv("MYSQL_URL"));
 
-// Comprobar si las variables están definidas
-if (!$servername || !$username || !$password || !$dbname || !$port) {
-    die('Error: Las variables de entorno para la base de datos no están configuradas correctamente.');
-}
+$host = $url["host"];
+$username = $url["user"];
+$password = $url["pass"];
+$database = substr($url["path"], 1);
+$port = $url["port"];
 
 // Crear la conexión
-$conn = new mysqli($servername, $username, $password, $dbname, $port);
+$conn = new mysqli($host, $username, $password, $database, $port);
 
 // Comprobar si la conexión fue exitosa
 if ($conn->connect_error) {
