@@ -29,15 +29,12 @@ if ($fecha_filtro) {
 }
 $sql .= " LIMIT $items_por_pagina OFFSET $offset";
 
-echo "SQL Query: " . $sql . "<br>";
 
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
     die("Error en la consulta: " . mysqli_error($conn));
 }
-
-echo "Número de filas devueltas: " . mysqli_num_rows($result) . "<br>";
 
 // Guarda los resultados en un array
 $pedidos = [];
