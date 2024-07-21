@@ -13,6 +13,11 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
 
 include_once('../includes/conexion.php');
 
+if (!$conn) {
+    die("Conexión fallida: " . mysqli_connect_error());
+}
+echo "Conexión exitosa a la base de datos.<br>";
+
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
@@ -29,6 +34,11 @@ if ($fecha_filtro) {
 $sql .= " LIMIT $items_por_pagina OFFSET $offset";
 
 $result = mysqli_query($conn, $sql);
+
+if (!$result) {
+    die("Error en la consulta: " . mysqli_error($conn));
+}
+echo "Número de filas devueltas: " . mysqli_num_rows($result);
 
 $sql_total = "SELECT COUNT(*) as total FROM pedidos";
 if ($fecha_filtro) {
