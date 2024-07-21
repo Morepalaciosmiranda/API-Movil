@@ -13,7 +13,7 @@ try {
     $idPedido = intval($_GET['idPedido']);
 
     // Obtener detalles del pedido y datos del cliente
-    $sql = "SELECT * FROM detalle_pedido WHERE id_pedido = ? LIMIT 1";
+    $sql = "SELECT * FROM detalle_pedido WHERE id_pedido = ?";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "i", $idPedido);
     mysqli_stmt_execute($stmt);
@@ -21,32 +21,28 @@ try {
 
     $response = array();
 
-    if ($row = mysqli_fetch_assoc($result)) {
-        $cliente = array(
-            'nombre' => htmlspecialchars($row['nombre']),
-            'direccion' => htmlspecialchars($row['direccion']),
-            'barrio' => htmlspecialchars($row['barrio']),
-            'telefono' => htmlspecialchars($row['telefono'])
-        );
-
-        // Obtener todos los productos del pedido
-        $sql_productos = "SELECT * FROM detalle_pedido WHERE id_pedido = ?";
-        $stmt_productos = mysqli_prepare($conn, $sql_productos);
-        mysqli_stmt_bind_param($stmt_productos, "i", $idPedido);
-        mysqli_stmt_execute($stmt_productos);
-        $result_productos = mysqli_stmt_get_result($stmt_productos);
-
+    if (mysqli_num_rows($result) > 0) {
+        $cliente = null;
         $detalles_pedido = "<ul>";
         $total_compra = 0;
 
-        while ($row_producto = mysqli_fetch_assoc($result_productos)) {
-            $detalles_pedido .= "<li>ID Producto: " . htmlspecialchars($row_producto['id_producto']) . "</li>";
-            $detalles_pedido .= "<li>Cantidad: " . htmlspecialchars($row_producto['cantidad']) . "</li>";
-            $detalles_pedido .= "<li>Valor Unitario: $" . number_format($row_producto['valor_unitario'], 2) . "</li>";
-            $detalles_pedido .= "<li>Subtotal: $" . number_format($row_producto['subtotal'], 2) . "</li>";
+        while ($row = mysqli_fetch_assoc($result)) {
+            if ($cliente === null) {
+                $cliente = array(
+                    'nombre' => htmlspecialchars($row['nombre']),
+                    'direccion' => htmlspecialchars($row['direccion']),
+                    'barrio' => htmlspecialchars($row['barrio']),
+                    'telefono' => htmlspecialchars($row['telefono'])
+                );
+            }
+
+            $detalles_pedido .= "<li>ID Producto: " . htmlspecialchars($row['id_producto']) . "</li>";
+            $detalles_pedido .= "<li>Cantidad: " . htmlspecialchars($row['cantidad']) . "</li>";
+            $detalles_pedido .= "<li>Valor Unitario: $" . number_format($row['valor_unitario'], 2) . "</li>";
+            $detalles_pedido .= "<li>Subtotal: $" . number_format($row['subtotal'], 2) . "</li>";
             $detalles_pedido .= "<br>";
 
-            $total_compra += $row_producto['subtotal'];
+            $total_compra += $row['subtotal'];
         }
         $detalles_pedido .= "<li><strong>Total Compra: $" . number_format($total_compra, 2) . "</strong></li>";
         $detalles_pedido .= "</ul>";
@@ -55,7 +51,8 @@ try {
         $response['detalles'] = $detalles_pedido;
         $response['cliente'] = $cliente;
     } else {
-        throw new Exception("No hay detalles disponibles para este pedido.");
+        $response['success'] = false;
+        $response['message'] = "No hay detalles disponibles para este pedido.";
     }
 
     echo json_encode($response);
@@ -67,7 +64,6 @@ try {
     ]);
 } finally {
     if (isset($stmt)) mysqli_stmt_close($stmt);
-    if (isset($stmt_productos)) mysqli_stmt_close($stmt_productos);
     if (isset($conn)) mysqli_close($conn);
 }
 ?>
