@@ -180,26 +180,33 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         function verDetallesPedido(idPedido) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        var cliente = response.cliente;
-                        if (cliente) {
-                            document.getElementById("detalles-pedido").innerHTML = response.detalles;
-                            document.getElementById("cliente-nombre").innerText = cliente.nombre || 'Nombre no disponible';
-                            document.getElementById("cliente-direccion").innerText = cliente.direccion || 'Dirección no disponible';
-                            document.getElementById("cliente-barrio").innerText = cliente.barrio || 'Barrio no disponible';
-                            document.getElementById("cliente-telefono").innerText = cliente.telefono || 'Teléfono no disponible';
-                        } else {
-                            document.getElementById("detalles-pedido").innerText = 'Datos del cliente no disponibles';
-                        }
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                var cliente = response.cliente;
+                                document.getElementById("detalles-pedido").innerHTML = response.detalles;
+                                document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
+                                document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
+                                document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
+                                document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
 
-                        var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                        modalDetallesPedido.style.display = "block";
-                        modalDetallesPedido.classList.add('show');
-                        modalDetallesPedido.querySelector('.modal-content').classList.add('show');
+                                var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+                                modalDetallesPedido.style.display = "block";
+                                modalDetallesPedido.classList.add('show');
+                                modalDetallesPedido.querySelector('.modal-content').classList.add('show');
+                            } else {
+                                console.error("Error del servidor:", response.message);
+                                alert("Error al obtener detalles del pedido: " + response.message);
+                            }
+                        } catch (e) {
+                            console.error("Error al parsear JSON:", xhr.responseText);
+                            alert("Error inesperado al obtener detalles del pedido");
+                        }
                     } else {
-                        document.getElementById("detalles-pedido").innerText = response.message || 'Error al obtener detalles';
+                        console.error("Error HTTP:", xhr.status);
+                        alert("Error de conexión al obtener detalles del pedido");
                     }
                 }
             };
