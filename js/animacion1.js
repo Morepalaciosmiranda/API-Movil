@@ -38,6 +38,6 @@ function adminPanel() {
    
     setTimeout(() => {
         Swal.close(); 
-        window.location.href = '../exterminio1/views/inicio.php';
+        window.location.href = '../views/inicio.php';
     }, 3000);
 }
