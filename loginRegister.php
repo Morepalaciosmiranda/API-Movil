@@ -219,10 +219,10 @@
                                 let redirectUrl = '';
                                 switch (data.role) {
                                     case 'Administrador':
-                                        redirectUrl = '../exterminio1/animacion.php';
+                                        redirectUrl = 'https://api-movil-tj84.onrender.com/exterminio1/animacion.php';
                                         break;
                                     case 'Usuario':
-                                        redirectUrl = '../exterminio1/index.php';
+                                        redirectUrl = 'https://api-movil-tj84.onrender.com/exterminio1/index.php';
                                         break;
                                     default:
                                         Swal.fire({
