@@ -1,13 +1,4 @@
 <?php
-if (!isset($_SESSION)) {
-    session_start();
-}
-
-if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['id_usuario'])) {
-    header("Location: ../loginRegister.php");
-    exit();
-}
-
 $user_id = $_SESSION['id_usuario'];
 
 include '../includes/conexion.php';
