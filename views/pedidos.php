@@ -33,12 +33,22 @@ if ($fecha_filtro) {
 }
 $sql .= " LIMIT $items_por_pagina OFFSET $offset";
 
+echo "SQL Query: " . $sql . "<br>"; // Depuración: Imprimir la consulta SQL
+
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
     die("Error en la consulta: " . mysqli_error($conn));
 }
-echo "Número de filas devueltas: " . mysqli_num_rows($result);
+echo "Número de filas devueltas: " . mysqli_num_rows($result) . "<br>";
+
+// Depuración: Imprimir los resultados
+echo "Resultados de la consulta:<br>";
+while ($row = mysqli_fetch_assoc($result)) {
+    print_r($row);
+    echo "<br>";
+}
+mysqli_data_seek($result, 0); // Resetear el puntero del resultado
 
 $sql_total = "SELECT COUNT(*) as total FROM pedidos";
 if ($fecha_filtro) {
