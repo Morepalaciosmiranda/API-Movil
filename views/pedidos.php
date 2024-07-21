@@ -118,15 +118,23 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <?php
                     if (mysqli_num_rows($result) > 0) {
                         mysqli_data_seek($result, 0); // Asegurarse de que el puntero del resultado esté al inicio
+                        echo "<pre>";
+                        print_r(mysqli_fetch_assoc($result));
+                        echo "</pre>";
+                        mysqli_data_seek($result, 0);
                         while ($row = mysqli_fetch_assoc($result)) {
                             echo "<tr>";
-                            echo "<td>" . htmlspecialchars($row['id_pedido']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['nombre_usuario']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['fecha_pedido']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['estado_pedido']) . "</td>";
+                            echo "<td>" . (isset($row['id_pedido']) ? htmlspecialchars($row['id_pedido']) : 'N/A') . "</td>";
+                            echo "<td>" . (isset($row['nombre_usuario']) ? htmlspecialchars($row['nombre_usuario']) : 'N/A') . "</td>";
+                            echo "<td>" . (isset($row['fecha_pedido']) ? htmlspecialchars($row['fecha_pedido']) : 'N/A') . "</td>";
+                            echo "<td>" . (isset($row['estado_pedido']) ? htmlspecialchars($row['estado_pedido']) : 'N/A') . "</td>";
                             echo '<td class="actions">';
-                            echo '<button class="details-btn" onclick="verDetallesPedido(' . $row['id_pedido'] . ')"><i class="fa fa-info-circle"></i></button>';
-                            echo '<button class="edit-btn" onclick="abrirModalEstado(' . $row['id_pedido'] . ', \'' . htmlspecialchars($row['estado_pedido'], ENT_QUOTES) . '\')"><i class="fa fa-edit"></i></button>';
+                            if (isset($row['id_pedido'])) {
+                                echo '<button class="details-btn" onclick="verDetallesPedido(' . $row['id_pedido'] . ')"><i class="fa fa-info-circle"></i></button>';
+                                echo '<button class="edit-btn" onclick="abrirModalEstado(' . $row['id_pedido'] . ', \'' . (isset($row['estado_pedido']) ? htmlspecialchars($row['estado_pedido'], ENT_QUOTES) : '') . '\')"><i class="fa fa-edit"></i></button>';
+                            } else {
+                                echo 'N/A';
+                            }
                             echo '</td>';
                             echo "</tr>";
                         }
