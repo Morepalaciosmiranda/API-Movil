@@ -13,10 +13,6 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
 
 include_once('../includes/conexion.php');
 
-if (!$conn) {
-    die("Conexión fallida: " . mysqli_connect_error());
-}
-echo "Conexión exitosa a la base de datos.<br>";
 
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
@@ -49,11 +45,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     $pedidos[] = $row;
 }
 
-// Imprime los resultados para depuración
-echo "Resultados de la consulta:<br>";
-echo "<pre>";
-print_r($pedidos);
-echo "</pre>";
 
 $sql_total = "SELECT COUNT(*) as total FROM pedidos";
 if ($fecha_filtro) {
