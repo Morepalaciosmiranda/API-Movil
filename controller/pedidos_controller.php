@@ -40,18 +40,14 @@ try {
         if ($stmt->execute()) {
             $pedido_id = $stmt->insert_id;
 
-            $stmt_detalle = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, nombre, direccion, barrio, telefono, cantidad, valor_unitario, subtotal, total_compra) 
-                                            VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?)");
-
-            $total_compra = 5000; // Iniciamos con 5000 por el domicilio
+            $stmt_detalle = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, nombre, direccion, barrio, telefono, cantidad, valor_unitario, subtotal) 
+                                            VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)");
 
             foreach ($productos as $producto) {
                 $id_producto = $producto['id'];
-                $precio_producto = $producto['price'] / 100; // Eliminamos los dos últimos ceros
-                $subtotal = $precio_producto + 5000; // Agregamos 5000 al subtotal
-                $total_compra += $subtotal;
+                $precio_producto = $producto['price'];
 
-                $stmt_detalle->bind_param("iissssdddd", $pedido_id, $id_producto, $nombre, $direccion, $barrio, $telefono, $precio_producto, $subtotal, $subtotal, $total_compra);
+                $stmt_detalle->bind_param("iissssdd", $pedido_id, $id_producto, $nombre, $direccion, $barrio, $telefono, $precio_producto, $precio_producto);
                 
                 if (!$stmt_detalle->execute()) {
                     send_json_response(false, 'Error al insertar detalle del pedido para el producto con ID ' . $id_producto . ': ' . $stmt_detalle->error);
