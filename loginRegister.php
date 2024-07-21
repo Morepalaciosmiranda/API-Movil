@@ -193,10 +193,14 @@
                                 'contrasena': password
                             })
                         })
-                        .then(response => response.text()) // Usa .text() para ver la respuesta cruda
+                        .then(response => response.text())
                         .then(text => {
-                            console.log('Respuesta del servidor:', text); // Verifica el contenido de la respuesta
-                            return JSON.parse(text); // Intenta parsear el texto a JSON
+                            try {
+                                return JSON.parse(text);
+                            } catch (error) {
+                                console.error('Error parsing JSON:', text);
+                                throw new Error('Invalid JSON response');
+                            }
                         })
                         .then(data => {
                             if (data.status === 'error') {
@@ -231,7 +235,7 @@
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Inicio de sesión exitoso',
-                                    text: data.message,
+                                    text: 'Bienvenido',
                                 }).then(() => {
                                     window.location.href = redirectUrl;
                                 });
@@ -245,7 +249,6 @@
                                 text: 'Ocurrió un error en el servidor. Por favor, inténtelo de nuevo más tarde.',
                             });
                         });
-
                 }
             }
 
