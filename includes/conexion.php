@@ -1,15 +1,10 @@
 <?php
 $url = parse_url(getenv("MYSQL_URL"));
 
-echo "Host: " . $url["host"] . "<br>";
-echo "Username: " . $url["user"] . "<br>";
-echo "Database: " . substr($url["path"], 1) . "<br>";
-echo "Port: " . $url["port"] . "<br>";
-
 $host = $url["host"];
 $username = $url["user"];
 $password = $url["pass"];
-$database = substr($url["path"], 1);
+$database = "railway";  // Cambiado a "railway"
 $port = $url["port"];
 
 // Crear la conexión
@@ -20,5 +15,6 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 } else {
     $conn->set_charset("utf8");
+    echo "Conexión exitosa a la base de datos " . $database;
 }
 ?>
