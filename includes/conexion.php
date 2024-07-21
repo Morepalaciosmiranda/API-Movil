@@ -1,6 +1,11 @@
 <?php
 $url = parse_url(getenv("MYSQL_URL"));
 
+echo "Host: " . $url["host"] . "<br>";
+echo "Username: " . $url["user"] . "<br>";
+echo "Database: " . substr($url["path"], 1) . "<br>";
+echo "Port: " . $url["port"] . "<br>";
+
 $host = $url["host"];
 $username = $url["user"];
 $password = $url["pass"];
