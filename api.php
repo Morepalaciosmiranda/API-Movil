@@ -1,22 +1,8 @@
 <?php
 header("Content-Type: application/json");
 require_once('./includes/conexion.php'); // Archivo de configuración de la base de datos
-
-// Función para enviar respuesta JSON
-function send_json_response($success, $message = '', $data = null) {
-    $response = [
-        'success' => $success,
-        'message' => $message,
-    ];
-    if ($data !== null) {
-        $response['data'] = $data;
-    }
-    echo json_encode($response);
-    exit;
-}
-
 // Manejar la solicitud POST para iniciar sesión
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $data = json_decode(file_get_contents("php://input"));
     // Obtener datos del formulario
     $correo_electronico = $data->correo_electronico;
@@ -27,7 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) {
               WHERE correo_electronico=?";
     $stmt = $conn->prepare($query);
     if (!$stmt) {
-        send_json_response(false, "Error en la preparación de la consulta: " . $conn->error);
+        $response = array(
+            "status" => "error",
+            "message" => "Error en la preparación de la consulta: " . $conn->error
+        );
     } else {
         $stmt->bind_param("s", $correo_electronico);
         $stmt->execute();
@@ -37,21 +26,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) {
             if (password_verify($contrasena, $row['contrasena'])) {
                 // Credenciales válidas
                 if ($row['estado_usuario'] == 'Inactivo') {
-                    send_json_response(false, "Su cuenta está inactiva. " . $row['mensaje_estado'], ['status' => 'warning']);
+                    $response = array(
+                        "status" => "warning",
+                        "message" => "Su cuenta está inactiva. " . $row['mensaje_estado']
+                    );
                 } else {
-                    send_json_response(true, "Inicio de sesión exitoso", ['role' => $row['nombre_rol']]);
+                    $response = array(
+                        "status" => "success",
+                        "role" => $row['nombre_rol'],
+                        "message" => "Inicio de sesión exitoso"
+                    );
                 }
             } else {
                 // Contraseña incorrecta
-                send_json_response(false, "Contraseña incorrecta");
+                $response = array(
+                    "status" => "error",
+                    "message" => "Contraseña incorrecta"
+                );
             }
         } else {
             // Usuario no encontrado
-            send_json_response(false, "Usuario no encontrado");
+            $response = array(
+                "status" => "error",
+                "message" => "Usuario no encontrado"
+            );
         }
         $stmt->close();
     }
+    echo json_encode($response);
 }
+mysqli_close($conn); // Cerrar conexión
 
 // Nueva ruta para manejar la creación de pedidos
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'crear_pedido') {
