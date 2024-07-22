@@ -16,7 +16,8 @@ if ($conn->connect_error) {
 }
 
 // Función para enviar respuesta JSON
-function send_json_response($success, $message = '', $data = null) {
+function send_json_response($success, $message = '', $data = null)
+{
     $response = [
         'success' => $success,
         'message' => $message,
@@ -38,14 +39,23 @@ switch ($method) {
         // Obtener pedidos
         if (isset($_GET['action']) && $_GET['action'] == 'obtener_pedidos') {
             $sql = "SELECT p.id_pedido, p.fecha_pedido, p.estado_pedido, p.precio_domicilio, 
-                           dp.nombre, dp.direccion, dp.barrio, dp.telefono, 
-                           SUM(dp.subtotal) as total_pedido
-                    FROM pedidos p
-                    LEFT JOIN detalle_pedido dp ON p.id_pedido = dp.id_pedido
-                    GROUP BY p.id_pedido
-                    ORDER BY p.fecha_pedido DESC";
+               dp.nombre, dp.direccion, dp.barrio, dp.telefono, 
+               SUM(dp.subtotal) as total_pedido
+        FROM pedidos p
+        LEFT JOIN (
+            SELECT id_pedido, 
+                   MAX(nombre) as nombre, 
+                   MAX(direccion) as direccion, 
+                   MAX(barrio) as barrio, 
+                   MAX(telefono) as telefono, 
+                   SUM(subtotal) as subtotal
+            FROM detalle_pedido
+            GROUP BY id_pedido
+        ) dp ON p.id_pedido = dp.id_pedido
+        GROUP BY p.id_pedido
+        ORDER BY p.fecha_pedido DESC";
             file_put_contents('debug.log', 'SQL query: ' . $sql . "\n", FILE_APPEND);
-            
+
             $result = $conn->query($sql);
 
             if ($result) {
@@ -76,7 +86,7 @@ switch ($method) {
         // Crear nuevo pedido
         $data = json_decode(file_get_contents("php://input"), true);
         file_put_contents('debug.log', 'POST data: ' . print_r($data, true) . "\n", FILE_APPEND);
-        
+
         // Aquí va la lógica para crear el pedido en la base de datos
         $nombre_cliente = $data['nombre_cliente'] ?? '';
         $direccion = $data['direccion'] ?? '';
@@ -172,4 +182,3 @@ switch ($method) {
 }
 
 $conn->close();
-?>
