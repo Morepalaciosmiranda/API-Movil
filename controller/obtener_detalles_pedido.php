@@ -29,30 +29,33 @@ try {
             'telefono' => htmlspecialchars($row['telefono'])
         );
 
-        // Obtener todos los productos del pedido
-        $sql_productos = "SELECT * FROM detalle_pedido WHERE id_pedido = ?";
+        // Obtener todos los productos del pedido incluyendo el nombre del producto
+        $sql_productos = "SELECT dp.*, p.nombre_producto 
+                          FROM detalle_pedido dp 
+                          JOIN productos p ON dp.id_producto = p.id_producto 
+                          WHERE dp.id_pedido = ?";
         $stmt_productos = mysqli_prepare($conn, $sql_productos);
         mysqli_stmt_bind_param($stmt_productos, "i", $idPedido);
         mysqli_stmt_execute($stmt_productos);
         $result_productos = mysqli_stmt_get_result($stmt_productos);
 
-        $detalles_pedido = "<ul>";
+        $detalles_pedido = array();
         $total_compra = 0;
 
         while ($row_producto = mysqli_fetch_assoc($result_productos)) {
-            $detalles_pedido .= "<li>ID Producto: " . htmlspecialchars($row_producto['id_producto']) . "</li>";
-            $detalles_pedido .= "<li>Cantidad: " . htmlspecialchars($row_producto['cantidad']) . "</li>";
-            $detalles_pedido .= "<li>Valor Unitario: $" . number_format($row_producto['valor_unitario'], 2) . "</li>";
-            $detalles_pedido .= "<li>Subtotal: $" . number_format($row_producto['subtotal'], 2) . "</li>";
-            $detalles_pedido .= "<br>";
-
+            $detalle = array(
+                'nombre_producto' => htmlspecialchars($row_producto['nombre_producto']),
+                'cantidad' => htmlspecialchars($row_producto['cantidad']),
+                'valor_unitario' => number_format($row_producto['valor_unitario'], 2),
+                'subtotal' => number_format($row_producto['subtotal'], 2)
+            );
+            $detalles_pedido[] = $detalle;
             $total_compra += $row_producto['subtotal'];
         }
-        $detalles_pedido .= "<li><strong>Total Compra: $" . number_format($total_compra, 2) . "</strong></li>";
-        $detalles_pedido .= "</ul>";
 
         $response['success'] = true;
         $response['detalles'] = $detalles_pedido;
+        $response['total_compra'] = number_format($total_compra, 2);
         $response['cliente'] = $cliente;
     } else {
         throw new Exception("No hay detalles disponibles para este pedido.");
