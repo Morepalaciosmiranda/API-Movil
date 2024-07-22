@@ -37,7 +37,13 @@ switch ($method) {
     case 'GET':
         // Obtener pedidos
         if (isset($_GET['action']) && $_GET['action'] == 'obtener_pedidos') {
-            $sql = "SELECT id_pedido, fecha_pedido, fecha_entrega, metodo_pago, estado_pedido FROM pedidos ORDER BY fecha_pedido DESC";
+            $sql = "SELECT p.id_pedido, p.fecha_pedido, p.estado_pedido, p.precio_domicilio, 
+                           dp.nombre, dp.direccion, dp.barrio, dp.telefono, 
+                           SUM(dp.subtotal) as total_pedido
+                    FROM pedidos p
+                    LEFT JOIN detalle_pedido dp ON p.id_pedido = dp.id_pedido
+                    GROUP BY p.id_pedido
+                    ORDER BY p.fecha_pedido DESC";
             file_put_contents('debug.log', 'SQL query: ' . $sql . "\n", FILE_APPEND);
             
             $result = $conn->query($sql);
@@ -48,9 +54,13 @@ switch ($method) {
                     $pedidos[] = [
                         'id' => $row['id_pedido'],
                         'fechapedido' => $row['fecha_pedido'],
-                        'fechaentrega' => $row['fecha_entrega'],
-                        'metodopago' => $row['metodo_pago'],
-                        'estadopedido' => $row['estado_pedido']
+                        'estadopedido' => $row['estado_pedido'],
+                        'precio_domicilio' => $row['precio_domicilio'],
+                        'nombre_cliente' => $row['nombre'],
+                        'direccion' => $row['direccion'],
+                        'barrio' => $row['barrio'],
+                        'telefono' => $row['telefono'],
+                        'total_pedido' => $row['total_pedido']
                     ];
                 }
                 file_put_contents('debug.log', 'Pedidos: ' . print_r($pedidos, true) . "\n", FILE_APPEND);
@@ -72,7 +82,7 @@ switch ($method) {
         $direccion = $data['direccion'] ?? '';
         $barrio = $data['barrio'] ?? '';
         $telefono = $data['telefono'] ?? '';
-        $metodo_pago = $data['metodo_pago'] ?? 'Efectivo';
+        $precio_domicilio = $data['precio_domicilio'] ?? 0;
         $productos = $data['productos'] ?? [];
 
         // Iniciar transacción
@@ -80,9 +90,9 @@ switch ($method) {
 
         try {
             // Insertar el pedido
-            $sql_pedido = "INSERT INTO pedidos (fecha_pedido, estado_pedido, id_usuario) VALUES (NOW(), 'Pendiente', ?)";
+            $sql_pedido = "INSERT INTO pedidos (fecha_pedido, estado_pedido, precio_domicilio, id_usuario) VALUES (NOW(), 'En Proceso', ?, ?)";
             $stmt_pedido = $conn->prepare($sql_pedido);
-            $stmt_pedido->bind_param("i", $data['id_usuario']);
+            $stmt_pedido->bind_param("di", $precio_domicilio, $data['id_usuario']);
             $stmt_pedido->execute();
             $pedido_id = $conn->insert_id;
 
@@ -91,11 +101,19 @@ switch ($method) {
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt_detalle = $conn->prepare($sql_detalle);
 
+            $total_compra = 0;
             foreach ($productos as $producto) {
                 $subtotal = $producto['cantidad'] * $producto['precio'];
+                $total_compra += $subtotal;
                 $stmt_detalle->bind_param("iissssidd", $pedido_id, $producto['id'], $nombre_cliente, $direccion, $barrio, $telefono, $producto['cantidad'], $producto['precio'], $subtotal);
                 $stmt_detalle->execute();
             }
+
+            // Actualizar el total_compra en la tabla detalle_pedido
+            $sql_update_total = "UPDATE detalle_pedido SET total_compra = ? WHERE id_pedido = ?";
+            $stmt_update_total = $conn->prepare($sql_update_total);
+            $stmt_update_total->bind_param("di", $total_compra, $pedido_id);
+            $stmt_update_total->execute();
 
             // Confirmar transacción
             $conn->commit();
@@ -103,10 +121,14 @@ switch ($method) {
             // Preparar datos para la app Flutter
             $pedidoFlutter = [
                 'id' => $pedido_id,
-                'fechapedido' => date('Y-m-d H:i:s'),
-                'fechaentrega' => date('Y-m-d H:i:s', strtotime('+1 day')),
-                'metodopago' => $metodo_pago,
-                'estadopedido' => 'Pendiente'
+                'fechapedido' => date('Y-m-d'),
+                'estadopedido' => 'En Proceso',
+                'precio_domicilio' => $precio_domicilio,
+                'nombre_cliente' => $nombre_cliente,
+                'direccion' => $direccion,
+                'barrio' => $barrio,
+                'telefono' => $telefono,
+                'total_pedido' => $total_compra
             ];
 
             send_json_response(true, "Pedido creado exitosamente", $pedidoFlutter);
