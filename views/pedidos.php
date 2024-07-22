@@ -16,13 +16,9 @@ include_once('../includes/conexion.php');
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
-
-$fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
-
 $sql = "SELECT pedidos.id_pedido, usuarios.nombre_usuario, pedidos.fecha_pedido, pedidos.estado_pedido 
         FROM pedidos
         JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario";
-
 if ($fecha_filtro) {
     $sql .= " WHERE DATE(pedidos.fecha_pedido) = '$fecha_filtro'";
 }
@@ -46,6 +42,11 @@ if ($fecha_filtro) {
 $result_total = mysqli_query($conn, $sql_total);
 $total_pedidos = mysqli_fetch_assoc($result_total)['total'];
 $total_paginas = ceil($total_pedidos / $items_por_pagina);
+
+// Ajusta la página actual si es mayor que el total de páginas
+if ($pagina_actual > $total_paginas) {
+    $pagina_actual = $total_paginas;
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -126,20 +127,36 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 <div class="pagination">
                     <?php
                     if ($total_paginas > 1) {
-                        $rango = 2; // Número de páginas a mostrar antes y después de la página actual
-
                         // Botón "Anterior"
                         if ($pagina_actual > 1) {
                             echo "<a href='pedidos.php?pagina=" . ($pagina_actual - 1) . "&fecha=$fecha_filtro'>&laquo; Anterior</a>";
                         }
 
                         // Páginas numeradas
-                        for ($i = max(1, $pagina_actual - $rango); $i <= min($total_paginas, $pagina_actual + $rango); $i++) {
+                        $rango = 2;
+                        $inicio = max(1, $pagina_actual - $rango);
+                        $fin = min($total_paginas, $pagina_actual + $rango);
+
+                        if ($inicio > 1) {
+                            echo "<a href='pedidos.php?pagina=1&fecha=$fecha_filtro'>1</a>";
+                            if ($inicio > 2) {
+                                echo "<span>...</span>";
+                            }
+                        }
+
+                        for ($i = $inicio; $i <= $fin; $i++) {
                             if ($i == $pagina_actual) {
                                 echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
                             } else {
                                 echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
                             }
+                        }
+
+                        if ($fin < $total_paginas) {
+                            if ($fin < $total_paginas - 1) {
+                                echo "<span>...</span>";
+                            }
+                            echo "<a href='pedidos.php?pagina=$total_paginas&fecha=$fecha_filtro'>$total_paginas</a>";
                         }
 
                         // Botón "Siguiente"
