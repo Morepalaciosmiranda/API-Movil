@@ -13,33 +13,22 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
 
 include_once('../includes/conexion.php');
 
-// Definir la variable $fecha_filtro
-$fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
 
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
-
-// Cálculo del total de páginas
-$sql_total = "SELECT COUNT(*) as total FROM pedidos";
-if ($fecha_filtro) {
-    $sql_total .= " WHERE DATE(fecha_pedido) = '$fecha_filtro'";
-}
-$result_total = mysqli_query($conn, $sql_total);
-$total_pedidos = mysqli_fetch_assoc($result_total)['total'];
-$total_paginas = ceil($total_pedidos / $items_por_pagina);
-
-// Asegurarse de que la página actual es válida
-$pagina_actual = max(1, min($pagina_actual, $total_paginas));
-
 $offset = ($pagina_actual - 1) * $items_por_pagina;
+
+$fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
 
 $sql = "SELECT pedidos.id_pedido, usuarios.nombre_usuario, pedidos.fecha_pedido, pedidos.estado_pedido 
         FROM pedidos
         JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario";
+
 if ($fecha_filtro) {
     $sql .= " WHERE DATE(pedidos.fecha_pedido) = '$fecha_filtro'";
 }
 $sql .= " LIMIT $items_por_pagina OFFSET $offset";
+
 
 $result = mysqli_query($conn, $sql);
 
@@ -47,11 +36,20 @@ if (!$result) {
     die("Error en la consulta: " . mysqli_error($conn));
 }
 
+// Guarda los resultados en un array
 $pedidos = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $pedidos[] = $row;
 }
 
+
+$sql_total = "SELECT COUNT(*) as total FROM pedidos";
+if ($fecha_filtro) {
+    $sql_total .= " WHERE DATE(fecha_pedido) = '$fecha_filtro'";
+}
+$result_total = mysqli_query($conn, $sql_total);
+$total_pedidos = mysqli_fetch_assoc($result_total)['total'];
+$total_paginas = ceil($total_pedidos / $items_por_pagina);
 ?>
 <!DOCTYPE html>
 <html>
@@ -131,28 +129,13 @@ while ($row = mysqli_fetch_assoc($result)) {
                 </table>
                 <div class="pagination">
                     <?php
-                    if ($total_paginas > 1) {
-                        // Botón "Anterior"
-                        if ($pagina_actual > 1) {
-                            echo "<a href='pedidos.php?pagina=" . ($pagina_actual - 1) . "&fecha=$fecha_filtro'>&laquo; Anterior</a>";
-                        }
-
-                        // Páginas numeradas
-                        $rango = 2;
-                        $inicio = max(1, $pagina_actual - $rango);
-                        $fin = min($total_paginas, $pagina_actual + $rango);
-
-                        for ($i = $inicio; $i <= $fin; $i++) {
+                    if ($total_paginas > 0) {
+                        for ($i = 1; $i <= $total_paginas; $i++) {
                             if ($i == $pagina_actual) {
-                                echo "<span class='active'>$i</span>";
+                                echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
                             } else {
                                 echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
                             }
-                        }
-
-                        // Botón "Siguiente"
-                        if ($pagina_actual < $total_paginas) {
-                            echo "<a href='pedidos.php?pagina=" . ($pagina_actual + 1) . "&fecha=$fecha_filtro'>Siguiente &raquo;</a>";
                         }
                     }
                     ?>
