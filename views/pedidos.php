@@ -13,7 +13,6 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
 
 include_once('../includes/conexion.php');
 
-
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
@@ -29,19 +28,16 @@ if ($fecha_filtro) {
 }
 $sql .= " LIMIT $items_por_pagina OFFSET $offset";
 
-
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
     die("Error en la consulta: " . mysqli_error($conn));
 }
 
-// Guarda los resultados en un array
 $pedidos = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $pedidos[] = $row;
 }
-
 
 $sql_total = "SELECT COUNT(*) as total FROM pedidos";
 if ($fecha_filtro) {
@@ -129,13 +125,26 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 </table>
                 <div class="pagination">
                     <?php
-                    if ($total_paginas > 0) {
-                        for ($i = 1; $i <= $total_paginas; $i++) {
+                    if ($total_paginas > 1) {
+                        $rango = 2; // Número de páginas a mostrar antes y después de la página actual
+
+                        // Botón "Anterior"
+                        if ($pagina_actual > 1) {
+                            echo "<a href='pedidos.php?pagina=" . ($pagina_actual - 1) . "&fecha=$fecha_filtro'>&laquo; Anterior</a>";
+                        }
+
+                        // Páginas numeradas
+                        for ($i = max(1, $pagina_actual - $rango); $i <= min($total_paginas, $pagina_actual + $rango); $i++) {
                             if ($i == $pagina_actual) {
                                 echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
                             } else {
                                 echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
                             }
+                        }
+
+                        // Botón "Siguiente"
+                        if ($pagina_actual < $total_paginas) {
+                            echo "<a href='pedidos.php?pagina=" . ($pagina_actual + 1) . "&fecha=$fecha_filtro'>Siguiente &raquo;</a>";
                         }
                     }
                     ?>
