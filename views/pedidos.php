@@ -188,12 +188,12 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                                 var cliente = response.cliente;
                                 var detallesHtml = '';
                                 response.detalles.forEach(function(detalle) {
-                                    detallesHtml += 'nombre del producto: ' + detalle.nombre_producto + '\n';
-                                    detallesHtml += 'cantidad: ' + detalle.cantidad + '\n';
-                                    detallesHtml += 'precio unitario: $' + detalle.valor_unitario + '\n';
-                                    detallesHtml += 'subtotal: $' + detalle.subtotal + '\n\n';
+                                    detallesHtml += 'Nombre del Producto: ' + detalle.nombre_producto + '\n';
+                                    detallesHtml += 'Cantidad: ' + detalle.cantidad + '\n';
+                                    detallesHtml += 'Precio Unitario: $' + detalle.valor_unitario + '\n';
+                                    detallesHtml += 'Subtotal: $' + parseFloat(detalle.subtotal).toFixed(0) + '\n\n';
                                 });
-                                detallesHtml += '\nTotal compras: $' + response.total_compra + '\n';
+                                detallesHtml += '\nTotal compra: $' + parseFloat(response.total_compra).toFixed(0) + '\n';
 
                                 document.getElementById("detalles-pedido").innerText = detallesHtml;
                                 document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
