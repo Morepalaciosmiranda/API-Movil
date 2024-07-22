@@ -186,16 +186,18 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                             var response = JSON.parse(xhr.responseText);
                             if (response.success) {
                                 var cliente = response.cliente;
-                                var detallesHtml = '';
+                                var detallesHtml = '<table><tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th></tr>';
                                 response.detalles.forEach(function(detalle) {
-                                    detallesHtml += 'Nombre del Producto: ' + detalle.nombre_producto + '\n';
-                                    detallesHtml += 'Cantidad: ' + detalle.cantidad + '\n';
-                                    detallesHtml += 'Precio Unitario: $' + formatearPrecio(detalle.valor_unitario) + '\n';
-                                    detallesHtml += 'Subtotal: $' + formatearPrecio(detalle.subtotal) + '\n\n';
+                                    detallesHtml += '<tr>' +
+                                        '<td>' + detalle.nombre_producto + '</td>' +
+                                        '<td>' + detalle.cantidad + '</td>' +
+                                        '<td>$' + detalle.valor_unitario + '</td>' +
+                                        '<td>$' + detalle.subtotal + '</td>' +
+                                        '</tr>';
                                 });
-                                detallesHtml += '\nTotal compra: $' + formatearPrecio(response.total_compra) + '\n';
-
-                                document.getElementById("detalles-pedido").innerText = detallesHtml;
+                                detallesHtml += '<tr><strong><td colspan="3">Total Compra:</td><td>$' + response.total_compra + '</td></strong></tr>';
+                                detallesHtml += '</table>';
+                                document.getElementById("detalles-pedido").innerHTML = detallesHtml;
                                 document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
                                 document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
                                 document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
@@ -221,22 +223,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             };
             xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
             xhr.send();
-        }
-
-        function formatearPrecio(precio) {
-            // Convertir a número y quitar los decimales
-            var numero = parseFloat(precio).toFixed(0);
-            // Convertir a string y dividir en grupos de 3 dígitos desde el final
-            var partes = numero.toString().split('').reverse();
-            var resultado = [];
-            for (var i = 0; i < partes.length; i++) {
-                if (i > 0 && i % 3 === 0) {
-                    resultado.push('.');
-                }
-                resultado.push(partes[i]);
-            }
-            // Invertir de nuevo y unir
-            return resultado.reverse().join('');
         }
 
         function closeDetailsModal() {
