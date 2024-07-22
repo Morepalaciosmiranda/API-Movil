@@ -186,7 +186,18 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                             var response = JSON.parse(xhr.responseText);
                             if (response.success) {
                                 var cliente = response.cliente;
-                                document.getElementById("detalles-pedido").innerHTML = response.detalles;
+                                var detallesHtml = '<table><tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th></tr>';
+                                response.detalles.forEach(function(detalle) {
+                                    detallesHtml += '<tr>' +
+                                        '<td>' + detalle.nombre_producto + '</td>' +
+                                        '<td>' + detalle.cantidad + '</td>' +
+                                        '<td>$' + detalle.valor_unitario + '</td>' +
+                                        '<td>$' + detalle.subtotal + '</td>' +
+                                        '</tr>';
+                                });
+                                detallesHtml += '<tr><strong><td colspan="3">Total Compra:</td><td>$' + response.total_compra + '</td></strong></tr>';
+                                detallesHtml += '</table>';
+                                document.getElementById("detalles-pedido").innerHTML = detallesHtml;
                                 document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
                                 document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
                                 document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
