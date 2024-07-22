@@ -224,18 +224,19 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         }
 
         function formatearPrecio(precio) {
-            // Convertir a número y fijar a 2 decimales
-            var numero = parseFloat(precio).toFixed(2);
-            // Dividir en parte entera y decimal
-            var partes = numero.split('.');
-            // Formatear la parte entera con comas para los miles
-            partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            // Si la parte decimal es .00, la eliminamos
-            if (partes[1] === '00') {
-                return partes[0];
+            // Convertir a número y quitar los decimales
+            var numero = parseFloat(precio).toFixed(0);
+            // Convertir a string y dividir en grupos de 3 dígitos desde el final
+            var partes = numero.toString().split('').reverse();
+            var resultado = [];
+            for (var i = 0; i < partes.length; i++) {
+                if (i > 0 && i % 3 === 0) {
+                    resultado.push('.');
+                }
+                resultado.push(partes[i]);
             }
-            // En caso contrario, devolvemos con la parte decimal
-            return partes.join('.');
+            // Invertir de nuevo y unir
+            return resultado.reverse().join('');
         }
 
         function closeDetailsModal() {
