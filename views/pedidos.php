@@ -186,22 +186,23 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                             var response = JSON.parse(xhr.responseText);
                             if (response.success) {
                                 var cliente = response.cliente;
-                                var detallesHtml = '<table><tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th></tr>';
+                                var detallesHtml = '_\n';
+                                detallesHtml += 'Nombre del cliente: ' + (cliente.nombre || 'No disponible') + '\n_\n';
+                                detallesHtml += 'Dirección del cliente: ' + (cliente.direccion || 'No disponible') + '\n_\n';
+                                detallesHtml += 'Barrio del cliente: ' + (cliente.barrio || 'No disponible') + '\n_\n';
+                                detallesHtml += 'Teléfono del cliente: ' + (cliente.telefono || 'No disponible') + '\n_\n';
+                                detallesHtml += 'Detalles del pedido:\n_\n';
+
                                 response.detalles.forEach(function(detalle) {
-                                    detallesHtml += '<tr>' +
-                                        '<td>' + detalle.nombre_producto + '</td>' +
-                                        '<td>' + detalle.cantidad + '</td>' +
-                                        '<td>$' + detalle.valor_unitario + '</td>' +
-                                        '<td>$' + detalle.subtotal + '</td>' +
-                                        '</tr>';
+                                    detallesHtml += 'Producto: ' + detalle.nombre_producto + '\n';
+                                    detallesHtml += 'Cantidad: ' + detalle.cantidad + '\n';
+                                    detallesHtml += 'Precio Unitario: $' + detalle.valor_unitario + '\n';
+                                    detallesHtml += 'Subtotal: $' + detalle.subtotal + '\n_\n';
                                 });
-                                detallesHtml += '<tr><strong><td colspan="3">Total Compra:</td><td>$' + response.total_compra + '</td></strong></tr>';
-                                detallesHtml += '</table>';
+
+                                detallesHtml += 'Total Compra: $' + response.total_compra + '\n';
+
                                 document.getElementById("detalles-pedido").innerHTML = detallesHtml;
-                                document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
-                                document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
-                                document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
-                                document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
 
                                 var modalDetallesPedido = document.getElementById("modalDetallesPedido");
                                 modalDetallesPedido.style.display = "block";
