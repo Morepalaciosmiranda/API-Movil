@@ -18,6 +18,19 @@ $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
 
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+
+// Cálculo del total de páginas
+$sql_total = "SELECT COUNT(*) as total FROM pedidos";
+if ($fecha_filtro) {
+    $sql_total .= " WHERE DATE(fecha_pedido) = '$fecha_filtro'";
+}
+$result_total = mysqli_query($conn, $sql_total);
+$total_pedidos = mysqli_fetch_assoc($result_total)['total'];
+$total_paginas = ceil($total_pedidos / $items_por_pagina);
+
+// Asegurarse de que la página actual es válida
+$pagina_actual = max(1, min($pagina_actual, $total_paginas));
+
 $offset = ($pagina_actual - 1) * $items_por_pagina;
 
 $sql = "SELECT pedidos.id_pedido, usuarios.nombre_usuario, pedidos.fecha_pedido, pedidos.estado_pedido 
@@ -39,18 +52,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     $pedidos[] = $row;
 }
 
-$sql_total = "SELECT COUNT(*) as total FROM pedidos";
-if ($fecha_filtro) {
-    $sql_total .= " WHERE DATE(fecha_pedido) = '$fecha_filtro'";
-}
-$result_total = mysqli_query($conn, $sql_total);
-$total_pedidos = mysqli_fetch_assoc($result_total)['total'];
-$total_paginas = ceil($total_pedidos / $items_por_pagina);
-
-// Ajusta la página actual si es mayor que el total de páginas
-if ($pagina_actual > $total_paginas) {
-    $pagina_actual = $total_paginas;
-}
 ?>
 <!DOCTYPE html>
 <html>
@@ -141,26 +142,12 @@ if ($pagina_actual > $total_paginas) {
                         $inicio = max(1, $pagina_actual - $rango);
                         $fin = min($total_paginas, $pagina_actual + $rango);
 
-                        if ($inicio > 1) {
-                            echo "<a href='pedidos.php?pagina=1&fecha=$fecha_filtro'>1</a>";
-                            if ($inicio > 2) {
-                                echo "<span>...</span>";
-                            }
-                        }
-
                         for ($i = $inicio; $i <= $fin; $i++) {
                             if ($i == $pagina_actual) {
-                                echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
+                                echo "<span class='active'>$i</span>";
                             } else {
                                 echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
                             }
-                        }
-
-                        if ($fin < $total_paginas) {
-                            if ($fin < $total_paginas - 1) {
-                                echo "<span>...</span>";
-                            }
-                            echo "<a href='pedidos.php?pagina=$total_paginas&fecha=$fecha_filtro'>$total_paginas</a>";
                         }
 
                         // Botón "Siguiente"
