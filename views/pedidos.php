@@ -190,10 +190,10 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                                 response.detalles.forEach(function(detalle) {
                                     detallesHtml += 'Nombre del Producto: ' + detalle.nombre_producto + '\n';
                                     detallesHtml += 'Cantidad: ' + detalle.cantidad + '\n';
-                                    detallesHtml += 'Precio Unitario: $' + detalle.valor_unitario + '\n';
-                                    detallesHtml += 'Subtotal: $' + parseFloat(detalle.subtotal).toFixed(0) + '\n\n';
+                                    detallesHtml += 'Precio Unitario: $' + formatearPrecio(detalle.valor_unitario) + '\n';
+                                    detallesHtml += 'Subtotal: $' + formatearPrecio(detalle.subtotal) + '\n\n';
                                 });
-                                detallesHtml += '\nTotal compra: $' + parseFloat(response.total_compra).toFixed(0) + '\n';
+                                detallesHtml += '\nTotal compra: $' + formatearPrecio(response.total_compra) + '\n';
 
                                 document.getElementById("detalles-pedido").innerText = detallesHtml;
                                 document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
@@ -221,6 +221,21 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             };
             xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
             xhr.send();
+        }
+
+        function formatearPrecio(precio) {
+            // Convertir a número y fijar a 2 decimales
+            var numero = parseFloat(precio).toFixed(2);
+            // Dividir en parte entera y decimal
+            var partes = numero.split('.');
+            // Formatear la parte entera con comas para los miles
+            partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            // Si la parte decimal es .00, la eliminamos
+            if (partes[1] === '00') {
+                return partes[0];
+            }
+            // En caso contrario, devolvemos con la parte decimal
+            return partes.join('.');
         }
 
         function closeDetailsModal() {
