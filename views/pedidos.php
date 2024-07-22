@@ -13,9 +13,13 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'Administrador') {
 
 include_once('../includes/conexion.php');
 
+// Definir la variable $fecha_filtro
+$fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
+
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
+
 $sql = "SELECT pedidos.id_pedido, usuarios.nombre_usuario, pedidos.fecha_pedido, pedidos.estado_pedido 
         FROM pedidos
         JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario";
