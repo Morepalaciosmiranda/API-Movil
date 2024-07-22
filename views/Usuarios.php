@@ -29,6 +29,7 @@ if (isset($_POST['user_id']) && isset($_POST['new_role'])) {
                 echo "Error al eliminar permisos anteriores: " . $conn->error . "<br>";
             }
 
+
             $insert_sql = "INSERT INTO rolesxpermiso (id_usuario, id_permiso) VALUES (?, ?)";
             $insert_stmt = $conn->prepare($insert_sql);
             foreach ($permissions as $permission) {
@@ -46,19 +47,23 @@ if (isset($_POST['user_id']) && isset($_POST['new_role'])) {
 }
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
+    // Redirigir a la página de inicio de sesión si no hay sesión
     header('Location: ../loginRegister.php');
     exit();
 }
 
 if ($_SESSION['rol'] !== 'Administrador') {
+    // Redirigir a una página de acceso no autorizado o hacer otra acción
     header('Location: ../no_autorizado.php');
     exit();
 }
 
-$resultados_por_pagina = 10;
-$pagina = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
-$inicio = ($pagina - 1) * $resultados_por_pagina;
+$results_per_page = 10;
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+$start_from = ($page - 1) * $results_per_page;
 
+$sql = "SELECT * FROM usuarios LIMIT $start_from, $results_per_page";
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -153,15 +158,15 @@ $inicio = ($pagina - 1) * $resultados_por_pagina;
                         </tbody>
                     </table>
                     <?php
-                    $sql_total = "SELECT COUNT(id_usuario) AS total FROM usuarios";
-                    $resultado_total = $conn->query($sql_total);
-                    $fila_total = $resultado_total->fetch_assoc();
-                    $total_usuarios = $fila_total["total"];
-                    $total_paginas = ceil($total_usuarios / $resultados_por_pagina);
 
-                    echo "<div class='paginacion'>";
-                    for ($i = 1; $i <= $total_paginas; $i++) {
-                        echo "<a href='?pagina=" . $i . "'" . ($pagina == $i ? " class='activa'" : "") . ">" . $i . "</a> ";
+                    $sql = "SELECT COUNT(id_usuario) AS total FROM usuarios";
+                    $result = $conn->query($sql);
+                    $row = $result->fetch_assoc();
+                    $total_pages = ceil($row["total"] / $results_per_page);
+
+                    echo "<div class='pagination'>";
+                    for ($i = 1; $i <= $total_pages; $i++) {
+                        echo "<a href='?page=" . $i . "'>" . $i . "</a>";
                     }
                     echo "</div>";
                     ?>
