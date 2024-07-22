@@ -39,21 +39,20 @@ switch ($method) {
         // Obtener pedidos
         if (isset($_GET['action']) && $_GET['action'] == 'obtener_pedidos') {
             $sql = "SELECT p.id_pedido, p.fecha_pedido, p.estado_pedido, p.precio_domicilio, 
-               dp.nombre, dp.direccion, dp.barrio, dp.telefono, 
-               SUM(dp.subtotal) as total_pedido
-        FROM pedidos p
-        LEFT JOIN (
-            SELECT id_pedido, 
-                   MAX(nombre) as nombre, 
-                   MAX(direccion) as direccion, 
-                   MAX(barrio) as barrio, 
-                   MAX(telefono) as telefono, 
-                   SUM(subtotal) as subtotal
-            FROM detalle_pedido
-            GROUP BY id_pedido
-        ) dp ON p.id_pedido = dp.id_pedido
-        GROUP BY p.id_pedido
-        ORDER BY p.fecha_pedido DESC";
+        dp.nombre, dp.direccion, dp.barrio, dp.telefono, 
+        dp.subtotal as total_pedido
+ FROM pedidos p
+ JOIN (
+     SELECT id_pedido, 
+            ANY_VALUE(nombre) as nombre, 
+            ANY_VALUE(direccion) as direccion, 
+            ANY_VALUE(barrio) as barrio, 
+            ANY_VALUE(telefono) as telefono, 
+            SUM(subtotal) as subtotal
+     FROM detalle_pedido
+     GROUP BY id_pedido
+ ) dp ON p.id_pedido = dp.id_pedido
+ ORDER BY p.fecha_pedido DESC";
             file_put_contents('debug.log', 'SQL query: ' . $sql . "\n", FILE_APPEND);
 
             $result = $conn->query($sql);
