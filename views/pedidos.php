@@ -443,6 +443,22 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 cerrarModalCrearPedido();
             }
         }
+
+        function openModal(modalId) {
+            var modal = document.getElementById(modalId);
+            modal.style.display = "block";
+            setTimeout(() => modal.classList.add('show'), 10);
+            document.body.style.overflow = 'hidden'; // Previene el scroll del body
+        }
+
+        function closeModal(modalId) {
+            var modal = document.getElementById(modalId);
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = "none";
+                document.body.style.overflow = ''; // Restaura el scroll del body
+            }, 300);
+        }
     </script>
 </body>
 
