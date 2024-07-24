@@ -3,6 +3,8 @@ session_start();
 include '../includes/conexion.php';
 
 header('Content-Type: application/json');
+$url = getenv("MYSQL_URL");
+$conn = new mysqli($url);
 
 $response = array('status' => '', 'message' => '');
 
