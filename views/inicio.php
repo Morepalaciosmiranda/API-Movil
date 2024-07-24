@@ -1,16 +1,20 @@
 <?php
 session_start();
+
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
     header('Location: ../loginRegister.php');
     exit();
 }
+
 if ($_SESSION['rol'] !== 'Administrador') {
     header('Location: ../no_autorizado.php');
     exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -21,6 +25,7 @@ if ($_SESSION['rol'] !== 'Administrador') {
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 </head>
+
 <body>
 <div class="container">
     <?php include 'sidebar.php'; ?>
@@ -53,6 +58,7 @@ if ($_SESSION['rol'] !== 'Administrador') {
         </div>
     </div>
 </div>
+
 <script>
     function toggleUserOptions() {
         var userOptionsContainer = document.getElementById("userOptionsContainer");
@@ -64,4 +70,5 @@ if ($_SESSION['rol'] !== 'Administrador') {
     }
 </script>
 </body>
+
 </html>
