@@ -179,54 +179,54 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
 
     <div id="modalCrearPedido" class="modal">
-        <div class="modal-content modal-large">
-            <span class="close" onclick="cerrarModalCrearPedido()">&times;</span>
-            <h2>Crear Nuevo Pedido</h2>
-            <form id="formCrearPedido">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="nombre_cliente">Nombre del Cliente:</label>
-                        <input type="text" id="nombre_cliente" name="nombre_cliente" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="telefono_cliente">Teléfono:</label>
-                        <input type="tel" id="telefono_cliente" name="telefono_cliente" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="calle">Calle:</label>
-                        <input type="text" id="calle" name="calle" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="interior">Interior/Apartamento:</label>
-                        <input type="text" id="interior" name="interior" required>
-                    </div>
+    <div class="modal-content modal-large">
+        <span class="close" onclick="cerrarModalCrearPedido()">&times;</span>
+        <h2>Crear Nuevo Pedido</h2>
+        <form id="formCrearPedido">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nombre_cliente">Nombre del Cliente:</label>
+                    <input type="text" id="nombre_cliente" name="nombre_cliente" required>
                 </div>
                 <div class="form-group">
-                    <label for="barrio_cliente">Barrio:</label>
-                    <input type="text" id="barrio_cliente" name="barrio_cliente" required>
+                    <label for="telefono_cliente">Teléfono:</label>
+                    <input type="tel" id="telefono_cliente" name="telefono_cliente" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="calle">Calle:</label>
+                    <input type="text" id="calle" name="calle" required>
                 </div>
                 <div class="form-group">
-                    <label for="productos">Productos:</label>
-                    <select id="productos" multiple>
-                        <?php
-                        $sql_productos = "SELECT id_producto, nombre_producto, precio FROM productos WHERE estado_producto = 'Activo'";
-                        $result_productos = mysqli_query($conn, $sql_productos);
-                        while ($row = mysqli_fetch_assoc($result_productos)) {
-                            echo "<option value='" . $row['id_producto'] . "' data-precio='" . $row['precio'] . "'>" . $row['nombre_producto'] . " - $" . $row['precio'] . "</option>";
-                        }
-                        ?>
-                    </select>
+                    <label for="interior">Interior/Apartamento:</label>
+                    <input type="text" id="interior" name="interior" required>
                 </div>
-                <div id="productosSeleccionados" class="productos-seleccionados"></div>
-                <div class="total-pedido">
-                    <strong>Total del Pedido: $<span id="totalPedido">0.00</span></strong>
-                </div>
-                <button type="submit" class="btn-guardar">Crear Pedido</button>
-            </form>
-        </div>
+            </div>
+            <div class="form-group">
+                <label for="barrio_cliente">Barrio:</label>
+                <input type="text" id="barrio_cliente" name="barrio_cliente" required>
+            </div>
+            <div class="form-group">
+                <label for="productos">Productos:</label>
+                <select id="productos" multiple>
+                    <?php
+                    $sql_productos = "SELECT id_producto, nombre_producto, precio FROM productos WHERE estado_producto = 'Activo'";
+                    $result_productos = mysqli_query($conn, $sql_productos);
+                    while ($row = mysqli_fetch_assoc($result_productos)) {
+                        echo "<option value='" . $row['id_producto'] . "' data-precio='" . $row['precio'] . "'>" . $row['nombre_producto'] . " - $" . $row['precio'] . "</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <div id="productosSeleccionados" class="productos-seleccionados"></div>
+            <div class="total-pedido">
+                <strong>Total del Pedido: $<span id="totalPedido">0.00</span></strong>
+            </div>
+            <button type="submit" class="btn-guardar">Crear Pedido</button>
+        </form>
     </div>
+</div>
 
     <script>
         function verDetallesPedido(idPedido) {
@@ -373,30 +373,21 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         document.getElementById("productos").addEventListener("change", function() {
             var productosSeleccionados = document.getElementById("productosSeleccionados");
             productosSeleccionados.innerHTML = "";
-            var total = 0;
 
             Array.from(this.selectedOptions).forEach(function(option) {
                 var div = document.createElement("div");
                 div.classList.add("producto-seleccionado");
-                var precio = parseFloat(option.dataset.precio);
-                total += precio;
                 div.innerHTML = option.text +
-                    ' <button type="button" class="btn-eliminar-producto" onclick="eliminarProducto(this, \'' + option.value + '\', ' + precio + ')">X</button>';
+                    ' <button type="button" class="btn-eliminar-producto" onclick="eliminarProducto(this, \'' + option.value + '\')">X</button>';
                 productosSeleccionados.appendChild(div);
             });
-
-            document.getElementById("totalPedido").textContent = total.toFixed(2);
         });
 
-        function eliminarProducto(button, value, precio) {
+        function eliminarProducto(button, value) {
             var select = document.getElementById("productos");
             var option = select.querySelector('option[value="' + value + '"]');
             option.selected = false;
             button.parentElement.remove();
-
-            var totalElement = document.getElementById("totalPedido");
-            var totalActual = parseFloat(totalElement.textContent);
-            totalElement.textContent = (totalActual - precio).toFixed(2);
         }
 
         document.getElementById("formCrearPedido").addEventListener("submit", function(e) {
@@ -442,22 +433,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             if (event.target == modalCrearPedido) {
                 cerrarModalCrearPedido();
             }
-        }
-
-        function openModal(modalId) {
-            var modal = document.getElementById(modalId);
-            modal.style.display = "block";
-            setTimeout(() => modal.classList.add('show'), 10);
-            document.body.style.overflow = 'hidden'; // Previene el scroll del body
-        }
-
-        function closeModal(modalId) {
-            var modal = document.getElementById(modalId);
-            modal.classList.remove('show');
-            setTimeout(() => {
-                modal.style.display = "none";
-                document.body.style.overflow = ''; // Restaura el scroll del body
-            }, 300);
         }
     </script>
 </body>
