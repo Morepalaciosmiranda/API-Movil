@@ -18,31 +18,43 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Verificar si existe la columna id_rol
-$checkColumn = "SHOW COLUMNS FROM rolesxpermiso LIKE 'id_rol'";
-$result = $conn->query($checkColumn);
+// ID del usuario al que quieres asignar permisos de administrador
+$admin_user_id = 54; // Cambia esto al ID del usuario que quieres hacer administrador
 
-if ($result->num_rows > 0) {
-    // Si existe id_rol, lo cambiamos a id_usuario
-    $sql = "ALTER TABLE rolesxpermiso CHANGE id_rol id_usuario INT;";
-    
-    if ($conn->query($sql) === TRUE) {
-        echo "La columna id_rol ha sido cambiada a id_usuario exitosamente.\n";
-    } else {
-        echo "Error al cambiar la columna: " . $conn->error . "\n";
-    }
+// Primero, asegúrate de que existe un rol de administrador
+$check_admin_role = "SELECT id_rol FROM roles WHERE nombre_rol = 'Administrador'";
+$result = $conn->query($check_admin_role);
+
+if ($result->num_rows == 0) {
+    // Si no existe, créalo
+    $create_admin_role = "INSERT INTO roles (nombre_rol) VALUES ('Administrador')";
+    $conn->query($create_admin_role);
+    $admin_role_id = $conn->insert_id;
 } else {
-    echo "La columna id_rol no existe. No se necesitan cambios.\n";
+    $row = $result->fetch_assoc();
+    $admin_role_id = $row['id_rol'];
 }
 
-// Verificar la estructura final de la tabla
-$checkTable = "DESCRIBE rolesxpermiso";
-$result = $conn->query($checkTable);
+// Asigna el rol de administrador al usuario
+$assign_role = "INSERT INTO usuarios_roles (id_usuario, id_rol) VALUES (?, ?) ON DUPLICATE KEY UPDATE id_rol = ?";
+$stmt = $conn->prepare($assign_role);
+$stmt->bind_param("iii", $admin_user_id, $admin_role_id, $admin_role_id);
+$stmt->execute();
 
-echo "Estructura actual de la tabla rolesxpermiso:\n";
+// Obtén todos los permisos
+$get_permissions = "SELECT id_permiso FROM permisos";
+$result = $conn->query($get_permissions);
+
+// Asigna todos los permisos al rol de administrador
 while ($row = $result->fetch_assoc()) {
-    echo $row['Field'] . "\n";
+    $permission_id = $row['id_permiso'];
+    $assign_permission = "INSERT INTO rolesxpermiso (id_usuario, id_permiso) VALUES (?, ?) ON DUPLICATE KEY UPDATE id_permiso = ?";
+    $stmt = $conn->prepare($assign_permission);
+    $stmt->bind_param("iii", $admin_user_id, $permission_id, $permission_id);
+    $stmt->execute();
 }
+
+echo "Se han asignado todos los permisos de administrador al usuario con ID: " . $admin_user_id;
 
 $conn->close();
 ?>
