@@ -1,18 +1,24 @@
 <?php
-$user_id = $_SESSION['id_rol'];
-
+session_start();
 include '../includes/conexion.php';
 
+$user_id = isset($_SESSION['id_rol']) ? $_SESSION['id_rol'] : null;
 $permissions = array();
 
-$sql = "SELECT id_permiso FROM rolesxpermiso WHERE id_rol = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-while ($row = $result->fetch_assoc()) {
-    $permissions[] = $row['id_permiso'];
+if ($user_id !== null) {
+    $sql = "SELECT id_permiso FROM rolesxpermiso WHERE id_rol = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $permissions[] = $row['id_permiso'];
+    }
+} else {
+    // Manejar el caso cuando el usuario no tiene un rol asignado
+    // Por ejemplo, puedes redirigir al usuario a la página de login
+    header("Location: login.php");
+    exit();
 }
 
 $modules = array(
@@ -29,7 +35,6 @@ $modules = array(
 ?>
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -37,7 +42,6 @@ $modules = array(
     <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/index6.css">
 </head>
-
 <body>
     <div class="overlay" id="overlay">
         <img src="../img/hamburguesa-cara-aterradora-otro-rasgo-monstruo-ilustracion-vectorial_648963-489-Photoroom.png" alt="Animación">
@@ -67,7 +71,6 @@ $modules = array(
                     userOptionsContainer.style.display = "none";
                 }
             }
-
             function showOverlayAndRedirect(link) {
                 var overlay = document.getElementById('overlay');
                 overlay.style.display = 'flex';
@@ -79,5 +82,4 @@ $modules = array(
         </script>
     </div>
 </body>
-
 </html>
