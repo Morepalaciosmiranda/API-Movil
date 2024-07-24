@@ -36,9 +36,9 @@ if ($result->num_rows == 0) {
 }
 
 // Asigna el rol de administrador al usuario
-$assign_role = "INSERT INTO usuarios_roles (id_usuario, id_rol) VALUES (?, ?) ON DUPLICATE KEY UPDATE id_rol = ?";
+$assign_role = "UPDATE usuarios SET id_rol = ? WHERE id_usuario = ?";
 $stmt = $conn->prepare($assign_role);
-$stmt->bind_param("iii", $admin_user_id, $admin_role_id, $admin_role_id);
+$stmt->bind_param("ii", $admin_role_id, $admin_user_id);
 $stmt->execute();
 
 // Obtén todos los permisos
