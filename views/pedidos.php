@@ -93,7 +93,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 </div>
             </div>
             <div class="content">
-                <button id="btnCrearPedido" class="btn-crear-pedido">Crear Pedido</button>
                 <div class="form-container">
                     <form method="GET" action="pedidos.php">
                         <label for="fecha">Filtrar por fecha:</label>
@@ -176,57 +175,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             </form>
         </div>
     </div>
-
-
-    <div id="modalCrearPedido" class="modal">
-    <div class="modal-content modal-large">
-        <span class="close" onclick="cerrarModalCrearPedido()">&times;</span>
-        <h2>Crear Nuevo Pedido</h2>
-        <form id="formCrearPedido">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="nombre_cliente">Nombre del Cliente:</label>
-                    <input type="text" id="nombre_cliente" name="nombre_cliente" required>
-                </div>
-                <div class="form-group">
-                    <label for="telefono_cliente">Teléfono:</label>
-                    <input type="tel" id="telefono_cliente" name="telefono_cliente" required>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="calle">Calle:</label>
-                    <input type="text" id="calle" name="calle" required>
-                </div>
-                <div class="form-group">
-                    <label for="interior">Interior/Apartamento:</label>
-                    <input type="text" id="interior" name="interior" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="barrio_cliente">Barrio:</label>
-                <input type="text" id="barrio_cliente" name="barrio_cliente" required>
-            </div>
-            <div class="form-group">
-                <label for="productos">Productos:</label>
-                <select id="productos" multiple>
-                    <?php
-                    $sql_productos = "SELECT id_producto, nombre_producto, precio FROM productos WHERE estado_producto = 'Activo'";
-                    $result_productos = mysqli_query($conn, $sql_productos);
-                    while ($row = mysqli_fetch_assoc($result_productos)) {
-                        echo "<option value='" . $row['id_producto'] . "' data-precio='" . $row['precio'] . "'>" . $row['nombre_producto'] . " - $" . $row['precio'] . "</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-            <div id="productosSeleccionados" class="productos-seleccionados"></div>
-            <div class="total-pedido">
-                <strong>Total del Pedido: $<span id="totalPedido">0.00</span></strong>
-            </div>
-            <button type="submit" class="btn-guardar">Crear Pedido</button>
-        </form>
-    </div>
-</div>
 
     <script>
         function verDetallesPedido(idPedido) {
@@ -348,90 +296,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             var modalEstadoPedido = document.getElementById("modalEstadoPedido");
             if (event.target == modalEstadoPedido) {
                 closeEstadoModal();
-            }
-        }
-
-
-        document.getElementById("btnCrearPedido").addEventListener("click", function() {
-            var modal = document.getElementById("modalCrearPedido");
-            modal.style.display = "block";
-            setTimeout(function() {
-                modal.classList.add('show');
-                modal.querySelector('.modal-content').classList.add('show');
-            }, 10);
-        });
-
-        function cerrarModalCrearPedido() {
-            var modal = document.getElementById("modalCrearPedido");
-            modal.querySelector('.modal-content').classList.remove('show');
-            setTimeout(function() {
-                modal.classList.remove('show');
-                modal.style.display = "none";
-            }, 300);
-        }
-
-        document.getElementById("productos").addEventListener("change", function() {
-            var productosSeleccionados = document.getElementById("productosSeleccionados");
-            productosSeleccionados.innerHTML = "";
-
-            Array.from(this.selectedOptions).forEach(function(option) {
-                var div = document.createElement("div");
-                div.classList.add("producto-seleccionado");
-                div.innerHTML = option.text +
-                    ' <button type="button" class="btn-eliminar-producto" onclick="eliminarProducto(this, \'' + option.value + '\')">X</button>';
-                productosSeleccionados.appendChild(div);
-            });
-        });
-
-        function eliminarProducto(button, value) {
-            var select = document.getElementById("productos");
-            var option = select.querySelector('option[value="' + value + '"]');
-            option.selected = false;
-            button.parentElement.remove();
-        }
-
-        document.getElementById("formCrearPedido").addEventListener("submit", function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            var productosSeleccionados = Array.from(document.getElementById("productos").selectedOptions).map(option => ({
-                id: option.value,
-                nombre: option.text
-            }));
-            formData.append("productos", JSON.stringify(productosSeleccionados));
-
-            fetch("../controller/pedidos_controller.php", {
-                    method: "POST",
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alertify.success(data.message);
-                        cerrarModalCrearPedido();
-                        setTimeout(() => location.reload(), 1500);
-                    } else {
-                        alertify.error(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alertify.error("Error al procesar la solicitud");
-                });
-        });
-
-        window.onclick = function(event) {
-            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-            var modalCrearPedido = document.getElementById("modalCrearPedido");
-
-            if (event.target == modalDetallesPedido) {
-                closeDetailsModal();
-            }
-            if (event.target == modalEstadoPedido) {
-                closeEstadoModal();
-            }
-            if (event.target == modalCrearPedido) {
-                cerrarModalCrearPedido();
             }
         }
     </script>
