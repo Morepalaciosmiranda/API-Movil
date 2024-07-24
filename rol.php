@@ -1,6 +1,18 @@
 <?php
 $url = getenv("MYSQL_URL");
-$conn = new mysqli($url);
+if (!$url) {
+    die("MYSQL_URL environment variable is not set.");
+}
+
+$parsed = parse_url($url);
+
+$host = $parsed["host"];
+$username = $parsed["user"];
+$password = $parsed["pass"];
+$database = ltrim($parsed["path"], '/');
+$port = $parsed["port"] ?? 3306;
+
+$conn = new mysqli($host, $username, $password, $database, $port);
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
