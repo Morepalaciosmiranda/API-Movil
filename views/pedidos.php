@@ -93,6 +93,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 </div>
             </div>
             <div class="content">
+                <button id="btnCrearPedido" class="btn-crear-pedido">Crear Pedido</button>
                 <div class="form-container">
                     <form method="GET" action="pedidos.php">
                         <label for="fecha">Filtrar por fecha:</label>
@@ -172,6 +173,44 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <option value="entregado">Entregado</option>
                 </select>
                 <button type="submit" class="btnGuardad">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="modalCrearPedido" class="modal">
+        <div class="modal-content modal-large">
+            <span class="close" onclick="cerrarModalCrearPedido()">&times;</span>
+            <h2>Crear Nuevo Pedido</h2>
+            <form id="formCrearPedido">
+                <div class="form-group">
+                    <label for="nombre_cliente">Nombre del Cliente:</label>
+                    <input type="text" id="nombre_cliente" name="nombre_cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="calle">Calle:</label>
+                    <input type="text" id="calle" name="calle" required>
+                </div>
+                <div class="form-group">
+                    <label for="interior">Interior/Apartamento:</label>
+                    <input type="text" id="interior" name="interior" required>
+                </div>
+                <div class="form-group">
+                    <label for="barrio_cliente">Barrio:</label>
+                    <input type="text" id="barrio_cliente" name="barrio_cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono_cliente">Teléfono:</label>
+                    <input type="tel" id="telefono_cliente" name="telefono_cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="productos">Productos:</label>
+                    <select id="productos" multiple>
+                        <!-- Aquí deberías cargar dinámicamente los productos disponibles -->
+                    </select>
+                </div>
+                <div id="productosSeleccionados"></div>
+                <button type="submit" class="btn-guardar">Crear Pedido</button>
             </form>
         </div>
     </div>
@@ -298,6 +337,64 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 closeEstadoModal();
             }
         }
+
+
+        document.getElementById("btnCrearPedido").addEventListener("click", function() {
+            document.getElementById("modalCrearPedido").style.display = "block";
+        });
+
+        function cerrarModalCrearPedido() {
+            document.getElementById("modalCrearPedido").style.display = "none";
+        }
+
+        document.getElementById("productos").addEventListener("change", function() {
+            var productosSeleccionados = document.getElementById("productosSeleccionados");
+            productosSeleccionados.innerHTML = "";
+
+            Array.from(this.selectedOptions).forEach(function(option) {
+                var div = document.createElement("div");
+                div.classList.add("producto-seleccionado");
+                div.innerHTML = option.text +
+                    ' <button type="button" class="btn-eliminar-producto" onclick="eliminarProducto(this, \'' + option.value + '\')">X</button>';
+                productosSeleccionados.appendChild(div);
+            });
+        });
+
+        function eliminarProducto(button, value) {
+            var select = document.getElementById("productos");
+            var option = select.querySelector('option[value="' + value + '"]');
+            option.selected = false;
+            button.parentElement.remove();
+        }
+
+        document.getElementById("formCrearPedido").addEventListener("submit", function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            var productosSeleccionados = Array.from(document.getElementById("productos").selectedOptions).map(option => ({
+                id: option.value,
+                nombre: option.text
+            }));
+            formData.append("productos", JSON.stringify(productosSeleccionados));
+
+            fetch("../controller/pedidos_controller.php", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alertify.success(data.message);
+                        cerrarModalCrearPedido();
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        alertify.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alertify.error("Error al procesar la solicitud");
+                });
+        });
     </script>
 </body>
 
