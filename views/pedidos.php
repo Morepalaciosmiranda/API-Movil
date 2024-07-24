@@ -340,11 +340,21 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
 
         document.getElementById("btnCrearPedido").addEventListener("click", function() {
-            document.getElementById("modalCrearPedido").style.display = "block";
+            var modal = document.getElementById("modalCrearPedido");
+            modal.style.display = "block";
+            setTimeout(function() {
+                modal.classList.add('show');
+                modal.querySelector('.modal-content').classList.add('show');
+            }, 10);
         });
 
         function cerrarModalCrearPedido() {
-            document.getElementById("modalCrearPedido").style.display = "none";
+            var modal = document.getElementById("modalCrearPedido");
+            modal.querySelector('.modal-content').classList.remove('show');
+            setTimeout(function() {
+                modal.classList.remove('show');
+                modal.style.display = "none";
+            }, 300);
         }
 
         document.getElementById("productos").addEventListener("change", function() {
@@ -395,6 +405,22 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     alertify.error("Error al procesar la solicitud");
                 });
         });
+
+        window.onclick = function(event) {
+            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            var modalCrearPedido = document.getElementById("modalCrearPedido");
+
+            if (event.target == modalDetallesPedido) {
+                closeDetailsModal();
+            }
+            if (event.target == modalEstadoPedido) {
+                closeEstadoModal();
+            }
+            if (event.target == modalCrearPedido) {
+                cerrarModalCrearPedido();
+            }
+        }
     </script>
 </body>
 
