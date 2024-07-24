@@ -1,11 +1,11 @@
 <?php
-$user_id = $_SESSION['id_usuario'];
+$user_id = $_SESSION['id_rol'];
 
 include '../includes/conexion.php';
 
 $permissions = array();
 
-$sql = "SELECT id_permiso FROM rolesxpermiso WHERE id_usuario = ?";
+$sql = "SELECT id_permiso FROM rolesxpermiso WHERE id_rol = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
