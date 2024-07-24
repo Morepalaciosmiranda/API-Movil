@@ -690,3 +690,58 @@ button[type="submit"]:hover {
     text-decoration: none;
     cursor: pointer;
 }
+
+
+.btn-crear-pedido {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.modal-large {
+    width: 80%;
+    max-width: 800px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#productosSeleccionados {
+    margin-top: 15px;
+}
+
+.producto-seleccionado {
+    background-color: #f0f0f0;
+    padding: 5px;
+    margin: 5px 0;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-eliminar-producto {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 2px 5px;
+    border-radius: 3px;
+    cursor: pointer;
+}
