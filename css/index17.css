@@ -919,32 +919,6 @@ footer h4{
 
 
 
-@media screen and (max-width: 414px) {
-
-    .header img {
-        width: 80px; /* Reduce el tamaño del logo */
-        margin-bottom: 10px; /* Añade un margen inferior al logo */
-        margin-left: -130px;
-    }
-
-    .nav-links {
-        display: flex;
-        flex-direction: column; /* Cambia la dirección del flex a columna */
-        align-items: center;
-        font-size: 13px;
-        margin-left: -70px;
-    }
-
-    .nav-links li {
-        margin: 5px -10px; /* Ajusta el margen entre los elementos del menú */
-    }
-
-    .header .car-shop, .header .logout {
-        margin: 60px -40px; /* Ajusta el margen para los otros elementos */
-        margin-left: -50px;
-    }
-}
-
 @media screen and (min-width: 576px) and (max-width: 992px) {
     .header .nav-links {
         margin-left: 150px;
@@ -995,9 +969,9 @@ footer h4{
         width: 70%; /* Ajuste del ancho del botón */
         margin-left: 15%; /* Ajuste del margen izquierdo */
     }
+
+    
 }
-
-
 @media screen and (max-width: 375px) {
     /* Ajustes generales */
     body {
