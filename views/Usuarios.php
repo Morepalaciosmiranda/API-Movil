@@ -118,6 +118,11 @@ $result = $conn->query($sql);
                         </thead>
                         <tbody>
                             <?php
+                            include '../includes/conexion.php';
+
+                            $sql = "SELECT * FROM usuarios";
+                            $result = $conn->query($sql);
+
                             if ($result && $result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
                                     echo "<tr>";
@@ -130,10 +135,16 @@ $result = $conn->query($sql);
                                     echo "<div class='actions'>";
                                     echo "<button class='btn state-button action-btn' data-user-id='" . $row["id_usuario"] . "' data-current-state='" . $row["estado_usuario"] . "' onclick='openStateModal(" . $row["id_usuario"] . ", \"" . $row["estado_usuario"] . "\")'><i class='fa fa-edit'></i></button>";
                                     if ($row["id_rol"] == 1) {
+                                        echo "<form class='assign-role-form' method='post' action='../controller/assign_role.php'>";
+                                        echo "<input type='hidden' name='user_id' value='" . $row["id_usuario"] . "'>";
                                         echo "<button class='btn assign-role-button action-btn' data-user-id='" . $row["id_usuario"] . "'><i class='fa fa-user-plus'></i></button>";
+                                        echo "</form>";
                                         echo "<button class='btn permission-button action-btn' data-user-id='" . $row["id_usuario"] . "' onclick='openPermissionsModal(" . $row["id_usuario"] . ")'><i class='fa fa-lock'></i></button>";
                                     } elseif ($row["id_rol"] == 2) {
+                                        echo "<form class='assign-role-form' method='post' action='../controller/assign_role.php'>";
+                                        echo "<input type='hidden' name='user_id' value='" . $row["id_usuario"] . "'>";
                                         echo "<button class='btn assign-role-button action-btn' data-user-id='" . $row["id_usuario"] . "'><i class='fa fa-user-plus'></i></button>";
+                                        echo "</form>";
                                     }
                                     echo "</div>";
                                     echo "</td>";
@@ -229,6 +240,7 @@ $result = $conn->query($sql);
             </div>
         </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script>
             var modal = document.getElementById('permissionsModal');
             var rolesModal = document.getElementById('rolesModal');
@@ -287,31 +299,40 @@ $result = $conn->query($sql);
                             var roleId = selectedRole.value;
                             var xhr = new XMLHttpRequest();
                             xhr.onreadystatechange = function() {
-                                if (xhr.readyState == 4 && xhr.status == 200) {
-                                    try {
-                                        var response = JSON.parse(xhr.responseText);
-                                        if (response.status == 'success') {
-                                            Swal.fire({
-                                                title: 'Éxito',
-                                                text: response.message,
-                                                icon: 'success',
-                                                confirmButtonText: 'OK'
-                                            }).then(() => {
-                                                location.reload();
-                                            });
-                                        } else {
+                                if (xhr.readyState == 4) {
+                                    if (xhr.status == 200) {
+                                        try {
+                                            var response = JSON.parse(xhr.responseText);
+                                            if (response.status == 'success') {
+                                                Swal.fire({
+                                                    title: 'Éxito',
+                                                    text: response.message,
+                                                    icon: 'success',
+                                                    confirmButtonText: 'OK'
+                                                }).then(() => {
+                                                    location.reload();
+                                                });
+                                            } else {
+                                                Swal.fire({
+                                                    title: 'Error',
+                                                    text: response.message,
+                                                    icon: 'error',
+                                                    confirmButtonText: 'OK'
+                                                });
+                                            }
+                                        } catch (e) {
+                                            console.error("Error parsing JSON:", e);
                                             Swal.fire({
                                                 title: 'Error',
-                                                text: response.message,
+                                                text: 'Hubo un error al procesar la respuesta del servidor.',
                                                 icon: 'error',
                                                 confirmButtonText: 'OK'
                                             });
                                         }
-                                    } catch (e) {
-                                        console.error("Error parsing JSON:", xhr.responseText);
+                                    } else {
                                         Swal.fire({
                                             title: 'Error',
-                                            text: 'Ha ocurrido un error inesperado',
+                                            text: 'Hubo un error en la comunicación con el servidor.',
                                             icon: 'error',
                                             confirmButtonText: 'OK'
                                         });
@@ -354,31 +375,40 @@ $result = $conn->query($sql);
                         if (result.isConfirmed) {
                             var xhr = new XMLHttpRequest();
                             xhr.onreadystatechange = function() {
-                                if (xhr.readyState == 4 && xhr.status == 200) {
-                                    try {
-                                        var response = JSON.parse(xhr.responseText);
-                                        if (response.status == 'success') {
-                                            Swal.fire({
-                                                title: 'Éxito',
-                                                text: response.message,
-                                                icon: 'success',
-                                                confirmButtonText: 'OK'
-                                            }).then(() => {
-                                                location.reload();
-                                            });
-                                        } else {
+                                if (xhr.readyState == 4) {
+                                    if (xhr.status == 200) {
+                                        try {
+                                            var response = JSON.parse(xhr.responseText);
+                                            if (response.status == 'success') {
+                                                Swal.fire({
+                                                    title: 'Éxito',
+                                                    text: response.message,
+                                                    icon: 'success',
+                                                    confirmButtonText: 'OK'
+                                                }).then(() => {
+                                                    location.reload();
+                                                });
+                                            } else {
+                                                Swal.fire({
+                                                    title: 'Error',
+                                                    text: response.message,
+                                                    icon: 'error',
+                                                    confirmButtonText: 'OK'
+                                                });
+                                            }
+                                        } catch (e) {
+                                            console.error("Error parsing JSON:", e);
                                             Swal.fire({
                                                 title: 'Error',
-                                                text: response.message,
+                                                text: 'Hubo un error al procesar la respuesta del servidor.',
                                                 icon: 'error',
                                                 confirmButtonText: 'OK'
                                             });
                                         }
-                                    } catch (e) {
-                                        console.error("Error parsing JSON:", xhr.responseText);
+                                    } else {
                                         Swal.fire({
                                             title: 'Error',
-                                            text: 'Ha ocurrido un error inesperado',
+                                            text: 'Hubo un error en la comunicación con el servidor.',
                                             icon: 'error',
                                             confirmButtonText: 'OK'
                                         });
@@ -465,33 +495,42 @@ $result = $conn->query($sql);
                         xhr.open("POST", "../controller/change_state.php", true);
                         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                         xhr.onreadystatechange = function() {
-                            if (xhr.readyState == 4 && xhr.status == 200) {
-                                try {
-                                    var response = JSON.parse(xhr.responseText);
-                                    if (response.status === "success") {
-                                        Swal.fire({
-                                            title: 'Éxito',
-                                            text: 'Estado actualizado correctamente. ' + response.message,
-                                            icon: 'success',
-                                            confirmButtonText: 'OK'
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                location.reload();
-                                            }
-                                        });
-                                    } else {
+                            if (xhr.readyState == 4) {
+                                if (xhr.status == 200) {
+                                    try {
+                                        var response = JSON.parse(xhr.responseText);
+                                        if (response.status === "success") {
+                                            Swal.fire({
+                                                title: 'Éxito',
+                                                text: 'Estado actualizado correctamente. ' + response.message,
+                                                icon: 'success',
+                                                confirmButtonText: 'OK'
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    location.reload();
+                                                }
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                title: 'Error',
+                                                text: response.message,
+                                                icon: 'error',
+                                                confirmButtonText: 'OK'
+                                            });
+                                        }
+                                    } catch (e) {
+                                        console.error("Error parsing JSON:", e);
                                         Swal.fire({
                                             title: 'Error',
-                                            text: response.message,
+                                            text: 'Hubo un error al procesar la respuesta del servidor.',
                                             icon: 'error',
                                             confirmButtonText: 'OK'
                                         });
                                     }
-                                } catch (e) {
-                                    console.error("Error parsing JSON:", xhr.responseText);
+                                } else {
                                     Swal.fire({
                                         title: 'Error',
-                                        text: 'Ha ocurrido un error inesperado',
+                                        text: 'Hubo un error en la comunicación con el servidor.',
                                         icon: 'error',
                                         confirmButtonText: 'OK'
                                     });
@@ -505,6 +544,5 @@ $result = $conn->query($sql);
                 return false;
             }
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     </body>
 </html>
