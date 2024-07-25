@@ -1,18 +1,5 @@
 <?php
-
-$host = $url["host"];
-$username = $url["user"];
-$password = $url["pass"];
-$database = "exterminio";
-$port = $url["port"];
-
-// Crear la conexión
-$conn = new mysqli($host, $username, $password, $database, $port);
-
-// Verificar conexión
-if ($conn->connect_error) {
-    die("Error de conexión: ". $conn->connect_error);
-}
+require_once './includes/conexion.php';
 
 // Actualizar estructura de la base de datos
 $sql = "ALTER TABLE rolesxpermiso
