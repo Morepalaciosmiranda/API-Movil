@@ -19,22 +19,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
             // Crear el usuario administrador
             $hashed_password = password_hash($admin_password, PASSWORD_DEFAULT);
+            $admin_role_id = 1; // Asumiendo que 1 es el ID del rol de administrador
 
-            $insert_user_sql = "INSERT INTO usuarios (nombre_usuario, contrasena, correo_electronico) VALUES (?, ?, ?)";
+            $insert_user_sql = "INSERT INTO usuarios (nombre_usuario, contrasena, correo_electronico, id_rol) VALUES (?, ?, ?, ?)";
             $insert_user_stmt = $conn->prepare($insert_user_sql);
-            $insert_user_stmt->bind_param("sss", $admin_username, $hashed_password, $admin_email);
+            $insert_user_stmt->bind_param("sssi", $admin_username, $hashed_password, $admin_email, $admin_role_id);
 
             if ($insert_user_stmt->execute()) {
                 $admin_id = $conn->insert_id;
                 echo "Usuario administrador creado con éxito. ID: $admin_id<br>";
-                
-                // Asignar rol de administrador
-                $admin_role_id = 1; // Asumiendo que 1 es el ID del rol de administrador
-                $update_role_sql = "UPDATE usuarios SET id_rol = ? WHERE id_usuario = ?";
-                $update_role_stmt = $conn->prepare($update_role_sql);
-                $update_role_stmt->bind_param("ii", $admin_role_id, $admin_id);
-                $update_role_stmt->execute();
-                
                 echo "Rol de administrador asignado.<br>";
 
                 // Asignar todos los permisos al administrador
@@ -72,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->close();
     }
 } else {
-    // Si no se ha enviado el formulario, muestra el formulario (igual que antes)
+    // Si no se ha enviado el formulario, muestra el formulario
     ?>
     <!DOCTYPE html>
     <html lang="es">
