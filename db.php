@@ -14,9 +14,13 @@ if ($result->num_rows > 0) {
     $conn->query($sql);
 }
 
+// Eliminar filas huérfanas en rolesxpermiso
+$sql = "DELETE FROM rolesxpermiso WHERE id_usuario NOT IN (SELECT id_usuario FROM usuarios)";
+$conn->query($sql);
+
 // Crear nueva restricción de clave externa
 $sql = "ALTER TABLE rolesxpermiso
-        ADD CONSTRAINT fk_rolesxpermiso_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)";
+        ADD CONSTRAINT fk_rolesxpermiso_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE";
 $conn->query($sql);
 
 // Cerrar conexión
