@@ -11,9 +11,9 @@ if (isset($_POST['user_id']) && isset($_POST['new_role'])) {
         $update_stmt = $conn->prepare($update_sql);
         $update_stmt->bind_param("ii", $new_role_or_permissions, $user_id);
         if ($update_stmt->execute()) {
-            echo "Rol actualizado correctamente.<br>";
+            echo json_encode(["status" => "success", "message" => "Rol actualizado correctamente."]);
         } else {
-            echo "Error al actualizar el rol: " . $conn->error . "<br>";
+            echo json_encode(["status" => "error", "message" => "Error al actualizar el rol: " . $conn->error]);
         }
     } else {
         if (isset($_POST['permissions'])) {
@@ -24,36 +24,37 @@ if (isset($_POST['user_id']) && isset($_POST['new_role'])) {
             $delete_stmt = $conn->prepare($delete_sql);
             $delete_stmt->bind_param("i", $user_id);
             if ($delete_stmt->execute()) {
-                echo "Permisos anteriores eliminados correctamente.<br>";
-            } else {
-                echo "Error al eliminar permisos anteriores: " . $conn->error . "<br>";
-            }
-
-
-            $insert_sql = "INSERT INTO rolesxpermiso (id_usuario, id_permiso) VALUES (?, ?)";
-            $insert_stmt = $conn->prepare($insert_sql);
-            foreach ($permissions as $permission) {
-                $insert_stmt->bind_param("ii", $user_id, $permission);
-                if ($insert_stmt->execute()) {
-                    echo "Permiso $permission asignado correctamente.<br>";
-                } else {
-                    echo "Error al asignar permiso $permission: " . $conn->error . "<br>";
+                $success = true;
+                $insert_sql = "INSERT INTO rolesxpermiso (id_usuario, id_permiso) VALUES (?, ?)";
+                $insert_stmt = $conn->prepare($insert_sql);
+                foreach ($permissions as $permission) {
+                    $insert_stmt->bind_param("ii", $user_id, $permission);
+                    if (!$insert_stmt->execute()) {
+                        $success = false;
+                        break;
+                    }
                 }
+                if ($success) {
+                    echo json_encode(["status" => "success", "message" => "Permisos actualizados correctamente."]);
+                } else {
+                    echo json_encode(["status" => "error", "message" => "Error al asignar permisos: " . $conn->error]);
+                }
+            } else {
+                echo json_encode(["status" => "error", "message" => "Error al eliminar permisos anteriores: " . $conn->error]);
             }
         } else {
-            echo "Debe seleccionar al menos un permiso.<br>";
+            echo json_encode(["status" => "error", "message" => "Debe seleccionar al menos un permiso."]);
         }
     }
+    exit;
 }
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
-    // Redirigir a la página de inicio de sesión si no hay sesión
     header('Location: ../loginRegister.php');
     exit();
 }
 
 if ($_SESSION['rol'] !== 'Administrador') {
-    // Redirigir a una página de acceso no autorizado o hacer otra acción
     header('Location: ../no_autorizado.php');
     exit();
 }
@@ -68,7 +69,6 @@ $result = $conn->query($sql);
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="./css/usuarios11.css">
@@ -79,7 +79,6 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 </head>
-
 <body>
     <div class="container">
         <?php include 'sidebar.php'; ?>
@@ -119,11 +118,6 @@ $result = $conn->query($sql);
                         </thead>
                         <tbody>
                             <?php
-                            include '../includes/conexion.php';
-
-                            $sql = "SELECT * FROM usuarios";
-                            $result = $conn->query($sql);
-
                             if ($result && $result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
                                     echo "<tr>";
@@ -136,16 +130,10 @@ $result = $conn->query($sql);
                                     echo "<div class='actions'>";
                                     echo "<button class='btn state-button action-btn' data-user-id='" . $row["id_usuario"] . "' data-current-state='" . $row["estado_usuario"] . "' onclick='openStateModal(" . $row["id_usuario"] . ", \"" . $row["estado_usuario"] . "\")'><i class='fa fa-edit'></i></button>";
                                     if ($row["id_rol"] == 1) {
-                                        echo "<form class='assign-role-form' method='post' action='../controller/assign_role.php'>";
-                                        echo "<input type='hidden' name='user_id' value='" . $row["id_usuario"] . "'>";
                                         echo "<button class='btn assign-role-button action-btn' data-user-id='" . $row["id_usuario"] . "'><i class='fa fa-user-plus'></i></button>";
-                                        echo "</form>";
                                         echo "<button class='btn permission-button action-btn' data-user-id='" . $row["id_usuario"] . "' onclick='openPermissionsModal(" . $row["id_usuario"] . ")'><i class='fa fa-lock'></i></button>";
                                     } elseif ($row["id_rol"] == 2) {
-                                        echo "<form class='assign-role-form' method='post' action='../controller/assign_role.php'>";
-                                        echo "<input type='hidden' name='user_id' value='" . $row["id_usuario"] . "'>";
                                         echo "<button class='btn assign-role-button action-btn' data-user-id='" . $row["id_usuario"] . "'><i class='fa fa-user-plus'></i></button>";
-                                        echo "</form>";
                                     }
                                     echo "</div>";
                                     echo "</td>";
@@ -158,7 +146,6 @@ $result = $conn->query($sql);
                         </tbody>
                     </table>
                     <?php
-
                     $sql = "SELECT COUNT(id_usuario) AS total FROM usuarios";
                     $result = $conn->query($sql);
                     $row = $result->fetch_assoc();
@@ -199,7 +186,6 @@ $result = $conn->query($sql);
             </div>
         </div>
 
-        
         <div id="rolesModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeRolesModal()">&times;</span>
@@ -243,9 +229,6 @@ $result = $conn->query($sql);
             </div>
         </div>
 
-
-
-
         <script>
             var modal = document.getElementById('permissionsModal');
             var rolesModal = document.getElementById('rolesModal');
@@ -271,7 +254,6 @@ $result = $conn->query($sql);
                 };
             });
 
-            // Asignar eventos para cerrar los modales
             Array.from(spans).forEach(function(span) {
                 span.onclick = function() {
                     closePermissionsModal();
@@ -306,20 +288,30 @@ $result = $conn->query($sql);
                             var xhr = new XMLHttpRequest();
                             xhr.onreadystatechange = function() {
                                 if (xhr.readyState == 4 && xhr.status == 200) {
-                                    var response = JSON.parse(xhr.responseText);
-                                    if (response.status == 'success') {
-                                        Swal.fire({
-                                            title: 'Éxito',
-                                            text: response.message,
-                                            icon: 'success',
-                                            confirmButtonText: 'OK'
-                                        }).then(() => {
-                                            location.reload();
-                                        });
-                                    } else {
+                                    try {
+                                        var response = JSON.parse(xhr.responseText);
+                                        if (response.status == 'success') {
+                                            Swal.fire({
+                                                title: 'Éxito',
+                                                text: response.message,
+                                                icon: 'success',
+                                                confirmButtonText: 'OK'
+                                            }).then(() => {
+                                                location.reload();
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                title: 'Error',
+                                                text: response.message,
+                                                icon: 'error',
+                                                confirmButtonText: 'OK'
+                                            });
+                                        }
+                                    } catch (e) {
+                                        console.error("Error parsing JSON:", xhr.responseText);
                                         Swal.fire({
                                             title: 'Error',
-                                            text: response.message,
+                                            text: 'Ha ocurrido un error inesperado',
                                             icon: 'error',
                                             confirmButtonText: 'OK'
                                         });
@@ -363,20 +355,30 @@ $result = $conn->query($sql);
                             var xhr = new XMLHttpRequest();
                             xhr.onreadystatechange = function() {
                                 if (xhr.readyState == 4 && xhr.status == 200) {
-                                    var response = JSON.parse(xhr.responseText);
-                                    if (response.status == 'success') {
-                                        Swal.fire({
-                                            title: 'Éxito',
-                                            text: response.message,
-                                            icon: 'success',
-                                            confirmButtonText: 'OK'
-                                        }).then(() => {
-                                            location.reload();
-                                        });
-                                    } else {
+                                    try {
+                                        var response = JSON.parse(xhr.responseText);
+                                        if (response.status == 'success') {
+                                            Swal.fire({
+                                                title: 'Éxito',
+                                                text: response.message,
+                                                icon: 'success',
+                                                confirmButtonText: 'OK'
+                                            }).then(() => {
+                                                location.reload();
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                title: 'Error',
+                                                text: response.message,
+                                                icon: 'error',
+                                                confirmButtonText: 'OK'
+                                            });
+                                        }
+                                    } catch (e) {
+                                        console.error("Error parsing JSON:", xhr.responseText);
                                         Swal.fire({
                                             title: 'Error',
-                                            text: response.message,
+                                            text: 'Ha ocurrido un error inesperado',
                                             icon: 'error',
                                             confirmButtonText: 'OK'
                                         });
@@ -464,22 +466,32 @@ $result = $conn->query($sql);
                         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                         xhr.onreadystatechange = function() {
                             if (xhr.readyState == 4 && xhr.status == 200) {
-                                var response = JSON.parse(xhr.responseText);
-                                if (response.status === "success") {
-                                    Swal.fire({
-                                        title: 'Éxito',
-                                        text: 'Estado actualizado correctamente. ' + response.message,
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            location.reload();
-                                        }
-                                    });
-                                } else {
+                                try {
+                                    var response = JSON.parse(xhr.responseText);
+                                    if (response.status === "success") {
+                                        Swal.fire({
+                                            title: 'Éxito',
+                                            text: 'Estado actualizado correctamente. ' + response.message,
+                                            icon: 'success',
+                                            confirmButtonText: 'OK'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                location.reload();
+                                            }
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: response.message,
+                                            icon: 'error',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    }
+                                } catch (e) {
+                                    console.error("Error parsing JSON:", xhr.responseText);
                                     Swal.fire({
                                         title: 'Error',
-                                        text: response.message,
+                                        text: 'Ha ocurrido un error inesperado',
                                         icon: 'error',
                                         confirmButtonText: 'OK'
                                     });
@@ -494,6 +506,5 @@ $result = $conn->query($sql);
             }
         </script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-</body>
-
+    </body>
 </html>
