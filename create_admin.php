@@ -30,15 +30,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "Usuario administrador creado con éxito. ID: $admin_id<br>";
                 echo "Rol de administrador asignado.<br>";
 
-                // Asignar todos los permisos al rol de administrador
+                // Asignar todos los permisos al usuario administrador
                 $get_permissions_sql = "SELECT id_permiso FROM permisos";
                 $permissions_result = $conn->query($get_permissions_sql);
                 
                 if ($permissions_result->num_rows > 0) {
-                    // Primero, eliminar permisos existentes para el rol de administrador
+                    // Primero, eliminar permisos existentes para el usuario administrador
                     $delete_existing_permissions_sql = "DELETE FROM rolesxpermiso WHERE id_usuario = ?";
                     $delete_existing_permissions_stmt = $conn->prepare($delete_existing_permissions_sql);
-                    $delete_existing_permissions_stmt->bind_param("i", $admin_role_id);
+                    $delete_existing_permissions_stmt->bind_param("i", $admin_id);
                     $delete_existing_permissions_stmt->execute();
 
                     // Ahora, insertar los nuevos permisos
@@ -47,11 +47,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     
                     while ($row = $permissions_result->fetch_assoc()) {
                         $permission_id = $row['id_permiso'];
-                        $insert_permissions_stmt->bind_param("ii", $admin_role_id, $permission_id);
+                        $insert_permissions_stmt->bind_param("ii", $admin_id, $permission_id);
                         $insert_permissions_stmt->execute();
                     }
                     
-                    echo "Todos los permisos asignados al rol de administrador.<br>";
+                    echo "Todos los permisos asignados al usuario administrador.<br>";
                 } else {
                     echo "No se encontraron permisos para asignar.<br>";
                 }
