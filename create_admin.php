@@ -1,6 +1,6 @@
 <?php
 // Incluye el archivo de conexión
-include '../includes/conexion.php';
+include './includes/conexion.php';
 
 // Verifica si el formulario ha sido enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
