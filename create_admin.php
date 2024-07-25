@@ -1,6 +1,6 @@
 <?php
 // Incluye el archivo de conexión
-include './includes/conexion.php';
+include '../includes/conexion.php';
 
 // Verifica si el formulario ha sido enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -42,16 +42,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $permissions_result = $conn->query($get_permissions_sql);
                 
                 if ($permissions_result->num_rows > 0) {
-                    $insert_permissions_sql = "INSERT INTO rolesxpermiso (id_rol, id_permiso) VALUES (?, ?)";
+                    $insert_permissions_sql = "INSERT INTO rolesxpermiso (id_usuario, id_permiso) VALUES (?, ?)";
                     $insert_permissions_stmt = $conn->prepare($insert_permissions_sql);
                     
                     while ($row = $permissions_result->fetch_assoc()) {
                         $permission_id = $row['id_permiso'];
-                        $insert_permissions_stmt->bind_param("ii", $admin_role_id, $permission_id);
+                        $insert_permissions_stmt->bind_param("ii", $admin_id, $permission_id);
                         $insert_permissions_stmt->execute();
                     }
                     
-                    echo "Todos los permisos asignados al rol de administrador.<br>";
+                    echo "Todos los permisos asignados al administrador.<br>";
                 } else {
                     echo "No se encontraron permisos para asignar.<br>";
                 }
