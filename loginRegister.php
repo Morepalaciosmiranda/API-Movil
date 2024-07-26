@@ -224,13 +224,10 @@
                                     case 'Usuario':
                                         redirectUrl = 'https://api-movil-tj84.onrender.com/index.php';
                                         break;
+                                        // Añade casos para otros roles aquí si es necesario
                                     default:
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: 'Rol desconocido. Por favor, póngase en contacto con el administrador.',
-                                        });
-                                        return;
+                                        redirectUrl = 'https://api-movil-tj84.onrender.com/index.php';
+                                        break;
                                 }
                                 Swal.fire({
                                     icon: 'success',
