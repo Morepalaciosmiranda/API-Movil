@@ -8,11 +8,7 @@ if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['id_usuario'])) 
     exit();
 }
 
-// Verificar si el usuario tiene el permiso para acceder a esta página
-if (!tienePermiso($_SESSION['id_usuario'], 'acceso_animacion')) {
-    header('Location: ./no_autorizado.php');
-    exit();
-}
+
 ?>
 
 <!DOCTYPE html>
