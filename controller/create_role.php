@@ -39,7 +39,7 @@ try {
     $newRoleId = $conn->insert_id;
 
     // Insertar los permisos para el nuevo rol
-    $insertPermissionSql = "INSERT INTO rolesxpermisos (id_rol, id_permiso) VALUES (?, ?)";
+    $insertPermissionSql = "INSERT INTO rolesxpermiso (id_rol, id_permiso) VALUES (?, ?)";
     $stmt = $conn->prepare($insertPermissionSql);
 
     foreach ($permissions as $permissionId) {
