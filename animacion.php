@@ -1,18 +1,20 @@
 <?php
 session_start();
+include_once '../includes/conexion.php';
+include_once '../includes/functions.php';
 
-if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
-
+if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['id_usuario'])) {
     header('Location: ../loginRegister.php');
     exit();
 }
 
-if ($_SESSION['rol'] !== 'Administrador') {
-
+// Verificar si el usuario tiene el permiso para acceder a esta página
+if (!tienePermiso($_SESSION['id_usuario'], 'acceso_animacion')) {
     header('Location: ./no_autorizado.php');
     exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
