@@ -1,16 +1,17 @@
 <?php
-include_once "../includes/conexion.php";
-include_once "../includes/functions.php";
-
 session_start();
 
-if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['id_usuario'])) {
+if (!isset($_SESSION['correo_electronico'])) {
     header("Location: ../loginRegister.php");
     exit();
 }
 
-// Verificar si el usuario tiene el permiso para acceder a esta página
-if (!tienePermiso($_SESSION['id_usuario'], 'ver_ventas')) {
+if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
+    header('Location: ../loginRegister.php');
+    exit();
+}
+
+if ($_SESSION['rol'] !== 'Administrador') {
     header('Location: ../no_autorizado.php');
     exit();
 }

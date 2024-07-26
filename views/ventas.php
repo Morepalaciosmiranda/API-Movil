@@ -1,16 +1,20 @@
 <?php
 include_once "../includes/conexion.php";
-include_once "../includes/functions.php";
+
 
 session_start();
 
-if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['id_usuario'])) {
+if (!isset($_SESSION['correo_electronico'])) {
     header("Location: ../loginRegister.php");
     exit();
 }
 
-// Verificar si el usuario tiene el permiso para acceder a esta página
-if (!tienePermiso($_SESSION['id_usuario'], 'ver_ventas')) {
+if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
+    header('Location: ../loginRegister.php');
+    exit();
+}
+
+if ($_SESSION['rol'] !== 'Administrador') {
     header('Location: ../no_autorizado.php');
     exit();
 }
@@ -62,6 +66,7 @@ $result_total = $stmt_total->get_result();
 $total_ventas = $result_total->fetch_assoc()['total'];
 $total_paginas = ceil($total_ventas / $items_por_pagina);
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -111,69 +116,69 @@ $total_paginas = ceil($total_ventas / $items_por_pagina);
                         <button type="submit">Filtrar</button>
                     </form>
                 </div>
-                <br>
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nombre Usuario</th>
-                                <th>Nombre Producto</th>
-                                <th># De Venta</th>
-                                <th>Fecha Venta</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ventasTableBody">
+                        <br>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre Usuario</th>
+                                        <th>Nombre Producto</th>
+                                        <th># De Venta</th>
+                                        <th>Fecha Venta</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ventasTableBody">
+                                    <?php
+                                    if ($resultado && $resultado->num_rows > 0) {
+                                        while ($fila = $resultado->fetch_assoc()) {
+                                            echo "<tr>";
+                                            echo "<td>" . htmlspecialchars($fila['nombre_usuario']) . "</td>";
+                                            echo "<td>" . htmlspecialchars($fila['nombre_producto']) . "</td>";
+                                            echo "<td>" . htmlspecialchars($fila['id_pedido']) . "</td>";
+                                            echo "<td>" . htmlspecialchars($fila['fecha_venta']) . "</td>";
+                                            echo "<td class='actions'>";
+                                            echo "<button class='details-btn' onclick='verDetallesVenta(" . htmlspecialchars($fila['id_venta']) . ")'><i class='fa fa-info-circle'></i></button>";
+                                            echo "</td>";
+                                            echo "</tr>";
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='5'>No hay ventas registradas</td></tr>";
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="pagination">
                             <?php
-                            if ($resultado && $resultado->num_rows > 0) {
-                                while ($fila = $resultado->fetch_assoc()) {
-                                    echo "<tr>";
-                                    echo "<td>" . htmlspecialchars($fila['nombre_usuario']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($fila['nombre_producto']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($fila['id_pedido']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($fila['fecha_venta']) . "</td>";
-                                    echo "<td class='actions'>";
-                                    echo "<button class='details-btn' onclick='verDetallesVenta(" . htmlspecialchars($fila['id_venta']) . ")'><i class='fa fa-info-circle'></i></button>";
-                                    echo "</td>";
-                                    echo "</tr>";
+                            if ($total_paginas > 0) {
+                                for ($i = 1; $i <= $total_paginas; $i++) {
+                                    if ($i == $pagina_actual) {
+                                        echo "<a href='ventas.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
+                                    } else {
+                                        echo "<a href='ventas.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
+                                    }
                                 }
-                            } else {
-                                echo "<tr><td colspan='5'>No hay ventas registradas</td></tr>";
                             }
                             ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pagination">
-                    <?php
-                    if ($total_paginas > 0) {
-                        for ($i = 1; $i <= $total_paginas; $i++) {
-                            if ($i == $pagina_actual) {
-                                echo "<a href='ventas.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
-                            } else {
-                                echo "<a href='ventas.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
-                            }
-                        }
-                    }
-                    ?>
-                </div>
-
-                <div id="modalDetallesVenta" class="modal">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2></h2>
-                            <button class="close-btn" onclick="cerrarModalDetallesVenta()">&times;</button>
                         </div>
-                        <div class="modal-body">
-                            <div id="detalles-venta"></div>
+
+                        <div id="modalDetallesVenta" class="modal">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h2></h2>
+                                    <button class="close-btn" onclick="cerrarModalDetallesVenta()">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="detalles-venta"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    </div>
     </div>
 
     <script>
