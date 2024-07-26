@@ -1,7 +1,7 @@
 <?php
 session_start();
-include_once '../includes/conexion.php';
-include_once '../includes/functions.php';
+include_once './includes/conexion.php';
+include_once './includes/functions.php';
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['id_usuario'])) {
     header('Location: ../loginRegister.php');
