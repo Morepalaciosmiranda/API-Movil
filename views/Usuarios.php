@@ -335,26 +335,36 @@ $result = $conn->query($sql);
                             var roleId = selectedRole.value;
                             var xhr = new XMLHttpRequest();
                             xhr.onreadystatechange = function() {
-                                if (xhr.readyState == 4 && xhr.status == 200) {
-                                    var response = JSON.parse(xhr.responseText);
-                                    if (response.status == 'success') {
-                                        Swal.fire({
-                                            title: 'Éxito',
-                                            text: response.message,
-                                            icon: 'success',
-                                            confirmButtonText: 'OK'
-                                        }).then(() => {
-                                            location.reload();
-                                        });
-                                    } else {
+                                if (xhr.readyState == 4) {
+                                    try {
+                                        var response = JSON.parse(xhr.responseText);
+                                        if (response.status === "success") {
+                                            Swal.fire({
+                                                title: 'Éxito',
+                                                text: response.message,
+                                                icon: 'success',
+                                                confirmButtonText: 'OK'
+                                            }).then(() => {
+                                                location.reload();
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                title: 'Error',
+                                                text: response.message,
+                                                icon: 'error',
+                                                confirmButtonText: 'OK'
+                                            });
+                                        }
+                                    } catch (e) {
+                                        console.error("Error parsing JSON:", xhr.responseText);
                                         Swal.fire({
                                             title: 'Error',
-                                            text: response.message,
+                                            text: 'Ocurrió un error inesperado. Por favor, intenta de nuevo.',
                                             icon: 'error',
                                             confirmButtonText: 'OK'
                                         });
                                     }
-                                    closeRolesModal();
+                                    closeCreateRoleModal();
                                 }
                             };
                             xhr.open("POST", "../controller/assign_role.php", true);
