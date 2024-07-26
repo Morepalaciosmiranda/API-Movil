@@ -348,12 +348,17 @@ $result = $conn->query($sql);
                                                 location.reload();
                                             });
                                         } else {
+                                            let errorMessage = response.message;
+                                            if (response.details) {
+                                                errorMessage += "\n\nDetalles: " + JSON.stringify(response.details);
+                                            }
                                             Swal.fire({
                                                 title: 'Error',
-                                                text: response.message,
+                                                text: errorMessage,
                                                 icon: 'error',
                                                 confirmButtonText: 'OK'
                                             });
+                                            console.error("Error details:", response);
                                         }
                                     } catch (e) {
                                         console.error("Error parsing JSON:", xhr.responseText);

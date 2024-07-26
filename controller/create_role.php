@@ -4,8 +4,12 @@ include '../includes/conexion.php';
 
 header('Content-Type: application/json');
 
-function sendJsonResponse($status, $message) {
-    echo json_encode(['status' => $status, 'message' => $message]);
+function sendJsonResponse($status, $message, $details = null) {
+    $response = ['status' => $status, 'message' => $message];
+    if ($details !== null) {
+        $response['details'] = $details;
+    }
+    echo json_encode($response);
     exit;
 }
 
@@ -54,5 +58,8 @@ try {
 
 } catch (Exception $e) {
     $conn->rollback();
-    sendJsonResponse('error', $e->getMessage());
+    sendJsonResponse('error', $e->getMessage(), [
+        'sql_error' => $conn->error,
+        'sql_errno' => $conn->errno
+    ]);
 }
