@@ -226,7 +226,7 @@
                                         break;
                                         // Añade casos para otros roles aquí si es necesario
                                     default:
-                                        redirectUrl = 'https://api-movil-tj84.onrender.com/index.php';
+                                        redirectUrl = 'https://api-movil-tj84.onrender.com/animacion.php';
                                         break;
                                 }
                                 Swal.fire({
