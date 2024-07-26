@@ -106,6 +106,7 @@ $result = $conn->query($sql);
                     </div>
                 </div>
                 <div class="content">
+                    <button id="createRoleBtn" class="btn btn-primary"><i class="fa fa-plus"></i> Crear Rol</button>
                     <table>
                         <thead>
                             <tr>
@@ -199,7 +200,7 @@ $result = $conn->query($sql);
             </div>
         </div>
 
-        
+
         <div id="rolesModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeRolesModal()">&times;</span>
@@ -244,7 +245,36 @@ $result = $conn->query($sql);
         </div>
 
 
+        <div id="createRoleModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeCreateRoleModal()">&times;</span>
+                <h2>Crear Nuevo Rol</h2>
+                <form id="createRoleForm">
+                    <label for="roleName">Nombre del Rol:</label>
+                    <input type="text" id="roleName" name="roleName" required>
 
+                    <h3>Asignar Permisos:</h3>
+                    <div id="permissionsList">
+                        <?php
+                        $sql = "SELECT * FROM permisos";
+                        $result = $conn->query($sql);
+
+                        if ($result && $result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<div class='checkbox-container'>";
+                                echo "<input type='checkbox' id='permiso_" . $row["id_permiso"] . "' name='permissions[]' value='" . $row["id_permiso"] . "'>";
+                                echo "<label for='permiso_" . $row["id_permiso"] . "'>" . $row["nombre_permiso"] . "</label>";
+                                echo "</div>";
+                            }
+                        } else {
+                            echo "<p>No se encontraron permisos.</p>";
+                        }
+                        ?>
+                    </div>
+                    <button type="submit" class='btn btn-primary'><i class='fa fa-check'></i> Crear Rol</button>
+                </form>
+            </div>
+        </div>
 
         <script>
             var modal = document.getElementById('permissionsModal');
@@ -491,6 +521,70 @@ $result = $conn->query($sql);
                     }
                 });
                 return false;
+            }
+
+
+            var createRoleBtn = document.getElementById('createRoleBtn');
+            var createRoleModal = document.getElementById('createRoleModal');
+
+            createRoleBtn.onclick = function() {
+                createRoleModal.style.display = "block";
+            }
+
+            function closeCreateRoleModal() {
+                createRoleModal.style.display = "none";
+            }
+
+            document.getElementById('createRoleForm').onsubmit = function(e) {
+                e.preventDefault();
+                var roleName = document.getElementById('roleName').value;
+                var permissions = Array.from(document.querySelectorAll('input[name="permissions[]"]:checked')).map(el => el.value);
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: '¿Quieres crear este nuevo rol con los permisos seleccionados?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, crear rol',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", "../controller/create_role.php", true);
+                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == 4 && xhr.status == 200) {
+                                var response = JSON.parse(xhr.responseText);
+                                if (response.status === "success") {
+                                    Swal.fire({
+                                        title: 'Éxito',
+                                        text: response.message,
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: response.message,
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                }
+                                closeCreateRoleModal();
+                            }
+                        };
+                        xhr.send("roleName=" + encodeURIComponent(roleName) + "&permissions=" + JSON.stringify(permissions));
+                    }
+                });
+            }
+
+            // Cerrar la modal si se hace clic fuera de ella
+            window.onclick = function(event) {
+                if (event.target == createRoleModal) {
+                    closeCreateRoleModal();
+                }
             }
         </script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
