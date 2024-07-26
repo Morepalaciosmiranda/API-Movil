@@ -207,7 +207,7 @@ $result = $conn->query($sql);
                 <h2>Roles existentes</h2>
                 <ul id="rolesList">
                     <?php
-                    $sql = "SELECT * FROM roles WHERE estado_rol = 'Activo'";
+                    $sql = "SELECT * FROM roles";
                     $result = $conn->query($sql);
 
                     if ($result && $result->num_rows > 0) {
@@ -215,11 +215,10 @@ $result = $conn->query($sql);
                             echo "<li class='checkbox-container'>";
                             echo "<input type='radio' name='rol' id='rol_" . $row["id_rol"] . "' value='" . $row["id_rol"] . "' class='role-radio'>";
                             echo "<label for='rol_" . $row["id_rol"] . "' class='checkbox-label'>" . $row["nombre_rol"] . "</label>";
-                            echo "<button class='delete-role-btn' onclick='deleteRole(" . $row["id_rol"] . ")'><i class='fa fa-trash'></i></button>";
                             echo "</li>";
                         }
                     } else {
-                        echo "<li>No se encontraron roles activos.</li>";
+                        echo "<li>No se encontraron roles.</li>";
                     }
                     ?>
                 </ul>
@@ -601,47 +600,6 @@ $result = $conn->query($sql);
                 if (event.target == createRoleModal) {
                     closeCreateRoleModal();
                 }
-            }
-
-
-            function deleteRole(roleId) {
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: 'Esta acción desactivará el rol. ¿Deseas continuar?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, desactivar rol',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var xhr = new XMLHttpRequest();
-                        xhr.onreadystatechange = function() {
-                            if (xhr.readyState == 4) {
-                                var response = JSON.parse(xhr.responseText);
-                                if (response.status === "success") {
-                                    Swal.fire({
-                                        title: 'Éxito',
-                                        text: response.message,
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    }).then(() => {
-                                        location.reload();
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: 'Error',
-                                        text: response.message,
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
-                                    });
-                                }
-                            }
-                        };
-                        xhr.open("POST", "../controller/delete_role.php", true);
-                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                        xhr.send("role_id=" + roleId);
-                    }
-                });
             }
         </script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>

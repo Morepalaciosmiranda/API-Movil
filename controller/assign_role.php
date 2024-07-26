@@ -1,21 +1,17 @@
 <?php
 session_start();
 include '../includes/conexion.php';
-
 $response = array('status' => '', 'message' => '');
-
 if (isset($_POST['user_id']) && isset($_POST['new_role'])) {
     $user_id = $_POST['user_id'];
     $new_role_or_permissions = $_POST['new_role'];
-
     if (is_numeric($new_role_or_permissions)) {
-        $check_role_sql = "SELECT COUNT(*) as count FROM roles WHERE id_rol = ? AND estado_rol = 'Activo'";
+        $check_role_sql = "SELECT COUNT(*) as count FROM roles WHERE id_rol = ?";
         $check_role_stmt = $conn->prepare($check_role_sql);
         $check_role_stmt->bind_param("i", $new_role_or_permissions);
         $check_role_stmt->execute();
         $role_result = $check_role_stmt->get_result();
         $role_count = $role_result->fetch_assoc()['count'];
-        
         if ($role_count > 0) {
             $update_sql = "UPDATE usuarios SET id_rol = ? WHERE id_usuario = ?";
             $update_stmt = $conn->prepare($update_sql);
@@ -29,7 +25,7 @@ if (isset($_POST['user_id']) && isset($_POST['new_role'])) {
             }
         } else {
             $response['status'] = 'error';
-            $response['message'] = 'El rol seleccionado no está activo o no existe.';
+            $response['message'] = 'El ID del rol no existe en la tabla roles.';
         }
     } else {
         if (isset($_POST['permissions']) && is_array($_POST['permissions'])) {
@@ -38,7 +34,6 @@ if (isset($_POST['user_id']) && isset($_POST['new_role'])) {
             $delete_stmt = $conn->prepare($delete_sql);
             $delete_stmt->bind_param("i", $user_id);
             $delete_stmt->execute();
-            
             $insert_sql = "INSERT INTO rolesxpermiso (id_usuario, id_permiso) VALUES (?, ?)";
             $insert_stmt = $conn->prepare($insert_sql);
             foreach ($permissions as $permission) {
@@ -56,6 +51,5 @@ if (isset($_POST['user_id']) && isset($_POST['new_role'])) {
     $response['status'] = 'error';
     $response['message'] = 'Faltan parámetros obligatorios.';
 }
-
 echo json_encode($response);
 ?>
