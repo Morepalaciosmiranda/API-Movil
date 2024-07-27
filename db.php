@@ -1,39 +1,26 @@
 <?php
-// Incluir el archivo de conexión
-require_once './includes/conexion.php';
+// Incluir el archivo de conexión para usar la configuración existente
+include './includes/conexion.php';
 
-// Función para ejecutar una consulta y manejar errores
-function executeQuery($conn, $sql) {
-    if ($conn->query($sql) === TRUE) {
-        echo "Operación exitosa: " . $sql . "<br>";
-    } else {
-        echo "Error al ejecutar la consulta: " . $conn->error . "<br>";
-    }
-}
+// SQL para crear la tabla productos_insumos
+$sql = "
+CREATE TABLE IF NOT EXISTS productos_insumos (
+  id_producto int(11) NOT NULL,
+  id_insumo int(11) NOT NULL,
+  cantidad_insumo double DEFAULT NULL,
+  PRIMARY KEY (id_producto, id_insumo),
+  FOREIGN KEY (id_producto) REFERENCES productos(id_producto),
+  FOREIGN KEY (id_insumo) REFERENCES insumos(id_insumo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+";
 
-// Verificar si la columna ya permite NULL
-$checkNullable = "SELECT IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS 
-                  WHERE TABLE_SCHEMA = DATABASE() 
-                  AND TABLE_NAME = 'rolesxpermiso' 
-                  AND COLUMN_NAME = 'id_usuario'";
-
-$result = $conn->query($checkNullable);
-
-if ($result && $result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    if ($row['IS_NULLABLE'] === 'NO') {
-        // La columna no permite NULL, procedemos a modificarla
-        $alterTable = "ALTER TABLE rolesxpermiso MODIFY COLUMN id_usuario INT NULL";
-        executeQuery($conn, $alterTable);
-    } else {
-        echo "La columna id_usuario ya permite valores NULL.<br>";
-    }
+// Ejecutar la consulta para crear la tabla
+if ($conn->query($sql) === TRUE) {
+    echo "Tabla productos_insumos creada exitosamente.";
 } else {
-    echo "No se pudo verificar el estado de la columna id_usuario.<br>";
+    echo "Error al crear la tabla: " . $conn->error;
 }
 
 // Cerrar la conexión
 $conn->close();
-
-echo "Proceso completado.";
 ?>
