@@ -9,6 +9,22 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+function obtenerProductos() {
+    global $conn;
+    $productos = [];
+
+    $sql = "SELECT * FROM productos";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $productos[] = $row;
+        }
+    }
+
+    return $productos;
+}
+
 function procesarProducto() {
     global $conn;
     $respuesta = ['exito' => false, 'mensaje' => ''];

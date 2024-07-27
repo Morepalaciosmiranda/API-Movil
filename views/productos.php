@@ -15,6 +15,8 @@ if ($_SESSION['rol'] === 'Usuario') {
 include_once('../controller/productos_controller.php');
 include_once('../controller/insumos_controller.php');
 
+// Asegúrate de que obtenerProductos() esté definida en tu controlador
+$productos = obtenerProductos(); // Esta función debe devolver un array de productos
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
@@ -52,7 +54,7 @@ $insumos = obtenerInsumos();
                 <div class="title-container">
                     <h1>Productos</h1>
                     <div class="search-bar">
-                        <input type="text" placeholder="Buscar..." />
+                        <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarProducto()" />
                         <button type="button"><i class="fa fa-search"></i></button>
                     </div>
                 </div>
@@ -85,17 +87,21 @@ $insumos = obtenerInsumos();
                             </thead>
                             <tbody id="productosTableBody">
                                 <?php
-                                foreach ($productos_paginados as $producto) {
-                                    echo "<tr>";
-                                    echo "<td>" . $producto['id_producto'] . "</td>";
-                                    echo "<td>" . $producto['nombre_producto'] . "</td>";
-                                    echo "<td>" . $producto['descripcion_producto'] . "</td>";
-                                    echo "<td>" . $producto['valor_unitario'] . "</td>";
-                                    echo '<td class="actions">';
-                                    echo '<button class="edit-btn" onclick="abrirModalEditar(\'' . $producto['id_producto'] . '\', \'' . $producto['nombre_producto'] . '\', \'' . $producto['descripcion_producto'] . '\', \'' . $producto['valor_unitario'] . '\')"><i class="fa fa-edit"></i></button>';
-                                    echo '<button class="delete-btn" onclick="confirmarEliminacion(' . $producto['id_producto'] . ')"><i class="fa fa-trash"></i></button>';
-                                    echo '</td>';
-                                    echo "</tr>";
+                                if (count($productos_paginados) > 0) {
+                                    foreach ($productos_paginados as $producto) {
+                                        echo "<tr>";
+                                        echo "<td>" . htmlspecialchars($producto['id_producto']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($producto['nombre_producto']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($producto['descripcion_producto']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($producto['valor_unitario']) . "</td>";
+                                        echo '<td class="actions">';
+                                        echo '<button class="edit-btn" onclick="abrirModalEditar(\'' . htmlspecialchars($producto['id_producto']) . '\', \'' . htmlspecialchars($producto['nombre_producto']) . '\', \'' . htmlspecialchars($producto['descripcion_producto']) . '\', \'' . htmlspecialchars($producto['valor_unitario']) . '\')"><i class="fa fa-edit"></i></button>';
+                                        echo '<button class="delete-btn" onclick="confirmarEliminacion(' . htmlspecialchars($producto['id_producto']) . ')"><i class="fa fa-trash"></i></button>';
+                                        echo '</td>';
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='5'>No se encontraron productos</td></tr>";
                                 }
                                 ?>
                             </tbody>
