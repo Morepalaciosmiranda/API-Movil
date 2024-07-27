@@ -8,6 +8,51 @@ function send_json_response($success, $message = '') {
     exit;
 }
 
+
+function actualizarInsumosPorPedido($pedido_id) {
+    global $conn;
+
+    // Obtener los productos y sus cantidades en el pedido
+    $sql_productos_pedido = "SELECT id_producto, cantidad FROM detalle_pedido WHERE id_pedido = ?";
+    $stmt_productos_pedido = $conn->prepare($sql_productos_pedido);
+    $stmt_productos_pedido->bind_param('i', $pedido_id);
+    $stmt_productos_pedido->execute();
+    $result_productos_pedido = $stmt_productos_pedido->get_result();
+
+    while ($row_producto = $result_productos_pedido->fetch_assoc()) {
+        $id_producto = $row_producto['id_producto'];
+        $cantidad_producto = $row_producto['cantidad'];
+
+        // Obtener los insumos y cantidades requeridos para este producto desde la tabla productos_insumos
+        $sql_insumos_producto = "SELECT id_insumo, cantidad_insumo FROM productos_insumos WHERE id_producto = ?";
+        $stmt_insumos_producto = $conn->prepare($sql_insumos_producto);
+        $stmt_insumos_producto->bind_param('i', $id_producto);
+        $stmt_insumos_producto->execute();
+        $result_insumos_producto = $stmt_insumos_producto->get_result();
+
+        while ($row_insumo = $result_insumos_producto->fetch_assoc()) {
+            $insumo_id = $row_insumo['id_insumo'];
+            $cantidad_insumo = $row_insumo['cantidad_insumo'] * $cantidad_producto;
+
+            // Actualizar la cantidad de insumo en el inventario
+            $sql_actualizar_insumo = "UPDATE insumos SET cantidad = cantidad - ? WHERE id_insumo = ?";
+            $stmt_actualizar_insumo = $conn->prepare($sql_actualizar_insumo);
+            $stmt_actualizar_insumo->bind_param('ii', $cantidad_insumo, $insumo_id);
+            $stmt_actualizar_insumo->execute();
+        }
+
+        $stmt_insumos_producto->close();
+    }
+
+    $stmt_productos_pedido->close();
+}
+
+// Ejemplo de uso al cambiar el estado del pedido a "entregado"
+if ($estado_pedido === 'Entregado') {
+    actualizarInsumosPorPedido($pedido_id);
+}
+
+
 try {
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombre_cliente']) && isset($_POST['calle'])  && isset($_POST['interior']) && isset($_POST['barrio_cliente']) && isset($_POST['telefono_cliente']) && isset($_POST['productos'])) {
         
