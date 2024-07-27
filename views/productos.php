@@ -199,7 +199,7 @@ $insumos = obtenerInsumos();
                 document.getElementById("edit-nombre").value = nombre;
                 document.getElementById("edit-descripcion").value = descripcion;
                 document.getElementById("edit-precio").value = precio;
-                document.getElementById("edit-imagen").value = ""; 
+                document.getElementById("edit-imagen").value = "";
                 modalEditar.style.display = "block";
             }
 
@@ -215,9 +215,6 @@ $insumos = obtenerInsumos();
                     cerrarModalEditar();
                 }
             }
-
-
-            var insumoCount = 1;
 
             function agregarInsumo() {
                 insumoCount++;
@@ -261,44 +258,42 @@ $insumos = obtenerInsumos();
                     cancelButtonText: 'Cancelar'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                
-                        var xhr = new XMLHttpRequest();
-                        xhr.onreadystatechange = function() {
-                            if (xhr.readyState === XMLHttpRequest.DONE) {
-                                if (xhr.status === 200) {
-                             
+                        fetch(`../controller/productos_controller.php?eliminar=${id}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.exito) {
                                     Swal.fire({
                                         title: 'Eliminado!',
-                                        text: 'El producto ha sido eliminado.',
+                                        text: data.mensaje,
                                         icon: 'success',
                                         confirmButtonText: 'OK'
                                     }).then(() => {
-                                    
                                         window.location.reload();
                                     });
                                 } else {
-                     o
                                     Swal.fire({
                                         title: 'Error',
-                                        text: 'Hubo un error al eliminar el producto.',
+                                        text: data.mensaje,
                                         icon: 'error',
                                         confirmButtonText: 'OK'
                                     });
                                 }
-                            }
-                        };
-
-                        xhr.open('GET', '../controller/productos_controller.php?eliminar=' + id, true);
-                        xhr.send();
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Hubo un error al procesar la solicitud.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            });
                     }
                 });
             }
 
-
-
-
             document.getElementById('formAgregarProducto').addEventListener('submit', function(event) {
-                event.preventDefault(); 
+                event.preventDefault();
 
                 Swal.fire({
                     title: '¿Estás seguro de agregar este producto?',
@@ -311,63 +306,48 @@ $insumos = obtenerInsumos();
                     cancelButtonText: 'Cancelar'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                
                         var formData = new FormData(event.target);
-                        var xhr = new XMLHttpRequest();
+                        formData.append('accion', 'agregar');
 
-                        xhr.onreadystatechange = function() {
-                            if (xhr.readyState === XMLHttpRequest.DONE) {
-                                if (xhr.status === 200) {
-                                    var respuesta = xhr.responseText;
-                                    if (respuesta.includes("No hay suficientes insumos disponibles")) {
-                              
-                                        Swal.fire({
-                                            title: 'Error',
-                                            text: 'No hay suficientes insumos disponibles para agregar el producto.',
-                                            icon: 'error',
-                                            confirmButtonText: 'OK'
-                                        });
-                                    } else if (respuesta.includes("Producto agregado correctamente")) {
-                              
-                                        Swal.fire({
-                                            title: 'Éxito',
-                                            text: 'Producto agregado correctamente',
-                                            icon: 'success',
-                                            confirmButtonText: 'OK'
-                                        }).then(() => {
-                                     
-                                            window.location.reload(); 
-                                        });
-                                    } else {
-                                        Swal.fire({
-                                            title: 'Error',
-                                            text: 'Hubo un error al agregar el producto.',
-                                            icon: 'error',
-                                            confirmButtonText: 'OK'
-                                        });
-                                    }
+                        fetch('../controller/productos_controller.php', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.exito) {
+                                    Swal.fire({
+                                        title: 'Éxito',
+                                        text: data.mensaje,
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then(() => {
+                                        window.location.reload();
+                                    });
                                 } else {
                                     Swal.fire({
                                         title: 'Error',
-                                        text: 'Hubo un error al agregar el producto.',
+                                        text: data.mensaje,
                                         icon: 'error',
                                         confirmButtonText: 'OK'
                                     });
                                 }
-                            }
-                        };
-
-                        xhr.open('POST', event.target.action, true);
-                        xhr.send(formData);
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Hubo un error al procesar la solicitud.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            });
                     }
                 });
             });
 
-
-
-
             document.getElementById('formEditarProducto').addEventListener('submit', function(event) {
-                event.preventDefault(); 
+                event.preventDefault();
 
                 Swal.fire({
                     title: '¿Confirmar edición?',
@@ -380,52 +360,55 @@ $insumos = obtenerInsumos();
                     cancelButtonText: 'Cancelar'
                 }).then((result) => {
                     if (result.isConfirmed) {
-              
                         var formData = new FormData(event.target);
-                        var xhr = new XMLHttpRequest();
+                        formData.append('accion', 'editar');
 
-                        xhr.onreadystatechange = function() {
-                            if (xhr.readyState === XMLHttpRequest.DONE) {
-                                if (xhr.status === 200) {
-                               
+                        fetch('../controller/productos_controller.php', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.exito) {
                                     Swal.fire({
                                         title: 'Éxito',
-                                        text: 'Producto editado correctamente',
+                                        text: data.mensaje,
                                         icon: 'success',
                                         confirmButtonText: 'OK'
                                     }).then(() => {
-                                    
-                                        window.location.reload(); 
+                                        window.location.reload();
                                     });
                                 } else {
-                           
                                     Swal.fire({
                                         title: 'Error',
-                                        text: 'Hubo un error al editar el producto.',
+                                        text: data.mensaje,
                                         icon: 'error',
                                         confirmButtonText: 'OK'
                                     });
                                 }
-                            }
-                        };
-
-                        xhr.open('POST', event.target.action, true);
-                        xhr.send(formData);
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Hubo un error al procesar la solicitud.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            });
                     }
                 });
             });
 
             function buscarProducto() {
-                // Declare variables
                 var input, filter, table, tr, td, i, txtValue;
                 input = document.getElementById("search");
                 filter = input.value.toUpperCase();
                 table = document.getElementById("productosTableBody");
                 tr = table.getElementsByTagName("tr");
 
-    
                 for (i = 0; i < tr.length; i++) {
-                    td = tr[i].getElementsByTagName("td")[1]; 
+                    td = tr[i].getElementsByTagName("td")[1];
                     if (td) {
                         txtValue = td.textContent || td.innerText;
                         if (txtValue.toUpperCase().indexOf(filter) > -1) {
