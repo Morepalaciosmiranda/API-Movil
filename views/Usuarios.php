@@ -68,7 +68,6 @@ $result = $conn->query($sql);
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="./css/usuarios11.css">
@@ -79,7 +78,6 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 </head>
-
 <body>
     <div class="container">
         <?php include 'sidebar.php'; ?>
@@ -120,8 +118,6 @@ $result = $conn->query($sql);
                         </thead>
                         <tbody>
                             <?php
-                            include '../includes/conexion.php';
-
                             $sql = "SELECT * FROM usuarios";
                             $result = $conn->query($sql);
 
@@ -136,17 +132,16 @@ $result = $conn->query($sql);
                                     echo "<td>";
                                     echo "<div class='actions'>";
                                     echo "<button class='btn state-button action-btn' data-user-id='" . $row["id_usuario"] . "' data-current-state='" . $row["estado_usuario"] . "' onclick='openStateModal(" . $row["id_usuario"] . ", \"" . $row["estado_usuario"] . "\")'><i class='fa fa-edit'></i></button>";
+                                    
+                                    // Mostrar el botón de asignar rol para todos los usuarios
+                                    echo "<form class='assign-role-form' method='post' action='../controller/assign_role.php'>";
+                                    echo "<input type='hidden' name='user_id' value='" . $row["id_usuario"] . "'>";
+                                    echo "<button class='btn assign-role-button action-btn' data-user-id='" . $row["id_usuario"] . "'><i class='fa fa-user-plus'></i></button>";
+                                    echo "</form>";
+                                    
+                                    // Mostrar el botón de permisos solo para usuarios con id_rol 1
                                     if ($row["id_rol"] == 1) {
-                                        echo "<form class='assign-role-form' method='post' action='../controller/assign_role.php'>";
-                                        echo "<input type='hidden' name='user_id' value='" . $row["id_usuario"] . "'>";
-                                        echo "<button class='btn assign-role-button action-btn' data-user-id='" . $row["id_usuario"] . "'><i class='fa fa-user-plus'></i></button>";
-                                        echo "</form>";
                                         echo "<button class='btn permission-button action-btn' data-user-id='" . $row["id_usuario"] . "' onclick='openPermissionsModal(" . $row["id_usuario"] . ")'><i class='fa fa-lock'></i></button>";
-                                    } elseif ($row["id_rol"] == 2) {
-                                        echo "<form class='assign-role-form' method='post' action='../controller/assign_role.php'>";
-                                        echo "<input type='hidden' name='user_id' value='" . $row["id_usuario"] . "'>";
-                                        echo "<button class='btn assign-role-button action-btn' data-user-id='" . $row["id_usuario"] . "'><i class='fa fa-user-plus'></i></button>";
-                                        echo "</form>";
                                     }
                                     echo "</div>";
                                     echo "</td>";
@@ -159,7 +154,6 @@ $result = $conn->query($sql);
                         </tbody>
                     </table>
                     <?php
-
                     $sql = "SELECT COUNT(id_usuario) AS total FROM usuarios";
                     $result = $conn->query($sql);
                     $row = $result->fetch_assoc();
@@ -199,7 +193,6 @@ $result = $conn->query($sql);
                 <button id="confirmPermissionsBtn" class='btn btn-primary'><i class='fa fa-check'></i> Confirmar Permisos</button>
             </div>
         </div>
-
 
         <div id="rolesModal" class="modal">
             <div class="modal-content">
@@ -244,7 +237,6 @@ $result = $conn->query($sql);
             </div>
         </div>
 
-
         <div id="createRoleModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeCreateRoleModal()">&times;</span>
@@ -276,6 +268,7 @@ $result = $conn->query($sql);
             </div>
         </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script>
             var modal = document.getElementById('permissionsModal');
             var rolesModal = document.getElementById('rolesModal');
@@ -301,7 +294,6 @@ $result = $conn->query($sql);
                 };
             });
 
-            // Asignar eventos para cerrar los modales
             Array.from(spans).forEach(function(span) {
                 span.onclick = function() {
                     closePermissionsModal();
@@ -369,7 +361,7 @@ $result = $conn->query($sql);
                                             confirmButtonText: 'OK'
                                         });
                                     }
-                                    closeCreateRoleModal();
+                                    closeRolesModal();
                                 }
                             };
                             xhr.open("POST", "../controller/assign_role.php", true);
@@ -538,7 +530,6 @@ $result = $conn->query($sql);
                 return false;
             }
 
-
             var createRoleBtn = document.getElementById('createRoleBtn');
             var createRoleModal = document.getElementById('createRoleModal');
 
@@ -602,7 +593,6 @@ $result = $conn->query($sql);
                 }
             }
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    </div>
 </body>
-
 </html>
