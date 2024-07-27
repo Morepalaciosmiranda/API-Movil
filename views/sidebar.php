@@ -1,11 +1,13 @@
 <?php
 $user_id = $_SESSION['id_usuario'];
-
 include '../includes/conexion.php';
 
 $permissions = array();
-
-$sql = "SELECT id_permiso FROM rolesxpermiso WHERE id_usuario = ?";
+$sql = "SELECT p.id_permiso 
+        FROM permisos p 
+        INNER JOIN rolesxpermiso rp ON p.id_permiso = rp.id_permiso 
+        INNER JOIN roles r ON rp.id_rol = r.id_rol 
+        WHERE r.id_rol = (SELECT id_rol FROM usuarios WHERE id_usuario = ?)";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -27,9 +29,9 @@ $modules = array(
     9 => array('id' => '9', 'name' => 'Productos', 'icon' => 'fas fa-box-open', 'link' => './productos.php'),
 );
 ?>
+
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -37,7 +39,6 @@ $modules = array(
     <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/index6.css">
 </head>
-
 <body>
     <div class="overlay" id="overlay">
         <img src="../img/hamburguesa-cara-aterradora-otro-rasgo-monstruo-ilustracion-vectorial_648963-489-Photoroom.png" alt="Animación">
@@ -79,5 +80,4 @@ $modules = array(
         </script>
     </div>
 </body>
-
 </html>
