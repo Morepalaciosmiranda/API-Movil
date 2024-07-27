@@ -48,6 +48,13 @@ function procesarProducto() {
         }
 
         $upload_dir = '../uploads/';
+        
+        // Verificar y crear el directorio si no existe
+        if (!is_dir($upload_dir)) {
+            if (!mkdir($upload_dir, 0755, true)) {
+                throw new Exception("No se pudo crear el directorio de uploads.");
+            }
+        }
         if (!is_writable($upload_dir)) {
             throw new Exception("El directorio de uploads no tiene permisos de escritura");
         }
@@ -123,6 +130,16 @@ function editarProducto() {
             $imagen_nombre = uniqid('producto_') . '_' . basename($imagen['name']);
             $upload_dir = '../uploads/';
             $imagen_destino = $upload_dir . $imagen_nombre;
+
+            // Verificar y crear el directorio si no existe
+            if (!is_dir($upload_dir)) {
+                if (!mkdir($upload_dir, 0755, true)) {
+                    throw new Exception("No se pudo crear el directorio de uploads.");
+                }
+            }
+            if (!is_writable($upload_dir)) {
+                throw new Exception("El directorio de uploads no tiene permisos de escritura");
+            }
 
             if (!move_uploaded_file($imagen_tmp_name, $imagen_destino)) {
                 throw new Exception("Error al mover la imagen al directorio de destino.");
@@ -204,33 +221,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo json_encode($resultado);
                 break;
             default:
-                echo json_encode(['exito' => false, 'mensaje' => 'Acción no reconocida']);
+                echo json_encode(['exito' => false, 'mensaje' => 'Acción no válida']);
+                break;
         }
-    } else {
-        echo json_encode(['exito' => false, 'mensaje' => 'No se especificó ninguna acción']);
     }
-    exit();
-}
 
-if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['eliminar'])) {
-    $resultado = eliminarProducto($_GET['eliminar']);
-    echo json_encode($resultado);
-    exit();
-}
-
-$consulta_productos = "SELECT * FROM productos";
-$resultado_productos = $conn->query($consulta_productos);
-
-if ($resultado_productos === false) {
-    die("Error en la consulta de productos: " . $conn->error);
-}
-
-if ($resultado_productos->num_rows > 0) {
-    $productos = array();
-    while ($row = $resultado_productos->fetch_assoc()) {
-        $productos[] = $row;
+    if (isset($_POST['eliminar_id'])) {
+        $id_producto = intval($_POST['eliminar_id']);
+        $resultado = eliminarProducto($id_producto);
+        echo json_encode($resultado);
     }
-} else {
-    $productos = array();
 }
+
+$conn->close();
 ?>
