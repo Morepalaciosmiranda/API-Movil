@@ -1,17 +1,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['correo_electronico'])) {
-    header("Location: ../loginRegister.php");
-    exit();
-}
-
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
     header('Location: ../loginRegister.php');
     exit();
 }
 
-if ($_SESSION['rol'] !== 'Administrador') {
+// Excluir específicamente el rol "Usuario"
+if ($_SESSION['rol'] === 'Usuario') {
     header('Location: ../no_autorizado.php');
     exit();
 }
