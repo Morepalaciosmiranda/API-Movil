@@ -1,24 +1,55 @@
 <?php
-// Incluir el archivo de conexión para usar la configuración existente
 include './includes/conexion.php';
 
-// SQL para crear la tabla productos_insumos
-$sql = "
-CREATE TABLE IF NOT EXISTS productos_insumos (
-  id_producto int(11) NOT NULL,
-  id_insumo int(11) NOT NULL,
-  cantidad_insumo double DEFAULT NULL,
-  PRIMARY KEY (id_producto, id_insumo),
-  FOREIGN KEY (id_producto) REFERENCES productos(id_producto),
-  FOREIGN KEY (id_insumo) REFERENCES insumos(id_insumo)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-";
+// Función para ejecutar una consulta y manejar errores
+function ejecutarConsulta($conn, $sql) {
+    if ($conn->query($sql) === TRUE) {
+        echo "Operación exitosa: $sql<br>";
+    } else {
+        echo "Error en la operación: " . $conn->error . "<br>";
+    }
+}
 
-// Ejecutar la consulta para crear la tabla
-if ($conn->query($sql) === TRUE) {
-    echo "Tabla productos_insumos creada exitosamente.";
-} else {
-    echo "Error al crear la tabla: " . $conn->error;
+// Iniciar transacción
+$conn->begin_transaction();
+
+try {
+    // 1. Crear una tabla temporal con la nueva estructura
+    $sql_crear_temp = "CREATE TABLE productos_temp (
+        id_producto INT AUTO_INCREMENT PRIMARY KEY,
+        nombre_producto VARCHAR(255) NOT NULL,
+        foto MEDIUMBLOB,
+        foto_tipo VARCHAR(255),
+        descripcion_producto TEXT,
+        valor_unitario DECIMAL(10, 2) NOT NULL
+    )";
+    ejecutarConsulta($conn, $sql_crear_temp);
+
+    // 2. Copiar los datos existentes a la tabla temporal
+    $sql_copiar_datos = "INSERT INTO productos_temp (id_producto, nombre_producto, descripcion_producto, valor_unitario)
+                         SELECT id_producto, nombre_producto, descripcion_producto, valor_unitario FROM productos";
+    ejecutarConsulta($conn, $sql_copiar_datos);
+
+    // 3. Renombrar la tabla original
+    $sql_renombrar_original = "RENAME TABLE productos TO productos_old";
+    ejecutarConsulta($conn, $sql_renombrar_original);
+
+    // 4. Renombrar la tabla temporal a productos
+    $sql_renombrar_temp = "RENAME TABLE productos_temp TO productos";
+    ejecutarConsulta($conn, $sql_renombrar_temp);
+
+    // 5. Eliminar la tabla antigua
+    $sql_eliminar_antigua = "DROP TABLE productos_old";
+    ejecutarConsulta($conn, $sql_eliminar_antigua);
+
+    // Confirmar los cambios
+    $conn->commit();
+    echo "La tabla productos ha sido actualizada exitosamente.";
+
+} catch (Exception $e) {
+    // Si algo sale mal, revertir los cambios
+    $conn->rollback();
+    echo "Error: " . $e->getMessage();
 }
 
 // Cerrar la conexión
