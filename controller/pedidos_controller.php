@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 include '../includes/conexion.php';
 
@@ -8,11 +10,9 @@ function send_json_response($success, $message = '') {
     exit;
 }
 
-
 function actualizarInsumosPorPedido($pedido_id) {
     global $conn;
 
-    // Obtener los productos y sus cantidades en el pedido
     $sql_productos_pedido = "SELECT id_producto, cantidad FROM detalle_pedido WHERE id_pedido = ?";
     $stmt_productos_pedido = $conn->prepare($sql_productos_pedido);
     $stmt_productos_pedido->bind_param('i', $pedido_id);
@@ -23,7 +23,6 @@ function actualizarInsumosPorPedido($pedido_id) {
         $id_producto = $row_producto['id_producto'];
         $cantidad_producto = $row_producto['cantidad'];
 
-        // Obtener los insumos y cantidades requeridos para este producto desde la tabla productos_insumos
         $sql_insumos_producto = "SELECT id_insumo, cantidad_insumo FROM productos_insumos WHERE id_producto = ?";
         $stmt_insumos_producto = $conn->prepare($sql_insumos_producto);
         $stmt_insumos_producto->bind_param('i', $id_producto);
@@ -34,7 +33,6 @@ function actualizarInsumosPorPedido($pedido_id) {
             $insumo_id = $row_insumo['id_insumo'];
             $cantidad_insumo = $row_insumo['cantidad_insumo'] * $cantidad_producto;
 
-            // Actualizar la cantidad de insumo en el inventario
             $sql_actualizar_insumo = "UPDATE insumos SET cantidad = cantidad - ? WHERE id_insumo = ?";
             $stmt_actualizar_insumo = $conn->prepare($sql_actualizar_insumo);
             $stmt_actualizar_insumo->bind_param('ii', $cantidad_insumo, $insumo_id);
@@ -46,12 +44,6 @@ function actualizarInsumosPorPedido($pedido_id) {
 
     $stmt_productos_pedido->close();
 }
-
-// Ejemplo de uso al cambiar el estado del pedido a "entregado"
-if ($estado_pedido === 'Entregado') {
-    actualizarInsumosPorPedido($pedido_id);
-}
-
 
 try {
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombre_cliente']) && isset($_POST['calle'])  && isset($_POST['interior']) && isset($_POST['barrio_cliente']) && isset($_POST['telefono_cliente']) && isset($_POST['productos'])) {
@@ -113,6 +105,13 @@ try {
 
         if ($stmt->execute()) {
             if ($nuevo_estado === 'entregado') {
+                try {
+                    actualizarInsumosPorPedido($pedido_id);
+                } catch (Exception $e) {
+                    send_json_response(false, 'Error al actualizar insumos: ' . $e->getMessage());
+                    exit;
+                }
+
                 $sql_usuario = "SELECT id_usuario FROM pedidos WHERE id_pedido = ?";
                 $stmt_usuario = $conn->prepare($sql_usuario);
                 $stmt_usuario->bind_param('i', $pedido_id);

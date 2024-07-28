@@ -257,20 +257,27 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             var estadoPedido = document.getElementById("estado_pedido").value;
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    try {
-                        var response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                            alertify.success(response.message || "Pedido realizado correctamente");
-                            setTimeout(function() {
-                                location.reload();
-                            }, 1000);
-                        } else {
-                            alertify.error(response.message || "Error al procesar el pedido");
+                if (xhr.readyState == 4) {
+                    console.log("Respuesta del servidor:", xhr.responseText); // Agregar este log
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                alertify.success(response.message || "Pedido actualizado correctamente");
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                alertify.error(response.message || "Error al procesar el pedido");
+                            }
+                        } catch (e) {
+                            console.error("Error al analizar la respuesta JSON:", e);
+                            console.error("Respuesta recibida:", xhr.responseText);
+                            alertify.error("Error inesperado en el servidor");
                         }
-                    } catch (e) {
-                        console.error("Error parsing JSON response:", e);
-                        alertify.error("Error inesperado en el servidor");
+                    } else {
+                        console.error("Error HTTP:", xhr.status);
+                        alertify.error("Error de conexión al actualizar el pedido");
                     }
                 }
             };
