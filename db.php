@@ -12,6 +12,10 @@ function ejecutarConsulta($conn, $sql) {
 $conn->begin_transaction();
 
 try {
+    // 0. Verificar si productos_temp existe y eliminarla si es necesario
+    $sql_drop_temp_if_exists = "DROP TABLE IF EXISTS productos_temp";
+    ejecutarConsulta($conn, $sql_drop_temp_if_exists);
+
     // 1. Crear una tabla temporal con la estructura original
     $sql_crear_temp = "CREATE TABLE productos_temp (
         id_producto int(11) NOT NULL,
