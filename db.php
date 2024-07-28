@@ -14,37 +14,22 @@ function ejecutarConsulta($conn, $sql) {
 $conn->begin_transaction();
 
 try {
-    // 1. Crear una tabla temporal con la nueva estructura
-    $sql_crear_temp = "CREATE TABLE productos_temp (
-        id_producto INT AUTO_INCREMENT PRIMARY KEY,
-        nombre_producto VARCHAR(255) NOT NULL,
-        foto MEDIUMBLOB,
-        foto_tipo VARCHAR(255),
-        descripcion_producto TEXT,
-        valor_unitario DECIMAL(10, 2) NOT NULL
-    )";
-    ejecutarConsulta($conn, $sql_crear_temp);
+    // 1. Eliminar la clave foránea existente
+    $sql_drop_fk = "ALTER TABLE detalle_venta DROP FOREIGN KEY detalle_venta_ibfk_2";
+    ejecutarConsulta($conn, $sql_drop_fk);
 
-    // 2. Copiar los datos existentes a la tabla temporal
-    $sql_copiar_datos = "INSERT INTO productos_temp (id_producto, nombre_producto, descripcion_producto, valor_unitario)
-                         SELECT id_producto, nombre_producto, descripcion_producto, valor_unitario FROM productos";
-    ejecutarConsulta($conn, $sql_copiar_datos);
+    // 2. Añadir la nueva clave foránea que apunte a la nueva tabla productos
+    $sql_add_fk = "ALTER TABLE detalle_venta ADD CONSTRAINT detalle_venta_ibfk_2 
+                   FOREIGN KEY (id_producto) REFERENCES productos(id_producto)";
+    ejecutarConsulta($conn, $sql_add_fk);
 
-    // 3. Renombrar la tabla original
-    $sql_renombrar_original = "RENAME TABLE productos TO productos_old";
-    ejecutarConsulta($conn, $sql_renombrar_original);
-
-    // 4. Renombrar la tabla temporal a productos
-    $sql_renombrar_temp = "RENAME TABLE productos_temp TO productos";
-    ejecutarConsulta($conn, $sql_renombrar_temp);
-
-    // 5. Eliminar la tabla antigua
-    $sql_eliminar_antigua = "DROP TABLE productos_old";
-    ejecutarConsulta($conn, $sql_eliminar_antigua);
+    // 3. Ahora podemos eliminar la tabla antigua
+    $sql_drop_old = "DROP TABLE productos_old";
+    ejecutarConsulta($conn, $sql_drop_old);
 
     // Confirmar los cambios
     $conn->commit();
-    echo "La tabla productos ha sido actualizada exitosamente.";
+    echo "La tabla productos_old ha sido eliminada y las referencias han sido actualizadas exitosamente.";
 
 } catch (Exception $e) {
     // Si algo sale mal, revertir los cambios
