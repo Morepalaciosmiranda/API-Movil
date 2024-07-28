@@ -56,18 +56,41 @@ function procesarProducto() {
         }
 
         $imagen = $_FILES['imagen'];
-        $imagen_contenido = file_get_contents($imagen['tmp_name']);
-        $imagen_tipo = $imagen['type'];
+        $imagen_tmp_name = $imagen['tmp_name'];
+        $imagen_error = $imagen['error'];
+
+        if ($imagen_error !== UPLOAD_ERR_OK) {
+            throw new Exception("Error al cargar la imagen: " . $imagen_error);
+        }
+
+        $upload_dir = '../uploads/';
+        
+        // Verificar y crear el directorio si no existe
+        if (!is_dir($upload_dir)) {
+            if (!mkdir($upload_dir, 0755, true)) {
+                throw new Exception("No se pudo crear el directorio de uploads.");
+            }
+        }
+        if (!is_writable($upload_dir)) {
+            throw new Exception("El directorio de uploads no tiene permisos de escritura");
+        }
+
+        $imagen_nombre = uniqid('producto_') . '_' . basename($imagen['name']);
+        $imagen_destino = $upload_dir . $imagen_nombre;
+
+        if (!move_uploaded_file($imagen_tmp_name, $imagen_destino)) {
+            throw new Exception("Error al mover la imagen al directorio de destino.");
+        }
 
         $conn->begin_transaction();
 
-        $insert_sql = "INSERT INTO productos (nombre_producto, foto, foto_tipo, descripcion_producto, valor_unitario) VALUES (?, ?, ?, ?, ?)";
+        $insert_sql = "INSERT INTO productos (nombre_producto, foto, descripcion_producto, valor_unitario) VALUES (?, ?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_sql);
         if (!$insert_stmt) {
             throw new Exception("Error al preparar la consulta de inserción: " . $conn->error);
         }
 
-        if (!$insert_stmt->bind_param("ssssd", $nombre, $imagen_contenido, $imagen_tipo, $descripcion, $precio)) {
+        if (!$insert_stmt->bind_param("sssd", $nombre, $imagen_nombre, $descripcion, $precio)) {
             throw new Exception("Error al enlazar parámetros: " . $insert_stmt->error);
         }
 
@@ -119,16 +142,32 @@ function editarProducto() {
 
         if (isset($_FILES['imagen_edit']) && $_FILES['imagen_edit']['error'] == UPLOAD_ERR_OK) {
             $imagen = $_FILES['imagen_edit'];
-            $imagen_contenido = file_get_contents($imagen['tmp_name']);
-            $imagen_tipo = $imagen['type'];
+            $imagen_tmp_name = $imagen['tmp_name'];
+            $imagen_nombre = uniqid('producto_') . '_' . basename($imagen['name']);
+            $upload_dir = '../uploads/';
+            $imagen_destino = $upload_dir . $imagen_nombre;
 
-            $actualizar_sql = "UPDATE productos SET nombre_producto = ?, descripcion_producto = ?, valor_unitario = ?, foto = ?, foto_tipo = ? WHERE id_producto = ?";
+            // Verificar y crear el directorio si no existe
+            if (!is_dir($upload_dir)) {
+                if (!mkdir($upload_dir, 0755, true)) {
+                    throw new Exception("No se pudo crear el directorio de uploads.");
+                }
+            }
+            if (!is_writable($upload_dir)) {
+                throw new Exception("El directorio de uploads no tiene permisos de escritura");
+            }
+
+            if (!move_uploaded_file($imagen_tmp_name, $imagen_destino)) {
+                throw new Exception("Error al mover la imagen al directorio de destino.");
+            }
+
+            $actualizar_sql = "UPDATE productos SET nombre_producto = ?, descripcion_producto = ?, valor_unitario = ?, foto = ? WHERE id_producto = ?";
             $actualizar_stmt = $conn->prepare($actualizar_sql);
             if (!$actualizar_stmt) {
                 throw new Exception("Error al preparar la consulta de actualización: " . $conn->error);
             }
 
-            if (!$actualizar_stmt->bind_param("ssdssi", $nombre_editar, $descripcion_editar, $precio_editar, $imagen_contenido, $imagen_tipo, $id_editar)) {
+            if (!$actualizar_stmt->bind_param("ssdsi", $nombre_editar, $descripcion_editar, $precio_editar, $imagen_nombre, $id_editar)) {
                 throw new Exception("Error al enlazar parámetros: " . $actualizar_stmt->error);
             }
         } else {
@@ -202,12 +241,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 break;
         }
     }
-}
 
-if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['eliminar'])) {
-    $id_producto = intval($_GET['eliminar']);
-    $resultado = eliminarProducto($id_producto);
-    echo json_encode($resultado);
+    if (isset($_POST['eliminar_id'])) {
+        $id_producto = intval($_POST['eliminar_id']);
+        $resultado = eliminarProducto($id_producto);
+        echo json_encode($resultado);
+    }
 }
 
 $conn->close();
