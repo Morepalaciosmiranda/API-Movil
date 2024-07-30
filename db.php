@@ -5,7 +5,7 @@ function ejecutarConsulta($conn, $sql) {
     if ($conn->query($sql) === TRUE) {
         echo "Operación exitosa: $sql<br>";
     } else {
-        echo "Error en la operación: " . $conn->error . "<br>";
+        echo "Error : " . $conn->error . "<br>";
     }
 }
 
