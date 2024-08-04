@@ -14,7 +14,6 @@ if ($_SESSION['rol'] === 'Usuario') {
 
 include_once('../includes/conexion.php');
 
-
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
@@ -30,7 +29,6 @@ if ($fecha_filtro) {
 }
 $sql .= " LIMIT $items_por_pagina OFFSET $offset";
 
-
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
@@ -43,7 +41,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     $pedidos[] = $row;
 }
 
-
 $sql_total = "SELECT COUNT(*) as total FROM pedidos";
 if ($fecha_filtro) {
     $sql_total .= " WHERE DATE(fecha_pedido) = '$fecha_filtro'";
@@ -51,6 +48,11 @@ if ($fecha_filtro) {
 $result_total = mysqli_query($conn, $sql_total);
 $total_pedidos = mysqli_fetch_assoc($result_total)['total'];
 $total_paginas = ceil($total_pedidos / $items_por_pagina);
+
+// Obtener lista de productos para el select
+$sql_productos = "SELECT id_producto, nombre_producto, precio FROM productos";
+$result_productos = mysqli_query($conn, $sql_productos);
+$productos = mysqli_fetch_all($result_productos, MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html>
@@ -65,6 +67,72 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .btn-agregar {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-agregar:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 
 <body>
@@ -94,6 +162,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 </div>
             </div>
             <div class="content">
+                <button id="btnAgregarPedido" class="btn-agregar">Agregar Pedido</button>
                 <div class="form-container">
                     <form method="GET" action="pedidos.php">
                         <label for="fecha">Filtrar por fecha:</label>
@@ -173,6 +242,43 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <option value="entregado">Entregado</option>
                 </select>
                 <button type="submit" class="btnGuardad">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalAgregarPedido" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalAgregarPedido()">&times;</span>
+            <h2>Agregar Nuevo Pedido</h2>
+            <form id="formAgregarPedido">
+                <div class="form-group">
+                    <label for="producto">Producto:</label>
+                    <select id="producto" name="producto" required onchange="actualizarPrecio()">
+                        <option value="">Seleccione un producto</option>
+                        <?php foreach ($productos as $producto): ?>
+                            <option value="<?php echo $producto['id_producto']; ?>" data-precio="<?php echo $producto['precio']; ?>">
+                                <?php echo htmlspecialchars($producto['nombre_producto']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" id="cantidad" name="cantidad" required min="1" onchange="calcularSubtotal()">
+                </div>
+                <div class="form-group">
+                    <label for="precio_unitario">Precio Unitario:</label>
+                    <input type="text" id="precio_unitario" name="precio_unitario" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="subtotal">Subtotal:</label>
+                    <input type="text" id="subtotal" name="subtotal" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="nombre_cliente">Nombre del Cliente:</label>
+                    <input type="text" id="nombre_cliente" name="nombre_cliente" required>
+                </div>
+                <button type="submit" class="btn-agregar">Agregar Pedido</button>
             </form>
         </div>
     </div>
@@ -258,7 +364,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
-                    console.log("Respuesta del servidor:", xhr.responseText); // Agregar este log
+                    console.log("Respuesta del servidor:", xhr.responseText);
                     if (xhr.status == 200) {
                         try {
                             var response = JSON.parse(xhr.responseText);
@@ -305,7 +411,68 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             if (event.target == modalEstadoPedido) {
                 closeEstadoModal();
             }
+            var modalAgregarPedido = document.getElementById("modalAgregarPedido");
+            if (event.target == modalAgregarPedido) {
+                cerrarModalAgregarPedido();
+            }
         }
+
+        // Funciones para el modal de agregar pedido
+        document.getElementById("btnAgregarPedido").onclick = function() {
+            document.getElementById("modalAgregarPedido").style.display = "block";
+        }
+
+        function cerrarModalAgregarPedido() {
+            document.getElementById("modalAgregarPedido").style.display = "none";
+        }
+
+        function actualizarPrecio() {
+            var select = document.getElementById("producto");
+            var precioUnitario = select.options[select.selectedIndex].getAttribute("data-precio");
+            document.getElementById("precio_unitario").value = precioUnitario;
+            calcularSubtotal();
+        }
+
+        function calcularSubtotal() {
+            var cantidad = document.getElementById("cantidad").value;
+            var precioUnitario = document.getElementById("precio_unitario").value;
+            var subtotal = cantidad * precioUnitario;
+            document.getElementById("subtotal").value = subtotal.toFixed(2);
+        }
+
+        document.getElementById("formAgregarPedido").onsubmit = function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                alertify.success(response.message || "Pedido agregado correctamente");
+                                cerrarModalAgregarPedido();
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                alertify.error(response.message || "Error al agregar el pedido");
+                            }
+                        } catch (e) {
+                            console.error("Error al analizar la respuesta JSON:", e);
+                            alertify.error("Error inesperado en el servidor");
+                        }
+                    } else {
+                        console.error("Error HTTP:", xhr.status);
+                        alertify.error("Error de conexión al agregar el pedido");
+                    }
+                }
+            };
+
+            xhr.open("POST", "../controller/pedidos_controller.php", true);
+            xhr.send(formData);
+        };
     </script>
 </body>
 
