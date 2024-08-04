@@ -398,3 +398,7 @@ button[type="submit"]:hover {
     margin-top: 20px; 
     margin-bottom: 20px; 
 }
+
+body.modal-open {
+    overflow: hidden;
+}

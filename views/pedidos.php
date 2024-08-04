@@ -14,7 +14,6 @@ if ($_SESSION['rol'] === 'Usuario') {
 
 include_once('../includes/conexion.php');
 
-
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
@@ -30,7 +29,6 @@ if ($fecha_filtro) {
 }
 $sql .= " LIMIT $items_por_pagina OFFSET $offset";
 
-
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
@@ -42,7 +40,6 @@ $pedidos = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $pedidos[] = $row;
 }
-
 
 $sql_total = "SELECT COUNT(*) as total FROM pedidos";
 if ($fecha_filtro) {
@@ -180,7 +177,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
     <div id="modalAgregarPedido" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="close" onclick="closeAgregarPedidoModal()">&times;</span>
             <h2>Agregar Nuevo Pedido</h2>
             <form id="formAgregarPedido">
                 <div class="form-group">
@@ -246,8 +243,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
                                 var modalDetallesPedido = document.getElementById("modalDetallesPedido");
                                 modalDetallesPedido.style.display = "block";
-                                modalDetallesPedido.classList.add('show');
-                                modalDetallesPedido.querySelector('.modal-content').classList.add('show');
+                                document.body.classList.add('modal-open');
                             } else {
                                 console.error("Error del servidor:", response.message);
                                 alert("Error al obtener detalles del pedido: " + response.message);
@@ -268,10 +264,8 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
         function closeDetailsModal() {
             var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-            modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
-            setTimeout(function() {
-                modalDetallesPedido.style.display = "none";
-            }, 300);
+            modalDetallesPedido.style.display = "none";
+            document.body.classList.remove('modal-open');
         }
 
         function abrirModalEstado(idPedido, estadoPedido) {
@@ -279,16 +273,19 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             document.getElementById("estado_pedido").value = estadoPedido;
             var modalEstadoPedido = document.getElementById("modalEstadoPedido");
             modalEstadoPedido.style.display = "block";
-            modalEstadoPedido.querySelector('.modal-content').classList.add('show');
-            modalEstadoPedido.classList.add('show');
+            document.body.classList.add('modal-open');
         }
 
         function closeEstadoModal() {
             var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-            modalEstadoPedido.querySelector('.modal-content').classList.remove('show');
-            setTimeout(function() {
-                modalEstadoPedido.style.display = "none";
-            }, 300);
+            modalEstadoPedido.style.display = "none";
+            document.body.classList.remove('modal-open');
+        }
+
+        function closeAgregarPedidoModal() {
+            var modalAgregarPedido = document.getElementById("modalAgregarPedido");
+            modalAgregarPedido.style.display = "none";
+            document.body.classList.remove('modal-open');
         }
 
         document.getElementById("formEstadoPedido").onsubmit = function(event) {
@@ -298,7 +295,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
-                    console.log("Respuesta del servidor:", xhr.responseText); // Agregar este log
+                    console.log("Respuesta del servidor:", xhr.responseText);
                     if (xhr.status == 200) {
                         try {
                             var response = JSON.parse(xhr.responseText);
@@ -337,33 +334,33 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         }
 
         window.onclick = function(event) {
-                var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                if (event.target == modalDetallesPedido) {
-                    closeDetailsModal();
-                }
-                var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-                if (event.target == modalEstadoPedido) {
-                    closeEstadoModal();
-                }
+            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            var modalAgregarPedido = document.getElementById("modalAgregarPedido");
+            var userOptionsContainer = document.getElementById("userOptionsContainer");
+
+            if (event.target == modalDetallesPedido) {
+                closeDetailsModal();
             }
-     
-          
-        var modalAgregarPedido = document.getElementById("modalAgregarPedido");
+            if (event.target == modalEstadoPedido) {
+                closeEstadoModal();
+            }
+            if (event.target == modalAgregarPedido) {
+                closeAgregarPedidoModal();
+            }
+            
+            // Cerrar opciones de usuario si se hace clic fuera
+            if (!event.target.closest('.profile-div') && userOptionsContainer.style.display === "block") {
+                userOptionsContainer.style.display = "none";
+            }
+        }
+
         var btnAgregarPedido = document.getElementById("btnAgregarPedido");
-        var spanCerrar = modalAgregarPedido.getElementsByClassName("close")[0];
 
         btnAgregarPedido.onclick = function() {
+            var modalAgregarPedido = document.getElementById("modalAgregarPedido");
             modalAgregarPedido.style.display = "block";
-        }
-
-        spanCerrar.onclick = function() {
-            modalAgregarPedido.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modalAgregarPedido) {
-                modalAgregarPedido.style.display = "none";
-            }
+            document.body.classList.add('modal-open');
         }
 
         document.getElementById('producto').addEventListener('change', function() {
@@ -393,7 +390,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 .then(data => {
                     if (data.success) {
                         alert(data.message);
-                        modalAgregarPedido.style.display = "none";
+                        closeAgregarPedidoModal();
                         location.reload();
                     } else {
                         alert('Error: ' + data.message);
