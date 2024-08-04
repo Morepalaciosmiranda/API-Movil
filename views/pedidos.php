@@ -14,6 +14,7 @@ if ($_SESSION['rol'] === 'Usuario') {
 
 include_once('../includes/conexion.php');
 
+
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
@@ -29,6 +30,7 @@ if ($fecha_filtro) {
 }
 $sql .= " LIMIT $items_por_pagina OFFSET $offset";
 
+
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
@@ -40,6 +42,7 @@ $pedidos = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $pedidos[] = $row;
 }
+
 
 $sql_total = "SELECT COUNT(*) as total FROM pedidos";
 if ($fecha_filtro) {
@@ -143,6 +146,38 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         </div>
     </div>
 
+    <div id="modalDetallesPedido" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDetailsModal()">&times;</span>
+            <h2>Detalles del Pedido</h2>
+            <div id="detalles-pedido"></div>
+            <h2>Datos del Cliente</h2>
+            <ul>
+                <li><strong>Nombre:</strong> <span id="cliente-nombre"></span></li>
+                <li><strong>Dirección:</strong> <span id="cliente-direccion"></span></li>
+                <li><strong>Barrio:</strong> <span id="cliente-barrio"></span></li>
+                <li><strong>Teléfono:</strong> <span id="cliente-telefono"></span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="modalEstadoPedido" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEstadoModal()">&times;</span>
+            <h2>Cambiar Estado del Pedido</h2>
+            <form id="formEstadoPedido">
+                <input type="hidden" id="estadoPedidoId" name="pedido_id">
+                <label for="estado_pedido">Estado:</label>
+                <select id="estado_pedido" name="nuevo_estado">
+                    <option value="en proceso">En Proceso</option>
+                    <option value="en camino">En Camino</option>
+                    <option value="entregado">Entregado</option>
+                </select>
+                <button type="submit" class="btnGuardad">Guardar</button>
+            </form>
+        </div>
+    </div>
+
     <div id="modalAgregarPedido" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -178,38 +213,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <input type="text" id="nombreCliente" name="nombreCliente" required>
                 </div>
                 <button type="submit" class="btn-guardar">Guardar Pedido</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="modalDetallesPedido" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeDetailsModal()">&times;</span>
-            <h2>Detalles del Pedido</h2>
-            <div id="detalles-pedido"></div>
-            <h2>Datos del Cliente</h2>
-            <ul>
-                <li><strong>Nombre:</strong> <span id="cliente-nombre"></span></li>
-                <li><strong>Dirección:</strong> <span id="cliente-direccion"></span></li>
-                <li><strong>Barrio:</strong> <span id="cliente-barrio"></span></li>
-                <li><strong>Teléfono:</strong> <span id="cliente-telefono"></span></li>
-            </ul>
-        </div>
-    </div>
-
-    <div id="modalEstadoPedido" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeEstadoModal()">&times;</span>
-            <h2>Cambiar Estado del Pedido</h2>
-            <form id="formEstadoPedido">
-                <input type="hidden" id="estadoPedidoId" name="pedido_id">
-                <label for="estado_pedido">Estado:</label>
-                <select id="estado_pedido" name="nuevo_estado">
-                    <option value="en proceso">En Proceso</option>
-                    <option value="en camino">En Camino</option>
-                    <option value="entregado">Entregado</option>
-                </select>
-                <button type="submit" class="btnGuardad">Guardar</button>
             </form>
         </div>
     </div>
@@ -295,7 +298,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
-                    console.log("Respuesta del servidor:", xhr.responseText);
+                    console.log("Respuesta del servidor:", xhr.responseText); // Agregar este log
                     if (xhr.status == 200) {
                         try {
                             var response = JSON.parse(xhr.responseText);
@@ -334,19 +337,20 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         }
 
         window.onclick = function(event) {
-            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-            if (event.target == modalDetallesPedido) {
-                closeDetailsModal();
+                var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+                if (event.target == modalDetallesPedido) {
+                    closeDetailsModal();
+                }
+                var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+                if (event.target == modalEstadoPedido) {
+                    closeEstadoModal();
+                }
             }
-            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-            if (event.target == modalEstadoPedido) {
-                closeEstadoModal();
-            }
-            var modalAgregarPedido = document.getElementById("modalAgregarPedido");
-            if (event.target == modalAgregarPedido) {
-                modalAgregarPedido.style.display = "none";
-            }
-        }
+
+
+     
+  
+            // Código existente...
 
         var modalAgregarPedido = document.getElementById("modalAgregarPedido");
         var btnAgregarPedido = document.getElementById("btnAgregarPedido");
@@ -358,6 +362,12 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
         spanCerrar.onclick = function() {
             modalAgregarPedido.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modalAgregarPedido) {
+                modalAgregarPedido.style.display = "none";
+            }
         }
 
         document.getElementById('producto').addEventListener('change', function() {
