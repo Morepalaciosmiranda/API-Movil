@@ -146,38 +146,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         </div>
     </div>
 
-    <div id="modalDetallesPedido" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeDetailsModal()">&times;</span>
-            <h2>Detalles del Pedido</h2>
-            <div id="detalles-pedido"></div>
-            <h2>Datos del Cliente</h2>
-            <ul>
-                <li><strong>Nombre:</strong> <span id="cliente-nombre"></span></li>
-                <li><strong>Dirección:</strong> <span id="cliente-direccion"></span></li>
-                <li><strong>Barrio:</strong> <span id="cliente-barrio"></span></li>
-                <li><strong>Teléfono:</strong> <span id="cliente-telefono"></span></li>
-            </ul>
-        </div>
-    </div>
-
-    <div id="modalEstadoPedido" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeEstadoModal()">&times;</span>
-            <h2>Cambiar Estado del Pedido</h2>
-            <form id="formEstadoPedido">
-                <input type="hidden" id="estadoPedidoId" name="pedido_id">
-                <label for="estado_pedido">Estado:</label>
-                <select id="estado_pedido" name="nuevo_estado">
-                    <option value="en proceso">En Proceso</option>
-                    <option value="en camino">En Camino</option>
-                    <option value="entregado">Entregado</option>
-                </select>
-                <button type="submit" class="btnGuardad">Guardar</button>
-            </form>
-        </div>
-    </div>
-
     <div id="modalAgregarPedido" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -216,6 +184,40 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             </form>
         </div>
     </div>
+
+    <div id="modalDetallesPedido" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDetailsModal()">&times;</span>
+            <h2>Detalles del Pedido</h2>
+            <div id="detalles-pedido"></div>
+            <h2>Datos del Cliente</h2>
+            <ul>
+                <li><strong>Nombre:</strong> <span id="cliente-nombre"></span></li>
+                <li><strong>Dirección:</strong> <span id="cliente-direccion"></span></li>
+                <li><strong>Barrio:</strong> <span id="cliente-barrio"></span></li>
+                <li><strong>Teléfono:</strong> <span id="cliente-telefono"></span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="modalEstadoPedido" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEstadoModal()">&times;</span>
+            <h2>Cambiar Estado del Pedido</h2>
+            <form id="formEstadoPedido">
+                <input type="hidden" id="estadoPedidoId" name="pedido_id">
+                <label for="estado_pedido">Estado:</label>
+                <select id="estado_pedido" name="nuevo_estado">
+                    <option value="en proceso">En Proceso</option>
+                    <option value="en camino">En Camino</option>
+                    <option value="entregado">Entregado</option>
+                </select>
+                <button type="submit" class="btnGuardad">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+
 
     <script>
         function verDetallesPedido(idPedido) {
@@ -337,17 +339,17 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         }
 
         window.onclick = function(event) {
-                var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                if (event.target == modalDetallesPedido) {
-                    closeDetailsModal();
-                }
-                var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-                if (event.target == modalEstadoPedido) {
-                    closeEstadoModal();
-                }
+            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+            if (event.target == modalDetallesPedido) {
+                closeDetailsModal();
             }
-     
-          
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            if (event.target == modalEstadoPedido) {
+                closeEstadoModal();
+            }
+        }
+
+
         var modalAgregarPedido = document.getElementById("modalAgregarPedido");
         var btnAgregarPedido = document.getElementById("btnAgregarPedido");
         var spanCerrar = modalAgregarPedido.getElementsByClassName("close")[0];
