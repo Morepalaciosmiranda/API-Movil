@@ -333,6 +333,11 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             }
         }
 
+        function cerrarModal() {
+            // Cierra tu modal
+            document.body.classList.remove('modal-open');
+        }
+
         window.onclick = function(event) {
             var modalDetallesPedido = document.getElementById("modalDetallesPedido");
             var modalEstadoPedido = document.getElementById("modalEstadoPedido");
@@ -348,7 +353,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             if (event.target == modalAgregarPedido) {
                 closeAgregarPedidoModal();
             }
-            
+
             // Cerrar opciones de usuario si se hace clic fuera
             if (!event.target.closest('.profile-div') && userOptionsContainer.style.display === "block") {
                 userOptionsContainer.style.display = "none";
@@ -400,6 +405,11 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     console.error('Error:', error);
                 });
         });
+
+        document.addEventListener('click', function(e) {
+            console.log('Elemento clickeado:', e.target);
+            console.log('Clickeable:', e.target.style.pointerEvents !== 'none');
+        }, true);
     </script>
 </body>
 
