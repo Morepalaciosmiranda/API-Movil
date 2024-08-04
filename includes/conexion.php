@@ -8,12 +8,14 @@ $database = substr($url["path"], 1);
 $port = $url["port"];
 
 // Crear la conexión
-$conn = new mysqli($host, $username, $password, $database, $port);
-
-// Comprobar si la conexión fue exitosa
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-} else {
-    $conn->set_charset("utf8");
+$conn = mysqli_init();
+if (!$conn) {
+    die("mysqli_init failed");
 }
+
+if (!mysqli_real_connect($conn, $host, $username, $password, $database, $port)) {
+    die("Connect Error: " . mysqli_connect_error());
+}
+
+$conn->set_charset("utf8");
 ?>
