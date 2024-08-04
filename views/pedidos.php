@@ -189,7 +189,7 @@ $productos = mysqli_fetch_all($result_productos, MYSQLI_ASSOC);
                     <label for="producto">Producto:</label>
                     <select id="producto" name="producto" required onchange="actualizarPrecio()">
                         <option value="">Seleccione un producto</option>
-                        <?php foreach ($productos as $producto): ?>
+                        <?php foreach ($productos as $producto) : ?>
                             <option value="<?php echo $producto['id_producto']; ?>" data-precio="<?php echo $producto['precio']; ?>">
                                 <?php echo htmlspecialchars($producto['nombre_producto']); ?>
                             </option>
@@ -353,11 +353,19 @@ $productos = mysqli_fetch_all($result_productos, MYSQLI_ASSOC);
 
         // Funciones para el modal de agregar pedido
         document.getElementById("btnAgregarPedido").onclick = function() {
-            document.getElementById("modalAgregarPedido").style.display = "block";
+            var modal = document.getElementById("modalAgregarPedido");
+            modal.style.display = "block";
+            setTimeout(function() {
+                modal.querySelector('.modal-content').style.opacity = "1";
+            }, 10);
         }
 
         function cerrarModalAgregarPedido() {
-            document.getElementById("modalAgregarPedido").style.display = "none";
+            var modal = document.getElementById("modalAgregarPedido");
+            modal.querySelector('.modal-content').style.opacity = "0";
+            setTimeout(function() {
+                modal.style.display = "none";
+            }, 300);
         }
 
         function actualizarPrecio() {

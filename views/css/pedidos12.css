@@ -703,4 +703,40 @@ button[type="submit"]:hover {
     cursor: pointer;
 }
 
+#modalAgregarPedido {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
 
+#modalAgregarPedido .modal-content {
+    background-color: #000000;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #ff5a0e;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 8px;
+    position: relative;
+}
+
+#modalAgregarPedido .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#modalAgregarPedido .close:hover,
+#modalAgregarPedido .close:focus {
+    color: #ff5a0e;
+    text-decoration: none;
+    cursor: pointer;
+}
