@@ -4,7 +4,7 @@ $url = parse_url(getenv("MYSQL_URL"));
 $host = $url["host"];
 $username = $url["user"];
 $password = $url["pass"];
-$database = "exterminio";
+$database = substr($url["path"], 1);
 $port = $url["port"];
 
 // Crear la conexión
