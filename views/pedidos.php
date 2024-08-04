@@ -14,7 +14,6 @@ if ($_SESSION['rol'] === 'Usuario') {
 
 include_once('../includes/conexion.php');
 
-
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
@@ -30,7 +29,6 @@ if ($fecha_filtro) {
 }
 $sql .= " LIMIT $items_por_pagina OFFSET $offset";
 
-
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
@@ -42,7 +40,6 @@ $pedidos = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $pedidos[] = $row;
 }
-
 
 $sql_total = "SELECT COUNT(*) as total FROM pedidos";
 if ($fecha_filtro) {
@@ -217,8 +214,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         </div>
     </div>
 
-
-
     <script>
         function verDetallesPedido(idPedido) {
             var xhr = new XMLHttpRequest();
@@ -300,7 +295,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
-                    console.log("Respuesta del servidor:", xhr.responseText); // Agregar este log
+                    console.log("Respuesta del servidor:", xhr.responseText);
                     if (xhr.status == 200) {
                         try {
                             var response = JSON.parse(xhr.responseText);
@@ -347,8 +342,11 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             if (event.target == modalEstadoPedido) {
                 closeEstadoModal();
             }
+            var modalAgregarPedido = document.getElementById("modalAgregarPedido");
+            if (event.target == modalAgregarPedido) {
+                modalAgregarPedido.style.display = "none";
+            }
         }
-
 
         var modalAgregarPedido = document.getElementById("modalAgregarPedido");
         var btnAgregarPedido = document.getElementById("btnAgregarPedido");
@@ -360,12 +358,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
         spanCerrar.onclick = function() {
             modalAgregarPedido.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modalAgregarPedido) {
-                modalAgregarPedido.style.display = "none";
-            }
         }
 
         document.getElementById('producto').addEventListener('change', function() {
