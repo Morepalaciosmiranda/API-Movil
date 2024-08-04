@@ -46,7 +46,47 @@ function actualizarInsumosPorPedido($pedido_id) {
 }
 
 try {
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombre_cliente']) && isset($_POST['calle'])  && isset($_POST['interior']) && isset($_POST['barrio_cliente']) && isset($_POST['telefono_cliente']) && isset($_POST['productos'])) {
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['producto']) && isset($_POST['cantidad']) && isset($_POST['nombreCliente'])) {
+        $producto_id = $_POST['producto'];
+        $cantidad = $_POST['cantidad'];
+        $nombre_cliente = $_POST['nombreCliente'];
+        $id_usuario = $_SESSION['id_usuario'];
+
+        // Iniciar transacción
+        $conn->begin_transaction();
+
+        try {
+            // Insertar pedido
+            $stmt = $conn->prepare("INSERT INTO pedidos (fecha_pedido, estado_pedido, id_usuario) VALUES (NOW(), 'en proceso', ?)");
+            $stmt->bind_param("i", $id_usuario);
+            $stmt->execute();
+            $pedido_id = $stmt->insert_id;
+
+            // Obtener información del producto
+            $stmt = $conn->prepare("SELECT nombre_producto, precio FROM productos WHERE id_producto = ?");
+            $stmt->bind_param("i", $producto_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $producto = $result->fetch_assoc();
+
+            $nombre_producto = $producto['nombre_producto'];
+            $precio_unitario = $producto['precio'];
+            $subtotal = $precio_unitario * $cantidad;
+
+            // Insertar detalle del pedido
+            $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("iiidds", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente);
+            $stmt->execute();
+
+            // Confirmar transacción
+            $conn->commit();
+
+            send_json_response(true, 'Pedido creado con éxito');
+        } catch (Exception $e) {
+            $conn->rollback();
+            send_json_response(false, 'Error al crear el pedido: ' . $e->getMessage());
+        }
+    } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombre_cliente']) && isset($_POST['calle'])  && isset($_POST['interior']) && isset($_POST['barrio_cliente']) && isset($_POST['telefono_cliente']) && isset($_POST['productos'])) {
         
         $nombre = $_POST['nombre_cliente'];
         $calle = $_POST['calle'];
