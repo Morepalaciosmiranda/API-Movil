@@ -102,7 +102,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     </form>
                 </div>
                 <table class="content">
-                    <button id="btnAgregarPedido" class="btn-agregar">Agregar Pedido</button>
                     <tr>
                         <th>ID Pedido</th>
                         <th>Nombre Usuario</th>
@@ -174,45 +173,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <option value="entregado">Entregado</option>
                 </select>
                 <button type="submit" class="btnGuardad">Guardar</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="modalAgregarPedido" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Agregar Nuevo Pedido</h2>
-            <form id="formAgregarPedido">
-                <div class="form-group">
-                    <label for="producto">Producto:</label>
-                    <select id="producto" name="producto" required>
-                        <option value="">Seleccione un producto</option>
-                        <?php
-                        $sql_productos = "SELECT id_producto, nombre_producto, precio FROM productos WHERE estado_producto = 'Activo'";
-                        $result_productos = mysqli_query($conn, $sql_productos);
-                        while ($row_producto = mysqli_fetch_assoc($result_productos)) {
-                            echo "<option value='" . $row_producto['id_producto'] . "' data-precio='" . $row_producto['precio'] . "'>" . $row_producto['nombre_producto'] . "</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="cantidad">Cantidad:</label>
-                    <input type="number" id="cantidad" name="cantidad" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="precioUnitario">Precio Unitario:</label>
-                    <input type="number" id="precioUnitario" name="precioUnitario" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="subtotal">Subtotal:</label>
-                    <input type="number" id="subtotal" name="subtotal" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="nombreCliente">Nombre del Cliente:</label>
-                    <input type="text" id="nombreCliente" name="nombreCliente" required>
-                </div>
-                <button type="submit" class="btn-guardar">Guardar Pedido</button>
             </form>
         </div>
     </div>
@@ -337,76 +297,15 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         }
 
         window.onclick = function(event) {
-                var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                if (event.target == modalDetallesPedido) {
-                    closeDetailsModal();
-                }
-                var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-                if (event.target == modalEstadoPedido) {
-                    closeEstadoModal();
-                }
+            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+            if (event.target == modalDetallesPedido) {
+                closeDetailsModal();
             }
-
-
-     
-  
-            // Código existente...
-
-        var modalAgregarPedido = document.getElementById("modalAgregarPedido");
-        var btnAgregarPedido = document.getElementById("btnAgregarPedido");
-        var spanCerrar = modalAgregarPedido.getElementsByClassName("close")[0];
-
-        btnAgregarPedido.onclick = function() {
-            modalAgregarPedido.style.display = "block";
-        }
-
-        spanCerrar.onclick = function() {
-            modalAgregarPedido.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modalAgregarPedido) {
-                modalAgregarPedido.style.display = "none";
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            if (event.target == modalEstadoPedido) {
+                closeEstadoModal();
             }
         }
-
-        document.getElementById('producto').addEventListener('change', function() {
-            var precioUnitario = this.options[this.selectedIndex].getAttribute('data-precio');
-            document.getElementById('precioUnitario').value = precioUnitario;
-            calcularSubtotal();
-        });
-
-        document.getElementById('cantidad').addEventListener('input', calcularSubtotal);
-
-        function calcularSubtotal() {
-            var cantidad = document.getElementById('cantidad').value;
-            var precioUnitario = document.getElementById('precioUnitario').value;
-            var subtotal = cantidad * precioUnitario;
-            document.getElementById('subtotal').value = subtotal.toFixed(2);
-        }
-
-        document.getElementById('formAgregarPedido').addEventListener('submit', function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-
-            fetch('../controller/pedidos_controller.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        modalAgregarPedido.style.display = "none";
-                        location.reload();
-                    } else {
-                        alert('Error: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
     </script>
 </body>
 
