@@ -50,7 +50,7 @@ $total_pedidos = mysqli_fetch_assoc($result_total)['total'];
 $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
 // Obtener lista de productos para el select
-$sql_productos = "SELECT id_producto, nombre_producto, precio FROM productos";
+$sql_productos = "SELECT id_producto, nombre_producto, valor_unitario AS precio FROM productos";
 $result_productos = mysqli_query($conn, $sql_productos);
 $productos = mysqli_fetch_all($result_productos, MYSQLI_ASSOC);
 ?>
