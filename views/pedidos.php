@@ -225,9 +225,10 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                                 document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
 
                                 var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                                modalDetallesPedido.style.display = "block";
+                                var mainContent = document.querySelector('main'); // Asegúrate de que esto selecciona el contenido principal correcto
+
                                 modalDetallesPedido.classList.add('show');
-                                modalDetallesPedido.querySelector('.modal-content').classList.add('show');
+                                mainContent.classList.add('modal-background-blur');
                             } else {
                                 console.error("Error del servidor:", response.message);
                                 alert("Error al obtener detalles del pedido: " + response.message);

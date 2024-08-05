@@ -568,6 +568,9 @@ button[type="submit"]:hover {
     background-color: #000000;
 }
 
+.modal-background-blur {
+    filter: blur(5px);
+}
 
 #modalDetallesPedido {
     display: none;
@@ -582,6 +585,10 @@ button[type="submit"]:hover {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#modalDetallesPedido.show {
+    display: flex;
 }
 
 #modalDetallesPedido .modal-content {
