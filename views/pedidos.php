@@ -249,10 +249,10 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
         function closeDetailsModal() {
             var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-            modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
-            setTimeout(function() {
-                modalDetallesPedido.style.display = "none";
-            }, 300);
+            var mainContent = document.querySelector('main');
+
+            modalDetallesPedido.classList.remove('show');
+            mainContent.classList.remove('modal-background-blur');
         }
 
         function abrirModalEstado(idPedido, estadoPedido) {
