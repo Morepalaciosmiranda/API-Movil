@@ -570,7 +570,7 @@ button[type="submit"]:hover {
 
 
 #modalDetallesPedido {
-    display: none; /* Ocultar modal por defecto */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -578,29 +578,77 @@ button[type="submit"]:hover {
     width: 100%;
     height: 100%;
     overflow: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: none; /* Asegurarse de que no haya desenfoque */
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 #modalDetallesPedido .modal-content {
     background-color: #000000;
+    margin: 5% auto;
     padding: 20px;
     border: 1px solid #ff5a0e;
-    width: 80%;
-    max-width: 600px;
+    width: 90%;
+    max-width: 800px;
     border-radius: 8px;
-    margin: 0;
+    color: #ffffff;
 }
 
 #modalDetallesPedido h2 {
     text-align: center;
+    color: #ff5a0e;
     margin-bottom: 20px;
-    color: #ec6e19;
 }
 
-#modalDetallesPedido .close-btn {
+#modalDetallesPedido h3 {
+    color: #ff5a0e;
+    margin-top: 20px;
+}
+
+.cliente-info {
+    background-color: #1a1a1a;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.cliente-info p {
+    margin: 5px 0;
+}
+
+.productos-lista {
+    background-color: #1a1a1a;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.producto-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #333;
+}
+
+.producto-item:last-child {
+    border-bottom: none;
+}
+
+.producto-nombre {
+    font-weight: bold;
+    flex: 2;
+}
+
+.producto-detalles {
+    display: flex;
+    flex: 3;
+    justify-content: space-between;
+}
+
+.producto-detalles span {
+    flex: 1;
+    text-align: center;
+}
+
+.close {
     color: #aaa;
     float: right;
     font-size: 28px;
@@ -608,11 +656,10 @@ button[type="submit"]:hover {
     cursor: pointer;
 }
 
-#modalDetallesPedido .close-btn:hover,
-#modalDetallesPedido .close-btn:focus {
+.close:hover,
+.close:focus {
     color: #ff5a0e;
     text-decoration: none;
-    cursor: pointer;
 }
 
 #modalEstadoPedido {

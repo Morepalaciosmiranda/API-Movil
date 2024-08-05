@@ -149,14 +149,19 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         <div class="modal-content">
             <span class="close" onclick="closeDetailsModal()">&times;</span>
             <h2>Detalles del Pedido</h2>
-            <div id="detalles-pedido"></div>
-            <h2>Datos del Cliente</h2>
-            <ul>
-                <li><strong>Nombre:</strong> <span id="cliente-nombre"></span></li>
-                <li><strong>Dirección:</strong> <span id="cliente-direccion"></span></li>
-                <li><strong>Barrio:</strong> <span id="cliente-barrio"></span></li>
-                <li><strong>Teléfono:</strong> <span id="cliente-telefono"></span></li>
-            </ul>
+
+            <div class="cliente-info">
+                <h3>Datos del Cliente</h3>
+                <p><strong>Nombre:</strong> <span id="cliente-nombre"></span></p>
+                <p><strong>Dirección:</strong> <span id="cliente-direccion"></span></p>
+                <p><strong>Barrio:</strong> <span id="cliente-barrio"></span></p>
+                <p><strong>Teléfono:</strong> <span id="cliente-telefono"></span></p>
+            </div>
+
+            <div class="productos-lista">
+                <h3>Productos</h3>
+                <div id="detalles-pedido"></div>
+            </div>
         </div>
     </div>
 
@@ -187,17 +192,32 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                             var response = JSON.parse(xhr.responseText);
                             if (response.success) {
                                 var cliente = response.cliente;
-                                var detallesHtml = '<table><tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th></tr>';
+                                var detallesHtml = '';
+
                                 response.detalles.forEach(function(detalle) {
-                                    detallesHtml += '<tr>' +
-                                        '<td>' + detalle.nombre_producto + '</td>' +
-                                        '<td>' + detalle.cantidad + '</td>' +
-                                        '<td>$' + detalle.valor_unitario + '</td>' +
-                                        '<td>$' + detalle.subtotal + '</td>' +
-                                        '</tr>';
+                                    detallesHtml += `
+                                <div class="producto-item">
+                                    <span class="producto-nombre">${detalle.nombre_producto}</span>
+                                    <div class="producto-detalles">
+                                        <span>Cantidad: ${detalle.cantidad}</span>
+                                        <span>Precio: $${detalle.valor_unitario}</span>
+                                        <span>Total: $${detalle.subtotal}</span>
+                                    </div>
+                                </div>
+                            `;
                                 });
-                                detallesHtml += '<tr><strong><td colspan="3">Total Compra:</td><td>$' + response.total_compra + '</td></strong></tr>';
-                                detallesHtml += '</table>';
+
+                                detallesHtml += `
+                            <div class="producto-item total-compra">
+                                <span class="producto-nombre">Total Compra:</span>
+                                <div class="producto-detalles">
+                                    <span></span>
+                                    <span></span>
+                                    <span>$${response.total_compra}</span>
+                                </div>
+                            </div>
+                        `;
+
                                 document.getElementById("detalles-pedido").innerHTML = detallesHtml;
                                 document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
                                 document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
