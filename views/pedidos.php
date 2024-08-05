@@ -225,10 +225,9 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                                 document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
 
                                 var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                                var mainContent = document.querySelector('main'); // Asegúrate de que esto selecciona el contenido principal correcto
-
+                                modalDetallesPedido.style.display = "block";
                                 modalDetallesPedido.classList.add('show');
-                                mainContent.classList.add('modal-background-blur');
+                                modalDetallesPedido.querySelector('.modal-content').classList.add('show');
                             } else {
                                 console.error("Error del servidor:", response.message);
                                 alert("Error al obtener detalles del pedido: " + response.message);
@@ -249,10 +248,10 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
         function closeDetailsModal() {
             var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-            var mainContent = document.querySelector('main');
-
-            modalDetallesPedido.classList.remove('show');
-            mainContent.classList.remove('modal-background-blur');
+            modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
+            setTimeout(function() {
+                modalDetallesPedido.style.display = "none";
+            }, 300);
         }
 
         function abrirModalEstado(idPedido, estadoPedido) {
