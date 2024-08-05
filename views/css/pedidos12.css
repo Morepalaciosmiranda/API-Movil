@@ -645,12 +645,7 @@ button[type="submit"]:hover {
 
 .producto-detalles span {
     flex: 1;
-    text-align: right;
-}
-
-.total-compra {
-    font-weight: bold;
-    margin-top: 10px;
+    text-align: center;
 }
 
 .close {
