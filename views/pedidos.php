@@ -14,6 +14,7 @@ if ($_SESSION['rol'] === 'Usuario') {
 
 include_once('../includes/conexion.php');
 
+
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
@@ -29,6 +30,7 @@ if ($fecha_filtro) {
 }
 $sql .= " LIMIT $items_por_pagina OFFSET $offset";
 
+
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
@@ -40,6 +42,7 @@ $pedidos = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $pedidos[] = $row;
 }
+
 
 $sql_total = "SELECT COUNT(*) as total FROM pedidos";
 if ($fecha_filtro) {
@@ -71,7 +74,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             <div class="head-section">
                 <div class="title-container">
                     <h1>Pedidos</h1>
-                    <button id="btnAgregarPedido" class="btn-agregar">Agregar Pedido</button>
                     <div class="search-bar">
                         <input type="text" placeholder="Buscar..." />
                         <button type="button"><i class="fa fa-search"></i></button>
@@ -180,266 +182,151 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         </div>
     </div>
 
-    <div id="modalAgregarPedido" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="cerrarModalAgregarPedido()">&times;</span>
-            <h2>Agregar Nuevo Pedido</h2>
-            <form id="formAgregarPedido">
-                <div class="form-group">
-                    <label for="producto">Producto:</label>
-                    <select id="producto" name="producto" required>
-                        <option value="">Seleccione un producto</option>
-                        <?php
-                        $sql_productos = "SELECT id_producto, nombre_producto, precio FROM productos";
-                        $result_productos = mysqli_query($conn, $sql_productos);
-                        while ($row_producto = mysqli_fetch_assoc($result_productos)) {
-                            echo "<option value='" . $row_producto['id_producto'] . "' data-precio='" . $row_producto['precio'] . "'>" . htmlspecialchars($row_producto['nombre_producto']) . "</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="cantidad">Cantidad:</label>
-                    <input type="number" id="cantidad" name="cantidad" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="precioUnitario">Precio Unitario:</label>
-                    <input type="text" id="precioUnitario" name="precioUnitario" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="subtotal">Subtotal:</label>
-                    <input type="text" id="subtotal" name="subtotal" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="nombreCliente">Nombre del Cliente:</label>
-                    <input type="text" id="nombreCliente" name="nombreCliente" required>
-                </div>
-                <button type="submit" class="btn-guardar">Guardar Pedido</button>
-            </form>
-        </div>
-    </div>
-
     <script>
-    function verDetallesPedido(idPedido) {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    try {
-                        var response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                            var cliente = response.cliente;
-                            var detallesHtml = '';
+        function verDetallesPedido(idPedido) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                var cliente = response.cliente;
+                                var detallesHtml = '';
 
-                            response.detalles.forEach(function(detalle) {
+                                response.detalles.forEach(function(detalle) {
+                                    detallesHtml += `
+                                <div class="producto-item">
+                                    <span class="producto-nombre">${detalle.nombre_producto}</span>
+                                    <div class="producto-detalles">
+                                        <span>Cantidad: ${detalle.cantidad}</span>
+                                        <span>Precio: $${detalle.valor_unitario}</span>
+                                        <span>Total: $${detalle.subtotal}</span>
+                                    </div>
+                                </div>
+                            `;
+                                });
+
                                 detallesHtml += `
-                        <div class="producto-item">
-                            <span class="producto-nombre">${detalle.nombre_producto}</span>
-                            <div class="producto-detalles">
-                                <span>Cantidad: ${detalle.cantidad}</span>
-                                <span>Precio: $${detalle.valor_unitario}</span>
-                                <span>Total: $${detalle.subtotal}</span>
+                            <div class="producto-item total-compra">
+                                <span class="producto-nombre">Total Compra:</span>
+                                <div class="producto-detalles">
+                                    <span></span>
+                                    <span></span>
+                                    <span>$${response.total_compra}</span>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                            });
+                        `;
 
-                            detallesHtml += `
-                    <div class="producto-item total-compra">
-                        <span class="producto-nombre">Total Compra:</span>
-                        <div class="producto-detalles">
-                            <span></span>
-                            <span></span>
-                            <span>$${response.total_compra}</span>
-                        </div>
-                    </div>
-                `;
+                                document.getElementById("detalles-pedido").innerHTML = detallesHtml;
+                                document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
+                                document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
+                                document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
+                                document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
 
-                            document.getElementById("detalles-pedido").innerHTML = detallesHtml;
-                            document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
-                            document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
-                            document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
-                            document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
-
-                            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                            modalDetallesPedido.style.display = "block";
-                            modalDetallesPedido.classList.add('show');
-                            modalDetallesPedido.querySelector('.modal-content').classList.add('show');
-                            document.body.classList.add('modal-background-blur');
-                        } else {
-                            console.error("Error del servidor:", response.message);
-                            alert("Error al obtener detalles del pedido: " + response.message);
+                                var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+                                modalDetallesPedido.style.display = "block";
+                                modalDetallesPedido.classList.add('show');
+                                modalDetallesPedido.querySelector('.modal-content').classList.add('show');
+                            } else {
+                                console.error("Error del servidor:", response.message);
+                                alert("Error al obtener detalles del pedido: " + response.message);
+                            }
+                        } catch (e) {
+                            console.error("Error al parsear JSON:", xhr.responseText);
+                            alert("Error inesperado al obtener detalles del pedido");
                         }
-                    } catch (e) {
-                        console.error("Error al parsear JSON:", xhr.responseText);
-                        alert("Error inesperado al obtener detalles del pedido");
+                    } else {
+                        console.error("Error HTTP:", xhr.status);
+                        alert("Error de conexión al obtener detalles del pedido");
                     }
-                } else {
-                    console.error("Error HTTP:", xhr.status);
-                    alert("Error de conexión al obtener detalles del pedido");
                 }
-            }
-        };
-        xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
-        xhr.send();
-    }
+            };
+            xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
+            xhr.send();
+        }
 
-    function closeDetailsModal() {
-        var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-        modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
-        setTimeout(function() {
-            modalDetallesPedido.style.display = "none";
-            removeBackgroundBlur();
-        }, 300);
-    }
+        function closeDetailsModal() {
+            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+            modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
+            setTimeout(function() {
+                modalDetallesPedido.style.display = "none";
+            }, 300);
+        }
 
-    function abrirModalEstado(idPedido, estadoPedido) {
-        document.getElementById("estadoPedidoId").value = idPedido;
-        document.getElementById("estado_pedido").value = estadoPedido;
-        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-        modalEstadoPedido.style.display = "block";
-        modalEstadoPedido.querySelector('.modal-content').classList.add('show');
-        modalEstadoPedido.classList.add('show');
-        document.body.classList.add('modal-background-blur');
-    }
+        function abrirModalEstado(idPedido, estadoPedido) {
+            document.getElementById("estadoPedidoId").value = idPedido;
+            document.getElementById("estado_pedido").value = estadoPedido;
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            modalEstadoPedido.style.display = "block";
+            modalEstadoPedido.querySelector('.modal-content').classList.add('show');
+            modalEstadoPedido.classList.add('show');
+        }
 
-    function closeEstadoModal() {
-        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-        modalEstadoPedido.querySelector('.modal-content').classList.remove('show');
-        setTimeout(function() {
-            modalEstadoPedido.style.display = "none";
-            removeBackgroundBlur();
-        }, 300);
-    }
+        function closeEstadoModal() {
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            modalEstadoPedido.querySelector('.modal-content').classList.remove('show');
+            setTimeout(function() {
+                modalEstadoPedido.style.display = "none";
+            }, 300);
+        }
 
-    document.getElementById("formEstadoPedido").onsubmit = function(event) {
-        event.preventDefault();
-        var idPedido = document.getElementById("estadoPedidoId").value;
-        var estadoPedido = document.getElementById("estado_pedido").value;
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                console.log("Respuesta del servidor:", xhr.responseText);
-                if (xhr.status == 200) {
-                    try {
-                        var response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                            alertify.success(response.message || "Pedido actualizado correctamente");
-                            setTimeout(function() {
-                                location.reload();
-                            }, 1000);
-                        } else {
-                            alertify.error(response.message || "Error al procesar el pedido");
+        document.getElementById("formEstadoPedido").onsubmit = function(event) {
+            event.preventDefault();
+            var idPedido = document.getElementById("estadoPedidoId").value;
+            var estadoPedido = document.getElementById("estado_pedido").value;
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    console.log("Respuesta del servidor:", xhr.responseText); // Agregar este log
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                alertify.success(response.message || "Pedido actualizado correctamente");
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                alertify.error(response.message || "Error al procesar el pedido");
+                            }
+                        } catch (e) {
+                            console.error("Error al analizar la respuesta JSON:", e);
+                            console.error("Respuesta recibida:", xhr.responseText);
+                            alertify.error("Error inesperado en el servidor");
                         }
-                    } catch (e) {
-                        console.error("Error al analizar la respuesta JSON:", e);
-                        console.error("Respuesta recibida:", xhr.responseText);
-                        alertify.error("Error inesperado en el servidor");
+                    } else {
+                        console.error("Error HTTP:", xhr.status);
+                        alertify.error("Error de conexión al actualizar el pedido");
                     }
-                } else {
-                    console.error("Error HTTP:", xhr.status);
-                    alertify.error("Error de conexión al actualizar el pedido");
                 }
-            }
+            };
+
+            xhr.open("POST", "../controller/pedidos_controller.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("pedido_id=" + encodeURIComponent(idPedido) + "&nuevo_estado=" + encodeURIComponent(estadoPedido));
         };
 
-        xhr.open("POST", "../controller/pedidos_controller.php", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send("pedido_id=" + encodeURIComponent(idPedido) + "&nuevo_estado=" + encodeURIComponent(estadoPedido));
-    };
-
-    function toggleUserOptions() {
-        var userOptionsContainer = document.getElementById("userOptionsContainer");
-        if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
-            userOptionsContainer.style.display = "block";
-        } else {
-            userOptionsContainer.style.display = "none";
+        function toggleUserOptions() {
+            var userOptionsContainer = document.getElementById("userOptionsContainer");
+            if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
+                userOptionsContainer.style.display = "block";
+            } else {
+                userOptionsContainer.style.display = "none";
+            }
         }
-    }
 
-    window.onclick = function(event) {
-        var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-        if (event.target == modalDetallesPedido) {
-            closeDetailsModal();
+        window.onclick = function(event) {
+            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+            if (event.target == modalDetallesPedido) {
+                closeDetailsModal();
+            }
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            if (event.target == modalEstadoPedido) {
+                closeEstadoModal();
+            }
         }
-        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-        if (event.target == modalEstadoPedido) {
-            closeEstadoModal();
-        }
-        var modalAgregarPedido = document.getElementById("modalAgregarPedido");
-        if (event.target == modalAgregarPedido) {
-            cerrarModalAgregarPedido();
-        }
-    }
-
-    var modalAgregarPedido = document.getElementById("modalAgregarPedido");
-    var btnAgregarPedido = document.getElementById("btnAgregarPedido");
-
-    btnAgregarPedido.onclick = function() {
-        modalAgregarPedido.style.display = "block";
-        document.body.classList.add('modal-background-blur');
-    }
-
-    function cerrarModalAgregarPedido() {
-        modalAgregarPedido.style.display = "none";
-        removeBackgroundBlur();
-    }
-
-    document.getElementById("producto").onchange = function() {
-        var precio = this.options[this.selectedIndex].getAttribute('data-precio');
-        document.getElementById("precioUnitario").value = precio;
-        calcularSubtotal();
-    }
-
-    document.getElementById("cantidad").onchange = function() {
-        calcularSubtotal();
-    }
-
-    function calcularSubtotal() {
-        var precio = parseFloat(document.getElementById("precioUnitario").value) || 0;
-        var cantidad = parseInt(document.getElementById("cantidad").value) || 0;
-        var subtotal = precio * cantidad;
-        document.getElementById("subtotal").value = subtotal.toFixed(2);
-    }
-
-    document.getElementById("formAgregarPedido").onsubmit = function(event) {
-        event.preventDefault();
-        var formData = new FormData(this);
-
-        fetch('../controller/pedidos_controller.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alertify.success(data.message);
-                    cerrarModalAgregarPedido();
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
-                } else {
-                    alertify.error(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alertify.error('Error al procesar la solicitud');
-            });
-    }
-
-    function removeBackgroundBlur() {
-        document.body.classList.remove('modal-background-blur');
-    }
-
-    // Asegurarse de que los modales estén ocultos y no haya desenfoque al cargar la página
-    window.onload = function() {
-        document.getElementById("modalDetallesPedido").style.display = "none";
-        document.getElementById("modalEstadoPedido").style.display = "none";
-        document.getElementById("modalAgregarPedido").style.display = "none";
-        removeBackgroundBlur();
-    }
-</script>
+    </script>
 </body>
 
 </html>
