@@ -286,11 +286,8 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
         function closeDetailsModal() {
             var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-            modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
-            setTimeout(function() {
-                modalDetallesPedido.style.display = "none";
-                removeBackgroundBlur();
-            }, 300);
+            modalDetallesPedido.style.display = "none";
+            document.body.classList.remove('modal-background-blur');
         }
 
         function abrirModalEstado(idPedido, estadoPedido) {
@@ -305,11 +302,8 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
         function closeEstadoModal() {
             var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-            modalEstadoPedido.querySelector('.modal-content').classList.remove('show');
-            setTimeout(function() {
-                modalEstadoPedido.style.display = "none";
-                removeBackgroundBlur();
-            }, 300);
+            modalEstadoPedido.style.display = "none";
+            document.body.classList.remove('modal-background-blur');
         }
 
         document.getElementById("formEstadoPedido").onsubmit = function(event) {
@@ -381,8 +375,9 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         }
 
         function cerrarModalAgregarPedido() {
+            var modalAgregarPedido = document.getElementById("modalAgregarPedido");
             modalAgregarPedido.style.display = "none";
-            removeBackgroundBlur();
+            document.body.classList.remove('modal-background-blur');
         }
 
         document.getElementById("producto").onchange = function() {
@@ -428,16 +423,16 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 });
         }
 
-        function removeBackgroundBlur() {
-            document.body.classList.remove('modal-background-blur');
-        }
+        // function removeBackgroundBlur() {
+        //     document.body.classList.remove('modal-background-blur');
+        // }
 
         // Asegurarse de que los modales estén ocultos y no haya desenfoque al cargar la página
         window.onload = function() {
             document.getElementById("modalDetallesPedido").style.display = "none";
             document.getElementById("modalEstadoPedido").style.display = "none";
             document.getElementById("modalAgregarPedido").style.display = "none";
-            removeBackgroundBlur();
+            document.body.classList.remove('modal-background-blur');
         }
     </script>
 </body>

@@ -569,9 +569,9 @@ button[type="submit"]:hover {
     background-color: #000000;
 }
 
-.modal-background-blur {
+/* .modal-background-blur {
     filter: blur(5px);
-}
+} */
 
 #modalDetallesPedido {
     display: none;
