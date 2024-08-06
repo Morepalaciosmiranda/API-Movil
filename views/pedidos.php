@@ -233,27 +233,27 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
                                 response.detalles.forEach(function(detalle) {
                                     detallesHtml += `
-                            <div class="producto-item">
-                                <span class="producto-nombre">${detalle.nombre_producto}</span>
-                                <div class="producto-detalles">
-                                    <span>Cantidad: ${detalle.cantidad}</span>
-                                    <span>Precio: $${detalle.valor_unitario}</span>
-                                    <span>Total: $${detalle.subtotal}</span>
-                                </div>
-                            </div>
-                        `;
-                                });
-
-                                detallesHtml += `
-                        <div class="producto-item total-compra">
-                            <span class="producto-nombre">Total Compra:</span>
+                        <div class="producto-item">
+                            <span class="producto-nombre">${detalle.nombre_producto}</span>
                             <div class="producto-detalles">
-                                <span></span>
-                                <span></span>
-                                <span>$${response.total_compra}</span>
+                                <span>Cantidad: ${detalle.cantidad}</span>
+                                <span>Precio: $${detalle.valor_unitario}</span>
+                                <span>Total: $${detalle.subtotal}</span>
                             </div>
                         </div>
                     `;
+                                });
+
+                                detallesHtml += `
+                    <div class="producto-item total-compra">
+                        <span class="producto-nombre">Total Compra:</span>
+                        <div class="producto-detalles">
+                            <span></span>
+                            <span></span>
+                            <span>$${response.total_compra}</span>
+                        </div>
+                    </div>
+                `;
 
                                 document.getElementById("detalles-pedido").innerHTML = detallesHtml;
                                 document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
@@ -265,6 +265,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                                 modalDetallesPedido.style.display = "block";
                                 modalDetallesPedido.classList.add('show');
                                 modalDetallesPedido.querySelector('.modal-content').classList.add('show');
+                                document.body.classList.add('modal-background-blur');
                             } else {
                                 console.error("Error del servidor:", response.message);
                                 alert("Error al obtener detalles del pedido: " + response.message);
@@ -288,6 +289,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
             setTimeout(function() {
                 modalDetallesPedido.style.display = "none";
+                removeBackgroundBlur();
             }, 300);
         }
 
@@ -298,6 +300,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             modalEstadoPedido.style.display = "block";
             modalEstadoPedido.querySelector('.modal-content').classList.add('show');
             modalEstadoPedido.classList.add('show');
+            document.body.classList.add('modal-background-blur');
         }
 
         function closeEstadoModal() {
@@ -305,6 +308,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             modalEstadoPedido.querySelector('.modal-content').classList.remove('show');
             setTimeout(function() {
                 modalEstadoPedido.style.display = "none";
+                removeBackgroundBlur();
             }, 300);
         }
 
@@ -373,10 +377,12 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
         btnAgregarPedido.onclick = function() {
             modalAgregarPedido.style.display = "block";
+            document.body.classList.add('modal-background-blur');
         }
 
         function cerrarModalAgregarPedido() {
             modalAgregarPedido.style.display = "none";
+            removeBackgroundBlur();
         }
 
         document.getElementById("producto").onchange = function() {
@@ -422,11 +428,16 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 });
         }
 
-        // Asegurarse de que los modales estén ocultos al cargar la página
+        function removeBackgroundBlur() {
+            document.body.classList.remove('modal-background-blur');
+        }
+
+        // Asegurarse de que los modales estén ocultos y no haya desenfoque al cargar la página
         window.onload = function() {
             document.getElementById("modalDetallesPedido").style.display = "none";
             document.getElementById("modalEstadoPedido").style.display = "none";
             document.getElementById("modalAgregarPedido").style.display = "none";
+            removeBackgroundBlur();
         }
     </script>
 </body>
