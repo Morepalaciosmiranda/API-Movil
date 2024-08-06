@@ -233,27 +233,27 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
                                 response.detalles.forEach(function(detalle) {
                                     detallesHtml += `
-                                <div class="producto-item">
-                                    <span class="producto-nombre">${detalle.nombre_producto}</span>
-                                    <div class="producto-detalles">
-                                        <span>Cantidad: ${detalle.cantidad}</span>
-                                        <span>Precio: $${detalle.valor_unitario}</span>
-                                        <span>Total: $${detalle.subtotal}</span>
-                                    </div>
-                                </div>
-                            `;
-                                });
-
-                                detallesHtml += `
-                            <div class="producto-item total-compra">
-                                <span class="producto-nombre">Total Compra:</span>
+                            <div class="producto-item">
+                                <span class="producto-nombre">${detalle.nombre_producto}</span>
                                 <div class="producto-detalles">
-                                    <span></span>
-                                    <span></span>
-                                    <span>$${response.total_compra}</span>
+                                    <span>Cantidad: ${detalle.cantidad}</span>
+                                    <span>Precio: $${detalle.valor_unitario}</span>
+                                    <span>Total: $${detalle.subtotal}</span>
                                 </div>
                             </div>
                         `;
+                                });
+
+                                detallesHtml += `
+                        <div class="producto-item total-compra">
+                            <span class="producto-nombre">Total Compra:</span>
+                            <div class="producto-detalles">
+                                <span></span>
+                                <span></span>
+                                <span>$${response.total_compra}</span>
+                            </div>
+                        </div>
+                    `;
 
                                 document.getElementById("detalles-pedido").innerHTML = detallesHtml;
                                 document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
@@ -401,25 +401,32 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             var formData = new FormData(this);
 
             fetch('../controller/pedidos_controller.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alertify.success(data.message);
-                    cerrarModalAgregarPedido();
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
-                } else {
-                    alertify.error(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alertify.error('Error al procesar la solicitud');
-            });
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alertify.success(data.message);
+                        cerrarModalAgregarPedido();
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        alertify.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alertify.error('Error al procesar la solicitud');
+                });
+        }
+
+        // Asegurarse de que los modales estén ocultos al cargar la página
+        window.onload = function() {
+            document.getElementById("modalDetallesPedido").style.display = "none";
+            document.getElementById("modalEstadoPedido").style.display = "none";
+            document.getElementById("modalAgregarPedido").style.display = "none";
         }
     </script>
 </body>
