@@ -292,10 +292,7 @@ body {
     cursor: pointer;
 }
 
-.modal.show .modal-content {
-    transform: scale(1); /* Escala final para la animación */
-    opacity: 1; /* Opacidad final para la animación */
-}
+
 
 
 
