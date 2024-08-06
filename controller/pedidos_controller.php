@@ -240,6 +240,8 @@ try {
             send_json_response(false, 'Error al eliminar los detalles del pedido: ' . $stmt_detalle->error);
         }
         $stmt_detalle->close();
+    } else {
+        send_json_response(false, 'Acción no reconocida');
     }
     $conn->close();
 } catch (Exception $e) {
