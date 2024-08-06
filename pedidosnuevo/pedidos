@@ -6,7 +6,7 @@ if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
     exit();
 }
 
-// Excluir específicamente el rol "Usuario"
+// Excluir específicamente el rol "Usuariooooooooooooooo"
 if ($_SESSION['rol'] === 'Usuario') {
     header('Location: ../no_autorizado.php');
     exit();
