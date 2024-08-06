@@ -587,9 +587,7 @@ button[type="submit"]:hover {
     align-items: center;
 }
 
-#modalDetallesPedido.show {
-    display: flex;
-}
+
 
 #modalDetallesPedido .modal-content {
     background-color: #000000;
