@@ -220,19 +220,19 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
     </div>
 
     <script>
-        function verDetallesPedido(idPedido) {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            if (response.success) {
-                                var cliente = response.cliente;
-                                var detallesHtml = '';
+    function verDetallesPedido(idPedido) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            var cliente = response.cliente;
+                            var detallesHtml = '';
 
-                                response.detalles.forEach(function(detalle) {
-                                    detallesHtml += `
+                            response.detalles.forEach(function(detalle) {
+                                detallesHtml += `
                         <div class="producto-item">
                             <span class="producto-nombre">${detalle.nombre_producto}</span>
                             <div class="producto-detalles">
@@ -242,9 +242,9 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                             </div>
                         </div>
                     `;
-                                });
+                            });
 
-                                detallesHtml += `
+                            detallesHtml += `
                     <div class="producto-item total-compra">
                         <span class="producto-nombre">Total Compra:</span>
                         <div class="producto-detalles">
@@ -255,186 +255,191 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     </div>
                 `;
 
-                                document.getElementById("detalles-pedido").innerHTML = detallesHtml;
-                                document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
-                                document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
-                                document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
-                                document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
+                            document.getElementById("detalles-pedido").innerHTML = detallesHtml;
+                            document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
+                            document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
+                            document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
+                            document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
 
-                                var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                                modalDetallesPedido.style.display = "block";
-                                modalDetallesPedido.classList.add('show');
-                                modalDetallesPedido.querySelector('.modal-content').classList.add('show');
-                                document.body.classList.add('modal-background-blur');
-                            } else {
-                                console.error("Error del servidor:", response.message);
-                                alert("Error al obtener detalles del pedido: " + response.message);
-                            }
-                        } catch (e) {
-                            console.error("Error al parsear JSON:", xhr.responseText);
-                            alert("Error inesperado al obtener detalles del pedido");
+                            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+                            modalDetallesPedido.style.display = "block";
+                            modalDetallesPedido.classList.add('show');
+                            modalDetallesPedido.querySelector('.modal-content').classList.add('show');
+                            document.body.classList.add('modal-background-blur');
+                        } else {
+                            console.error("Error del servidor:", response.message);
+                            alert("Error al obtener detalles del pedido: " + response.message);
                         }
-                    } else {
-                        console.error("Error HTTP:", xhr.status);
-                        alert("Error de conexión al obtener detalles del pedido");
+                    } catch (e) {
+                        console.error("Error al parsear JSON:", xhr.responseText);
+                        alert("Error inesperado al obtener detalles del pedido");
                     }
+                } else {
+                    console.error("Error HTTP:", xhr.status);
+                    alert("Error de conexión al obtener detalles del pedido");
                 }
-            };
-            xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
-            xhr.send();
-        }
+            }
+        };
+        xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
+        xhr.send();
+    }
 
-        function closeDetailsModal() {
-            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+    function closeDetailsModal() {
+        var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+        modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
+        setTimeout(function() {
             modalDetallesPedido.style.display = "none";
-            document.body.classList.remove('modal-background-blur');
-        }
+            removeBackgroundBlur();
+        }, 300);
+    }
 
-        function abrirModalEstado(idPedido, estadoPedido) {
-            document.getElementById("estadoPedidoId").value = idPedido;
-            document.getElementById("estado_pedido").value = estadoPedido;
-            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-            modalEstadoPedido.style.display = "block";
-            modalEstadoPedido.querySelector('.modal-content').classList.add('show');
-            modalEstadoPedido.classList.add('show');
-            document.body.classList.add('modal-background-blur');
-        }
+    function abrirModalEstado(idPedido, estadoPedido) {
+        document.getElementById("estadoPedidoId").value = idPedido;
+        document.getElementById("estado_pedido").value = estadoPedido;
+        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+        modalEstadoPedido.style.display = "block";
+        modalEstadoPedido.querySelector('.modal-content').classList.add('show');
+        modalEstadoPedido.classList.add('show');
+        document.body.classList.add('modal-background-blur');
+    }
 
-        function closeEstadoModal() {
-            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+    function closeEstadoModal() {
+        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+        modalEstadoPedido.querySelector('.modal-content').classList.remove('show');
+        setTimeout(function() {
             modalEstadoPedido.style.display = "none";
-            document.body.classList.remove('modal-background-blur');
-        }
+            removeBackgroundBlur();
+        }, 300);
+    }
 
-        document.getElementById("formEstadoPedido").onsubmit = function(event) {
-            event.preventDefault();
-            var idPedido = document.getElementById("estadoPedidoId").value;
-            var estadoPedido = document.getElementById("estado_pedido").value;
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4) {
-                    console.log("Respuesta del servidor:", xhr.responseText);
-                    if (xhr.status == 200) {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            if (response.success) {
-                                alertify.success(response.message || "Pedido actualizado correctamente");
-                                setTimeout(function() {
-                                    location.reload();
-                                }, 1000);
-                            } else {
-                                alertify.error(response.message || "Error al procesar el pedido");
-                            }
-                        } catch (e) {
-                            console.error("Error al analizar la respuesta JSON:", e);
-                            console.error("Respuesta recibida:", xhr.responseText);
-                            alertify.error("Error inesperado en el servidor");
+    document.getElementById("formEstadoPedido").onsubmit = function(event) {
+        event.preventDefault();
+        var idPedido = document.getElementById("estadoPedidoId").value;
+        var estadoPedido = document.getElementById("estado_pedido").value;
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                console.log("Respuesta del servidor:", xhr.responseText);
+                if (xhr.status == 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            alertify.success(response.message || "Pedido actualizado correctamente");
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            alertify.error(response.message || "Error al procesar el pedido");
                         }
-                    } else {
-                        console.error("Error HTTP:", xhr.status);
-                        alertify.error("Error de conexión al actualizar el pedido");
+                    } catch (e) {
+                        console.error("Error al analizar la respuesta JSON:", e);
+                        console.error("Respuesta recibida:", xhr.responseText);
+                        alertify.error("Error inesperado en el servidor");
                     }
+                } else {
+                    console.error("Error HTTP:", xhr.status);
+                    alertify.error("Error de conexión al actualizar el pedido");
                 }
-            };
-
-            xhr.open("POST", "../controller/pedidos_controller.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.send("pedido_id=" + encodeURIComponent(idPedido) + "&nuevo_estado=" + encodeURIComponent(estadoPedido));
+            }
         };
 
-        function toggleUserOptions() {
-            var userOptionsContainer = document.getElementById("userOptionsContainer");
-            if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
-                userOptionsContainer.style.display = "block";
-            } else {
-                userOptionsContainer.style.display = "none";
-            }
-        }
+        xhr.open("POST", "../controller/pedidos_controller.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send("pedido_id=" + encodeURIComponent(idPedido) + "&nuevo_estado=" + encodeURIComponent(estadoPedido));
+    };
 
-        window.onclick = function(event) {
-            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-            if (event.target == modalDetallesPedido) {
-                closeDetailsModal();
-            }
-            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-            if (event.target == modalEstadoPedido) {
-                closeEstadoModal();
-            }
-            var modalAgregarPedido = document.getElementById("modalAgregarPedido");
-            if (event.target == modalAgregarPedido) {
-                cerrarModalAgregarPedido();
-            }
+    function toggleUserOptions() {
+        var userOptionsContainer = document.getElementById("userOptionsContainer");
+        if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
+            userOptionsContainer.style.display = "block";
+        } else {
+            userOptionsContainer.style.display = "none";
         }
+    }
 
+    window.onclick = function(event) {
+        var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+        if (event.target == modalDetallesPedido) {
+            closeDetailsModal();
+        }
+        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+        if (event.target == modalEstadoPedido) {
+            closeEstadoModal();
+        }
         var modalAgregarPedido = document.getElementById("modalAgregarPedido");
-        var btnAgregarPedido = document.getElementById("btnAgregarPedido");
-
-        btnAgregarPedido.onclick = function() {
-            modalAgregarPedido.style.display = "block";
-            document.body.classList.add('modal-background-blur');
+        if (event.target == modalAgregarPedido) {
+            cerrarModalAgregarPedido();
         }
+    }
 
-        function cerrarModalAgregarPedido() {
-            var modalAgregarPedido = document.getElementById("modalAgregarPedido");
-            modalAgregarPedido.style.display = "none";
-            document.body.classList.remove('modal-background-blur');
-        }
+    var modalAgregarPedido = document.getElementById("modalAgregarPedido");
+    var btnAgregarPedido = document.getElementById("btnAgregarPedido");
 
-        document.getElementById("producto").onchange = function() {
-            var precio = this.options[this.selectedIndex].getAttribute('data-precio');
-            document.getElementById("precioUnitario").value = precio;
-            calcularSubtotal();
-        }
+    btnAgregarPedido.onclick = function() {
+        modalAgregarPedido.style.display = "block";
+        document.body.classList.add('modal-background-blur');
+    }
 
-        document.getElementById("cantidad").onchange = function() {
-            calcularSubtotal();
-        }
+    function cerrarModalAgregarPedido() {
+        modalAgregarPedido.style.display = "none";
+        removeBackgroundBlur();
+    }
 
-        function calcularSubtotal() {
-            var precio = parseFloat(document.getElementById("precioUnitario").value) || 0;
-            var cantidad = parseInt(document.getElementById("cantidad").value) || 0;
-            var subtotal = precio * cantidad;
-            document.getElementById("subtotal").value = subtotal.toFixed(2);
-        }
+    document.getElementById("producto").onchange = function() {
+        var precio = this.options[this.selectedIndex].getAttribute('data-precio');
+        document.getElementById("precioUnitario").value = precio;
+        calcularSubtotal();
+    }
 
-        document.getElementById("formAgregarPedido").onsubmit = function(event) {
-            event.preventDefault();
-            var formData = new FormData(this);
+    document.getElementById("cantidad").onchange = function() {
+        calcularSubtotal();
+    }
 
-            fetch('../controller/pedidos_controller.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alertify.success(data.message);
-                        cerrarModalAgregarPedido();
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        alertify.error(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alertify.error('Error al procesar la solicitud');
-                });
-        }
+    function calcularSubtotal() {
+        var precio = parseFloat(document.getElementById("precioUnitario").value) || 0;
+        var cantidad = parseInt(document.getElementById("cantidad").value) || 0;
+        var subtotal = precio * cantidad;
+        document.getElementById("subtotal").value = subtotal.toFixed(2);
+    }
 
-        // function removeBackgroundBlur() {
-        //     document.body.classList.remove('modal-background-blur');
-        // }
+    document.getElementById("formAgregarPedido").onsubmit = function(event) {
+        event.preventDefault();
+        var formData = new FormData(this);
 
-        // Asegurarse de que los modales estén ocultos y no haya desenfoque al cargar la página
-        window.onload = function() {
-            document.getElementById("modalDetallesPedido").style.display = "none";
-            document.getElementById("modalEstadoPedido").style.display = "none";
-            document.getElementById("modalAgregarPedido").style.display = "none";
-            document.body.classList.remove('modal-background-blur');
-        }
-    </script>
+        fetch('../controller/pedidos_controller.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alertify.success(data.message);
+                    cerrarModalAgregarPedido();
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    alertify.error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alertify.error('Error al procesar la solicitud');
+            });
+    }
+
+    function removeBackgroundBlur() {
+        document.body.classList.remove('modal-background-blur');
+    }
+
+    // Asegurarse de que los modales estén ocultos y no haya desenfoque al cargar la página
+    window.onload = function() {
+        document.getElementById("modalDetallesPedido").style.display = "none";
+        document.getElementById("modalEstadoPedido").style.display = "none";
+        document.getElementById("modalAgregarPedido").style.display = "none";
+        removeBackgroundBlur();
+    }
+</script>
 </body>
 
 </html>

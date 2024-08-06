@@ -7,7 +7,7 @@ body {
     background-color: #000000;
     color: #FFFFFF;
     line-height: 1.6;
-    transition: filter 0.3s ease;
+     transition: filter 0.3s ease;
 }
 
 
@@ -257,7 +257,7 @@ body {
     width: 100%;
     height: 100%;
     overflow: auto;
-    /* backdrop-filter: blur(5px); */
+    backdrop-filter: blur(5px);
 }
 
 .modal-content {
@@ -292,7 +292,10 @@ body {
     cursor: pointer;
 }
 
-
+.modal.show .modal-content {
+    transform: scale(1); /* Escala final para la animación */
+    opacity: 1; /* Opacidad final para la animación */
+}
 
 
 
@@ -300,7 +303,9 @@ body.modal-open {
     overflow: hidden; /* Evitar el desplazamiento de la página cuando el modal está abierto */
 }
 
-
+.modal-background-blur {
+    filter: blur(5px); /* Aplicar desenfoque al fondo */
+}
 
 .modal-content h2 {
     margin-top: 0;
@@ -564,9 +569,9 @@ button[type="submit"]:hover {
     background-color: #000000;
 }
 
-/* .modal-background-blur {
+.modal-background-blur {
     filter: blur(5px);
-} */
+}
 
 #modalDetallesPedido {
     display: none;
@@ -583,9 +588,9 @@ button[type="submit"]:hover {
     align-items: center;
 }
 
-/* #modalDetallesPedido.show {
+#modalDetallesPedido.show {
     display: flex;
-} */
+}
 
 #modalDetallesPedido .modal-content {
     background-color: #000000;
