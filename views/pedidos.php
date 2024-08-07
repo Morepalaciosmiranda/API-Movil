@@ -198,8 +198,16 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 <div class="form-group">
                     <label for="producto">Producto:</label>
                     <select id="producto" name="producto" required>
-                        <!-- Aquí deberías cargar dinámicamente las opciones de productos desde tu base de datos -->
                         <option value="">Seleccione un producto</option>
+                        <?php
+                        // Consulta para obtener todos los productos
+                        $sql_productos = "SELECT id_producto, nombre_producto FROM productos";
+                        $result_productos = mysqli_query($conn, $sql_productos);
+
+                        while ($row_producto = mysqli_fetch_assoc($result_productos)) {
+                            echo "<option value='" . $row_producto['id_producto'] . "'>" . htmlspecialchars($row_producto['nombre_producto']) . "</option>";
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="form-group">
