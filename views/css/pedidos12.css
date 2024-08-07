@@ -261,20 +261,17 @@ body {
 
 .modal-content {
     background-color: #000000;
-    position: absolute;
-    left: 750px;
-    top: 170px;
-    transform: translate(-50%, -50%);
+    margin: 15% auto;
     padding: 20px;
-    border: 1px solid #ffffff;
+    border: 1px solid #ff5a0e;
     width: 80%;
-    max-width: 500px;
-    border-radius: 10px;
-    max-height: 80%;
-    overflow-y: auto;
+    max-width: 600px;
+    border-radius: 8px;
+    color: #ffffff;
+    position: relative;
     transition: all 0.3s ease-in-out;
-    transform-origin: center;
     opacity: 0;
+    transform: scale(0.8);
 }
 
 .close {
@@ -672,9 +669,7 @@ button[type="submit"]:hover {
 
 .close {
     color: #aaa;
-    position: absolute;
-    top: 10px;
-    right: 20px;
+    float: right;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
@@ -684,6 +679,55 @@ button[type="submit"]:hover {
 .close:focus {
     color: #ff5a0e;
     text-decoration: none;
+}
+
+.btn-agregar-pedido {
+    background-color: #ff5a0e;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.btn-agregar-pedido:hover {
+    background-color: #e54e00;
+}
+
+#formAgregarPedido .form-group {
+    margin-bottom: 15px;
+}
+
+#formAgregarPedido label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ff5a0e;
+}
+
+#formAgregarPedido input,
+#formAgregarPedido select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+#formAgregarPedido button {
+    background-color: #ff5a0e;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#formAgregarPedido button:hover {
+    background-color: #e54e00;
 }
 
 #modalEstadoPedido {

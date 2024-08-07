@@ -94,6 +94,11 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 </div>
             </div>
             <div class="content">
+                <div class="add-order-button">
+                    <button onclick="abrirModalAgregarPedido()" class="btn-agregar">
+                        <i class="fa fa-plus"></i> Agregar Pedido
+                    </button>
+                </div>
                 <div class="form-container">
                     <form method="GET" action="pedidos.php">
                         <label for="fecha">Filtrar por fecha:</label>
@@ -162,6 +167,47 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 <h3>Productos</h3>
                 <div id="detalles-pedido"></div>
             </div>
+        </div>
+    </div>
+
+    <div id="modalAgregarPedido" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalAgregarPedido()">&times;</span>
+            <h2>Agregar Nuevo Pedido</h2>
+            <form id="formAgregarPedido">
+                <div class="form-group">
+                    <label for="nombre_cliente">Nombre del Cliente:</label>
+                    <input type="text" id="nombre_cliente" name="nombre_cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="calle">Calle:</label>
+                    <input type="text" id="calle" name="calle" required>
+                </div>
+                <div class="form-group">
+                    <label for="interior">Interior:</label>
+                    <input type="text" id="interior" name="interior" required>
+                </div>
+                <div class="form-group">
+                    <label for="barrio_cliente">Barrio:</label>
+                    <input type="text" id="barrio_cliente" name="barrio_cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono_cliente">Teléfono:</label>
+                    <input type="tel" id="telefono_cliente" name="telefono_cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="producto">Producto:</label>
+                    <select id="producto" name="producto" required>
+                        <!-- Aquí deberías cargar dinámicamente las opciones de productos desde tu base de datos -->
+                        <option value="">Seleccione un producto</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" id="cantidad" name="cantidad" min="1" required>
+                </div>
+                <button type="submit" class="btn-guardar">Guardar Pedido</button>
+            </form>
         </div>
     </div>
 
@@ -245,6 +291,48 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
             xhr.send();
         }
+
+        function abrirModalAgregarPedido() {
+            document.getElementById("modalAgregarPedido").style.display = "block";
+        }
+
+        function cerrarModalAgregarPedido() {
+            document.getElementById("modalAgregarPedido").style.display = "none";
+        }
+
+        document.getElementById("formAgregarPedido").onsubmit = function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                alertify.success(response.message);
+                                cerrarModalAgregarPedido();
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                alertify.error(response.message);
+                            }
+                        } catch (e) {
+                            console.error("Error al analizar la respuesta JSON:", e);
+                            alertify.error("Error inesperado al procesar la respuesta del servidor");
+                        }
+                    } else {
+                        console.error("Error HTTP:", xhr.status);
+                        alertify.error("Error de conexión al crear el pedido");
+                    }
+                }
+            };
+
+            xhr.open("POST", "../controller/pedidos_controller.php", true);
+            xhr.send(formData);
+        };
 
         function closeDetailsModal() {
             var modalDetallesPedido = document.getElementById("modalDetallesPedido");
