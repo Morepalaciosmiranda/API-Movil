@@ -843,10 +843,10 @@ button[type="submit"]:hover {
     transition: all 0.3s ease-in-out;
 }
 
-#modalAgregarPedido.show .modal-content {
+/* #modalAgregarPedido.show .modal-content {
     transform: translateY(0);
     opacity: 1;
-}
+} */
 
 #modalAgregarPedido h2 {
     color: #ff5a0e;
