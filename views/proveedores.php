@@ -377,6 +377,7 @@ $result = mysqli_query($conn, $sql);
 
                 }
             </script>
+            <script src="../js/validaciones.js"></script>
         </div>
 </body>
 
