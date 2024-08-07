@@ -232,16 +232,15 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         function verDetallesPedido(idPedido) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            if (response.success) {
-                                var cliente = response.cliente;
-                                var detallesHtml = '';
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            var cliente = response.cliente;
+                            var detallesHtml = '';
 
-                                response.detalles.forEach(function(detalle) {
-                                    detallesHtml += `
+                            response.detalles.forEach(function(detalle) {
+                                detallesHtml += `
                                 <div class="producto-item">
                                     <span class="producto-nombre">${detalle.nombre_producto}</span>
                                     <div class="producto-detalles">
@@ -251,9 +250,9 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                                     </div>
                                 </div>
                             `;
-                                });
+                            });
 
-                                detallesHtml += `
+                            detallesHtml += `
                             <div class="producto-item total-compra">
                                 <span class="producto-nombre">Total Compra:</span>
                                 <div class="producto-detalles">
@@ -264,27 +263,23 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                             </div>
                         `;
 
-                                document.getElementById("detalles-pedido").innerHTML = detallesHtml;
-                                document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
-                                document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
-                                document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
-                                document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
+                            document.getElementById("detalles-pedido").innerHTML = detallesHtml;
+                            document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
+                            document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
+                            document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
+                            document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
 
-                                var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                                modalDetallesPedido.style.display = "block";
-                                modalDetallesPedido.classList.add('show');
-                                modalDetallesPedido.querySelector('.modal-content').classList.add('show');
-                            } else {
-                                console.error("Error del servidor:", response.message);
-                                alert("Error al obtener detalles del pedido: " + response.message);
-                            }
-                        } catch (e) {
-                            console.error("Error al parsear JSON:", xhr.responseText);
-                            alert("Error inesperado al obtener detalles del pedido");
+                            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+                            modalDetallesPedido.style.display = "block";
+                            modalDetallesPedido.classList.add('show');
+                            modalDetallesPedido.querySelector('.modal-content').classList.add('show');
+                        } else {
+                            console.error("Error del servidor:", response.message);
+                            alert("Error al obtener detalles del pedido: " + response.message);
                         }
-                    } else {
-                        console.error("Error HTTP:", xhr.status);
-                        alert("Error de conexión al obtener detalles del pedido");
+                    } catch (e) {
+                        console.error("Error al parsear JSON:", xhr.responseText);
+                        alert("Error inesperado al obtener detalles del pedido");
                     }
                 }
             };
@@ -414,6 +409,13 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 closeEstadoModal();
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+            if (modalDetallesPedido) {
+                modalDetallesPedido.style.display = "none";
+            }
+        });
     </script>
 </body>
 
