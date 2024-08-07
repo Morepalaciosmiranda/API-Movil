@@ -129,7 +129,7 @@ $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['canc
         </div>
     </div>
 
-  
+
     <div id="password-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -151,25 +151,23 @@ $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['canc
         <div class="pedidos-lista">
             <?php foreach ($pedidos as $pedido) : ?>
                 <div class="pedido-item">
-                    <div class="pedido-header">
-                        <p><strong>Número de pedido:</strong> <?php echo $pedido['id_pedido']; ?></p>
-                        <p><strong>Fecha:</strong> <?php echo $pedido['fecha_pedido']; ?></p>
-                        <p><strong>Nombre:</strong> <?php echo $pedido['nombre_usuario']; ?></p>
+                    <div class="pedido-info">
+                        <span><strong>Número:</strong> <?php echo $pedido['id_pedido']; ?></span>
+                        <span><strong>Fecha:</strong> <?php echo $pedido['fecha_pedido']; ?></span>
+                        <span><strong>Nombre:</strong> <?php echo $pedido['nombre_usuario']; ?></span>
+                        <span><strong>Domicilio:</strong> <?php echo $pedido['precio_domicilio']; ?></span>
+                        <span><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></span>
+                        <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
                     </div>
-                    <div class="pedido-body">
-                        <p><strong>Precio de domicilio:</strong> <?php echo $pedido['precio_domicilio']; ?></p>
-                        <p><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></p>
-                        <p><strong>Total del pedido:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></p>
-                    </div>
-                    <div class="pedido-footer">
-                        <?php if ($pedido['estado_pedido'] != 'cancelado' && !in_array($pedido['id_pedido'], $cancelled_orders)) : ?>
+                    <?php if ($pedido['estado_pedido'] != 'cancelado' && !in_array($pedido['id_pedido'], $cancelled_orders)) : ?>
+                        <div class="pedido-actions">
                             <form method="POST" action="./controller/cambiar_estado_pedido.php" id="cancelarForm_<?php echo $pedido['id_pedido']; ?>">
                                 <input type="hidden" name="id_pedido" value="<?php echo $pedido['id_pedido']; ?>">
                                 <input type="hidden" name="nuevo_estado" value="cancelado">
                                 <button type="button" class="cancelar-button" id="cancelarButton_<?php echo $pedido['id_pedido']; ?>" onclick="confirmCancel('<?php echo $pedido['id_pedido']; ?>')">Cancelar Pedido</button>
                             </form>
-                        <?php endif; ?>
-                    </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         </div>

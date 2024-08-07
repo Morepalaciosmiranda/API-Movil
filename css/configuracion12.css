@@ -8,11 +8,10 @@
 
 body {
     font-family: 'Bebas Neue', cursive;
-    font-size: 18px; /* Tamaño del texto, ajusta según necesites */
-    line-height: 1.6; /* Espaciado entre líneas */
-    background-color: #000000; /* Fondo negro */
+    font-size: 18px;
+    line-height: 1.6;
+    background-color: #000000;
 }
-
 
 .navbar {
     background-color: #e77122;
@@ -28,11 +27,10 @@ body {
 }
 
 .logo img {
-    width: 130px; /* Tamaño del logo */
-    float: left; /* Posiciona la imagen a la izquierda */
-    margin-right: 100%; /* Ajusta el espacio a la derecha */
+    width: 130px;
+    float: left;
+    margin-right: 100%;
 }
-
 
 .nav-links {
     list-style: none;
@@ -40,16 +38,16 @@ body {
 }
 
 .nav-links li {
-    margin-right: 20px; /* Espaciado entre elementos */
+    margin-right: 20px;
 }
 
 .nav-links li a {
     text-decoration: none;
-    color: #fff; /* Color del texto */
+    color: #fff;
 }
 
 .nav-links li a:hover {
-    color: #ff6600; /* Color al pasar el cursor */
+    color: #ff6600;
 }
 
 .container {
@@ -57,13 +55,12 @@ body {
     height: 480px;
     background-color: #fff;
     position: absolute;
-    left: 580px;
+    left: 530px;
     top: 100px;
     border: 2px solid black;
     display: flex;
     justify-content: space-between;
-    margin: 0 auto; /* Centra el contenedor horizontalmente */
-
+    margin: 0 auto;
 }
 
 .inputs-container {
@@ -73,13 +70,13 @@ body {
 }
 
 .inputs-column {
-    width: 48%; /* Ajusta el ancho de cada columna */
-    margin-top: 50px; /* Agrega un margen superior a los inputs */
+    width: 48%;
+    margin-top: 50px;
 }
 
 .inputs-column input {
     display: block;
-    margin-bottom: 20px; /* Ajusta el margen inferior */
+    margin-bottom: 20px;
     width: 100%;
     padding: 20px;
     font-size: 18px;
@@ -92,15 +89,14 @@ body {
 .title {
     position: absolute;
     top: 20px;
-    left: 20px; /* Ajuste de la posición hacia la izquierda */
-    /*transform: translateX(-50%);*/
-    background-color: transparent; /* Fondo transparente para el título */
+    left: 20px;
+    background-color: transparent;
 }
 
 .title h2 {
     text-align: center;
-    color: rgb(0, 0, 0); /* Color negro para el texto */
-    font-size: 18px !important; /* Tamaño de fuente reducido */
+    color: rgb(0, 0, 0);
+    font-size: 18px !important;
 }
 
 .container2 {
@@ -108,9 +104,9 @@ body {
     height: 380px;
     background-color: #fff;
     position: absolute;
-    left: 310px;
+    left: 220px;
     top: 100px;
-    border: 2px solidblack;
+    border: 2px solid black;
 }
 
 .navigation {
@@ -118,25 +114,23 @@ body {
 }
 
 .navigation h3 {
-    margin-bottom: 20px; /* Ajusta el margen inferior para separar más los elementos */
+    margin-bottom: 20px;
     font-size: 16px;
-    border-bottom: 1px solid #ccc; /* Agrega un borde inferior */
-    padding-bottom: 5px; /* Ajusta el espacio entre el texto y la línea */
-    color: black; /* Color inicial del texto */
-    transition: color 0.3s; /* Transición suave para el cambio de color */
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+    color: black;
+    transition: color 0.3s;
     cursor: pointer;
 }
 
 .navigation h3:hover {
-    color: orange; /* Cambia el color del texto a naranja al pasar el cursor sobre él */
+    color: orange;
 }
-
 
 .input-container {
     position: relative;
-    margin: 20px 20px 50px; /* Add a bottom margin of 10px */
+    margin: 20px 20px 50px;
 }
-
 
 .input-field {
     display: block;
@@ -149,7 +143,6 @@ body {
     background-color: transparent;
 }
 
-
 .input-label {
     position: absolute;
     top: 0;
@@ -159,7 +152,6 @@ body {
     pointer-events: none;
     transition: all 0.3s ease;
 }
-
 
 .input-highlight {
     position: absolute;
@@ -172,7 +164,6 @@ body {
     transition: all 0.3s ease;
 }
 
-
 .input-field:focus + .input-label {
     top: -10px;
     font-size: 12px;
@@ -183,7 +174,6 @@ body {
     width: 100%;
 }
 
-
 .input-container i {
     position: absolute;
     top: 30%;
@@ -193,20 +183,19 @@ body {
     color: #ff6600;
     cursor: pointer;
     transition: color 0.3s;
-  }
+}
 
-  .input-container i:hover {
+.input-container i:hover {
     color: #000000;
-  }
+}
 
-
-  .button-container {
+.button-container {
     position: absolute;
     bottom: 20px;
     left: 20px;
-  }
+}
 
-  .update-button {
+.update-button {
     background-color: #e74919;
     color: white;
     border: none;
@@ -214,45 +203,41 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-  }
+}
 
-  .update-button:hover {
+.update-button:hover {
     background-color: #000000;
-  }
+}
 
-
-  .modal {
-    display: none; /* Oculta la modal por defecto */
-    position: fixed; /* Mantiene la modal en una posición fija */
-    z-index: 1000; /* Asegura que la modal esté por encima de otros elementos */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* Permite el scroll si el contenido es demasiado grande */
-    background-color: rgba(0, 0, 0, 0.8); /* Fondo negro semi-transparente */
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
-/* Estilos para el contenido de la modal */
 .modal-content {
     background-color: #000000;
-    margin: 10% auto; /* Centra la modal verticalmente y horizontalmente */
+    margin: 10% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Ancho de la modal */
-    max-width: 500px; /* Máximo ancho de la modal */
-    border-radius: 10px; /* Esquinas redondeadas */
-    position: relative; /* Para posicionar el botón de cierre */
-    animation: fadeIn 0.5s; /* Animación de aparición */
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+    position: relative;
+    animation: fadeIn 0.5s;
 }
 
-/* Animación de aparición */
 @keyframes fadeIn {
     from {opacity: 0;}
     to {opacity: 1;}
 }
 
-/* Estilos para el botón de cierre */
 .close {
     color: #ff4901;
     float: right;
@@ -267,14 +252,12 @@ body {
     cursor: pointer;
 }
 
-/* Estilos para el título de la modal */
 .modal-content h2 {
-    color: #ff6600; /* Color naranja */
+    color: #ff6600;
     font-size: 24px;
     margin-bottom: 20px;
 }
 
-/* Estilos para los formularios dentro de la modal */
 .modal-content form {
     display: flex;
     flex-direction: column;
@@ -290,193 +273,84 @@ body {
 }
 
 .modal-content button {
-    background-color: #ff6600; /* Fondo naranja */
-    color: #fff; /* Texto blanco */
+    background-color: #ff6600;
+    color: #fff;
     border: none;
     padding: 10px;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* Transición suave para el fondo */
+    transition: background-color 0.3s ease;
 }
 
 .modal-content button:hover {
-    background-color: #e65c00; /* Fondo naranja oscuro al pasar el cursor */
+    background-color: #e65c00;
 }
 
-.cancelar-button{
-    background-color: #ee540d; /* Color de fondo */
-    color: #ffffff; /* Color del texto */
-    border: none; /* Sin borde */
-    padding: 10px 20px; /* Espaciado interno */
-    font-size: 16px; /* Tamaño de fuente */
-    border-radius: 5px; /* Borde redondeado */
-    cursor: pointer; /* Cursor al pasar por encima */
-    transition: background-color 0.3s; /* Transición suave del color de fondo */
-}
-
-
+/* Nuevos estilos para la sección de pedidos */
 .containerPedidos {
     width: 90%;
     max-width: 1200px;
     background-color: #fff;
     position: absolute;
-    left: 1180px;
+    left: 1110px;
     top: 100px;
-    transform: translateX(-50%); 
+    transform: translateX(-50%);
     border: 2px solid black;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0 auto;
-    margin-bottom: 20px; /* Agregar margen inferior */
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
-
-
-.titlePedido {
-    font-size: 20px; /* Tamaño de la fuente */
-    font-weight: bold; /* Grosor de la fuente */
-    color: #000000; /* Color del texto */
-    margin-bottom: 20px; /* Margen inferior para separarlo del contenido */
-    text-transform: uppercase; /* Convertir el texto a mayúsculas */
-    /* Otros estilos que desees agregar */
-
-    /* Posicionamiento */
-    position: absolute; /* Se posiciona de forma absoluta */
-    top: 35px; /* Puedes ajustar la posición vertical */
-    left: 30px; /* O ajustar la posición horizontal */
-}
-
-.subtitle {
-    font-size: 12px; /* Tamaño de la fuente */
-    font-weight: bold; /* Grosor de la fuente */
-    color: #525151; /* Color del texto */
-    margin-bottom: 20px; /* Margen inferior para separarlo del contenido */
-    text-transform: uppercase; /* Convertir el texto a mayúsculas */
-    /* Otros estilos que desees agregar */
-
-    /* Posicionamiento */
-    position: absolute; /* Se posiciona de forma absoluta */
-    top: 80px; /* Puedes ajustar la posición vertical */
-    left: 30px; /* O ajustar la posición horizontal */
+.titlePedido, .subtitle {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .pedidos-lista {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 35px;
-    width: 90%;
-    margin-top: 140px;
-    margin-left: 45px;
-    margin-bottom: 50px; /* Ajustar margen inferior */
+    width: 100%;
 }
-
 
 .pedido-item {
-    background-color: #e77122;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #000000;
 }
 
-.pedido-item:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.pedido-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex-grow: 1;
 }
 
-.pedido-header, .pedido-body, .pedido-footer {
-    margin-bottom: 10px;
+.pedido-info span {
+    flex-basis: calc(33.333% - 10px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.pedido-header p, .pedido-body p {
-    margin: 5px 0;
-    color: #fff;
+.pedido-actions {
+    flex-shrink: 0;
+    margin-left: 20px;
 }
 
-.pedido-header p strong, .pedido-body p strong {
-    color: #000000;
-}
-
-.detalle-button {
-    background-color: var(--secondary);
-    color: #fff;
+.cancelar-button {
+    background-color: #ee540d;
+    color: #ffffff;
     border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 3px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
 }
 
-.detalle-button:hover {
-    background-color: var(--secondary-light);
+.cancelar-button:hover {
+    background-color: #d24400;
 }
-
-
-/* Estilos para los iconos */
-.fa {
-    font-size: 20px; /* Tamaño base para los iconos */
-}
-
-.fa-trash {
-    color: red; /* Color personalizado para el icono de eliminar */
-}
-
-.fa-pencil {
-    color: blue; /* Color personalizado para el icono de editar */
-}
-
-.fa-user-plus {
-    color: green; /* Color personalizado para el icono de asignar rol */
-}
-
-.ticon {
-    font-size: 100px; /* Tamaño de icono en las celdas de la tabla */
-}
-
-.hicon {
-    font-size: 22px; /* Tamaño de icono en la barra superior */
-}
-
-.search {
-    padding: 5px;
-    display: none;
-    outline: none;
-    border: none;
-    border-bottom: 1px solid black;
-}
-
-.pe {
-    content: '';
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    background: red;
-    border-radius: 10px;
-    left: 10px;
-    top: 37px;
-    transform: scale(0.5);
-    box-shadow: 0 0 0 0 rgba(255, 82, 82, 1);
-    animation: pulse-red 2s infinite;
-    cursor: pointer;
-}
-
-.de {
-    content: '';
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    background: green;
-    border-radius: 10px;
-    left: 10px;
-    top: 37px;
-    transform: scale(0.5);
-    box-shadow: 0 0 0 0 rgba(255, 82, 82, 1);
-    animation: pulse-green 2s infinite;
-    cursor: pointer;
-}
-
 
 .swal2-popup {
     background-color: rgb(0, 0, 0) !important;
@@ -498,15 +372,172 @@ body {
         transform: scale(0.85);
         box-shadow: 0 0 0 0 rgba(82, 255, 82, 0.7);
     }
-
     70% {
         transform: scale(1);
         box-shadow: 0 0 0 25px rgba(82, 255, 82, 0);
     }
-
     100% {
         transform: scale(0.85);
         box-shadow: 0 0 0 0 rgba(82, 255, 82, 0);
     }
 }
 
+/* Media queries */
+@media only screen and (max-width: 1200px) {
+    body {
+        padding: 0px;
+    }
+
+    .container {
+        width: 30%;
+        left: 40%;
+        transform: translateX(-50%);
+    }
+    
+    .inputs-container {
+        flex-direction: column;
+    }
+
+    .inputs-column {
+        width: 110%;
+    }
+
+    .container2 {
+        width: 20%;
+        left: 15%;
+        transform: translateX(-50%);
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .input-label {
+        font-size: 10px;
+    }
+
+    .input-field,
+    .edit-button {
+        font-size: 30px;
+    }
+
+    .modal-content {
+        width: 40%;
+    }
+
+    .containerPedidos {
+        width: 40%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .titlePedido {
+        font-size: 20px;
+    }
+
+    .pedidos-lista {
+        grid-template-columns: 1fr;
+    }
+
+    .pedido-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .pedido-info span {
+        flex-basis: 100%;
+    }
+
+    .pedido-actions {
+        margin-top: 10px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .navbar {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nav-links li {
+        margin-bottom: 10px;
+        margin-right: 0;
+    }
+
+    .logo img {
+        margin-right: 0;
+    }
+
+    .container, .container2, .containerPedidos {
+        width: 100%;
+        left: 0;
+        top: 10px;
+        transform: none;
+    }
+
+    .titlePedido, .subtitle {
+        font-size: 16px;
+    }
+}
+
+/* Ajustes adicionales para pantallas más pequeñas */
+@media only screen and (max-width: 430px) {
+    .input-container {
+        width: 100%;
+        left: 50%;
+        top: 500px;
+        position: relative;
+        transform: translateX(-50%);
+        z-index: 1;   
+    }
+    
+    .inputs-container {
+        width: 100%;
+        left: 100%;
+        top: 65%;
+        transform: translateX(-50%);
+        z-index: 1;
+    }
+
+    .input-field,
+    .edit-button {
+        font-size: 10px;
+    }
+
+    .containerPedidos {
+        width: 100%;
+        left: 50%;
+        top: 65%;
+        transform: translateX(-50%);
+        z-index: 1;
+    }
+
+    .pedido-item {
+        padding: 10px;
+    }
+
+    .pedido-info span {
+        font-size: 14px;
+    }
+
+    .container2 {
+        width: 50%;
+        top: 800px;
+    }
+
+    .navigation {
+        width: 100%;
+        top: -50px;
+    }
+
+    .navbar .logo {
+        width: 300px;
+        top: 80%;
+        margin-left: 5px;
+        float: left;
+        margin-bottom: 20px;
+    }
+}
