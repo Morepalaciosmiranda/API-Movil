@@ -64,23 +64,15 @@ function procesarProducto() {
         }
 
         $upload_dir = '../uploads/';
-
+        
         // Verificar y crear el directorio si no existe
         if (!is_dir($upload_dir)) {
             if (!mkdir($upload_dir, 0755, true)) {
                 throw new Exception("No se pudo crear el directorio de uploads.");
             }
         }
-
-        // Establecer permisos si no son adecuados
         if (!is_writable($upload_dir)) {
-            if (!chmod($upload_dir, 0755)) {
-                throw new Exception("No se pudieron establecer los permisos adecuados en el directorio de uploads.");
-            }
-        }
-
-        if (!is_writable($upload_dir)) {
-            throw new Exception("El directorio de uploads no tiene permisos de escritura.");
+            throw new Exception("El directorio de uploads no tiene permisos de escritura");
         }
 
         $imagen_nombre = uniqid('producto_') . '_' . basename($imagen['name']);
