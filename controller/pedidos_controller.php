@@ -4,9 +4,9 @@ ini_set('display_errors', 1);
 session_start();
 include '../includes/conexion.php';
 
-function enviarRespuestaJSON($exito, $mensaje = '') {
+function send_json_response($success, $message = '') {
     header('Content-Type: application/json');
-    echo json_encode(['success' => $exito, 'message' => $mensaje]);
+    echo json_encode(['success' => $success, 'message' => $message]);
     exit;
 }
 
@@ -62,9 +62,6 @@ try {
             $stmt->execute();
             $pedido_id = $stmt->insert_id;
 
-            // Actualizar insumos por pedido
-            actualizarInsumosPorPedido($pedido_id);
-
             // Obtener información del producto
             $stmt = $conn->prepare("SELECT nombre_producto, valor_unitario FROM productos WHERE id_producto = ?");
             $stmt->bind_param("i", $producto_id);
@@ -84,10 +81,10 @@ try {
             // Confirmar transacción
             $conn->commit();
 
-            enviarRespuestaJSON(true, 'Pedido creado con éxito');
+            send_json_response(true, 'Pedido creado con éxito');
         } catch (Exception $e) {
             $conn->rollback();
-            enviarRespuestaJSON(false, 'Error al crear el pedido: ' . $e->getMessage());
+            send_json_response(false, 'Error al crear el pedido: ' . $e->getMessage());
         }
     } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['pedido_id']) && isset($_POST['nuevo_estado'])) {
         $pedido_id = $_POST['pedido_id'];
@@ -102,7 +99,7 @@ try {
                 try {
                     actualizarInsumosPorPedido($pedido_id);
                 } catch (Exception $e) {
-                    enviarRespuestaJSON(false, 'Error al actualizar insumos: ' . $e->getMessage());
+                    send_json_response(false, 'Error al actualizar insumos: ' . $e->getMessage());
                     exit;
                 }
 
@@ -167,9 +164,9 @@ try {
                     }
                 }
             }
-            enviarRespuestaJSON(true, 'Estado actualizado correctamente');
+            send_json_response(true, 'Estado actualizado correctamente');
         } else {
-            enviarRespuestaJSON(false, 'Error al actualizar el estado del pedido: ' . $stmt->error);
+            send_json_response(false, 'Error al actualizar el estado del pedido: ' . $stmt->error);
         }
         $stmt->close();
     } elseif (isset($_GET['eliminar'])) {
@@ -185,20 +182,20 @@ try {
             $stmt_pedido->bind_param('i', $pedido_id);
 
             if ($stmt_pedido->execute()) {
-                enviarRespuestaJSON(true, 'Pedido eliminado con éxito.');
+                send_json_response(true, 'Pedido eliminado con éxito.');
             } else {
-                enviarRespuestaJSON(false, 'Error al eliminar el pedido: ' . $stmt_pedido->error);
+                send_json_response(false, 'Error al eliminar el pedido: ' . $stmt_pedido->error);
             }
             $stmt_pedido->close();
         } else {
-            enviarRespuestaJSON(false, 'Error al eliminar los detalles del pedido: ' . $stmt_detalle->error);
+            send_json_response(false, 'Error al eliminar los detalles del pedido: ' . $stmt_detalle->error);
         }
         $stmt_detalle->close();
     } else {
-        enviarRespuestaJSON(false, 'Solicitud no válida');
+        send_json_response(false, 'Solicitud no válida');
     }
     $conn->close();
 } catch (Exception $e) {
-    enviarRespuestaJSON(false, 'Error inesperado: ' . $e->getMessage());
+    send_json_response(false, 'Error inesperado: ' . $e->getMessage());
 }
 ?>

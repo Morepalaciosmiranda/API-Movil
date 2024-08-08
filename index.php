@@ -390,9 +390,14 @@ if ($_SESSION['rol'] !== 'Usuario') {
                         }
                     </script>
 
+
+
+
+</html>
 <script src="./js/index12.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-canvas/2.0.2/dom-canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.all.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
+
+
 </html>

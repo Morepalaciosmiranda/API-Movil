@@ -203,6 +203,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         </div>
     </div>
 
+
     <div id="modalEstadoPedido" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeEstadoModal()">&times;</span>
@@ -308,7 +309,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                             }
                         } catch (e) {
                             console.error("Error al analizar la respuesta JSON:", e);
-                            console.error("Respuesta recibida:", xhr.responseText);
                             alertify.error("Error inesperado al procesar la respuesta del servidor");
                         }
                     } else {
