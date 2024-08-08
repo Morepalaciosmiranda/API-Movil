@@ -241,10 +241,6 @@ if ($_SESSION['rol'] !== 'Usuario') {
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
                             const addToCartButtons = document.querySelectorAll('.addToCartButton');
-                            const btnComprar = document.getElementById('btn_comprar');
-                            const telefonoCliente = document.getElementById('telefono_cliente');
-                            const barrioCliente = document.getElementById('barrio_cliente');
-                            const barrioList = document.querySelectorAll('#barrios option');
 
                             addToCartButtons.forEach(button => {
                                 button.addEventListener('click', function() {
@@ -275,127 +271,127 @@ if ($_SESSION['rol'] !== 'Usuario') {
                                         });
                                 });
                             });
+                        });
 
-                            document.getElementById('btn_comprar').addEventListener('click', function() {
-                                const cartProducts = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-                                if (cartProducts.length === 0) {
-                                    Swal.fire('Error', 'No hay productos en el carrito. Agrega productos antes de enviar el pedido.', 'error');
-                                } else {
-                                    document.getElementById('modalContainer').style.display = 'block';
+                        document.getElementById('btn_comprar').addEventListener('click', function() {
+                            const cartProducts = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+                            if (cartProducts.length === 0) {
+                                Swal.fire('Error', 'No hay productos en el carrito. Agrega productos antes de enviar el pedido.', 'error');
+                            } else {
+                                document.getElementById('modalContainer').style.display = 'block';
+                            }
+                        });
+
+                        function submitForm() {
+                            const btnComprar = document.getElementById('btn_comprar');
+                            const telefonoCliente = document.getElementById('telefono_cliente').value;
+                            const barrioCliente = document.getElementById('barrio_cliente').value;
+                            const barrioList = document.querySelectorAll('#barrios option');
+                            let barrioValido = false;
+
+                            barrioList.forEach(option => {
+                                if (option.value === barrioCliente) {
+                                    barrioValido = true;
                                 }
                             });
 
-                            function submitForm() {
-                                let barrioValido = false;
+                            if (!barrioValido) {
+                                Swal.fire('Error', 'Por favor seleccione un barrio válido de la lista.', 'error');
+                                return;
+                            }
 
-                                barrioList.forEach(option => {
-                                    if (option.value === barrioCliente.value) {
-                                        barrioValido = true;
-                                    }
-                                });
+                            if (!/^\d{10}$/.test(telefonoCliente)) {
+                                Swal.fire('Error', 'El número de teléfono debe tener 10 dígitos y solo contener números.', 'error');
+                                return;
+                            }
 
-                                if (!barrioValido) {
-                                    Swal.fire('Error', 'Por favor seleccione un barrio válido de la lista.', 'error');
-                                    return;
-                                }
+                            var productos = JSON.parse(localStorage.getItem('shoppingCart')) || [];
 
-                                if (!/^\d{10}$/.test(telefonoCliente.value)) {
-                                    Swal.fire('Error', 'El número de teléfono debe tener 10 dígitos y solo contener números.', 'error');
-                                    return;
-                                }
+                            if (productos.length > 0) {
+                                document.getElementById('productos').value = JSON.stringify(productos);
 
-                                var productos = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+                                var form = document.getElementById('pedidoFormulario');
+                                if (form.checkValidity()) {
+                                    Swal.fire({
+                                        title: '¿Estás seguro?',
+                                        text: '¿Deseas realizar el pedido?',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Sí, realizar pedido',
+                                        cancelButtonText: 'Cancelar'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            var formData = new FormData(form);
 
-                                if (productos.length > 0) {
-                                    document.getElementById('productos').value = JSON.stringify(productos);
+                                            // Deshabilitar el botón mientras se procesa la solicitud
+                                            btnComprar.setAttribute('disabled', true);
 
-                                    var form = document.getElementById('pedidoFormulario');
-                                    if (form.checkValidity()) {
-                                        Swal.fire({
-                                            title: '¿Estás seguro?',
-                                            text: '¿Deseas realizar el pedido?',
-                                            icon: 'warning',
-                                            showCancelButton: true,
-                                            confirmButtonText: 'Sí, realizar pedido',
-                                            cancelButtonText: 'Cancelar'
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                var formData = new FormData(form);
-
-                                                // Deshabilitar el botón mientras se procesa la solicitud
-                                                btnComprar.setAttribute('disabled', true);
-
-                                                fetch('./controller/pedidos_controller.php', {
-                                                        method: 'POST',
-                                                        body: formData
-                                                    })
-                                                    .then(response => response.text())
-                                                    .then(data => {
-                                                        Swal.fire('Éxito', 'Pedido realizado correctamente.', 'success');
-                                                        document.getElementById('modalContainer').style.display = 'none';
-                                                        localStorage.removeItem('shoppingCart'); // Limpiar el carrito después de la compra
-                                                        updateCartBadge(); // Actualizar la insignia del carrito si es necesario
-                                                    })
-                                                    .catch(error => {
-                                                        Swal.fire('Error', 'Error: ' + error.message, 'error');
-                                                    })
-                                                    .finally(() => {
-                                                        btnComprar.removeAttribute('disabled'); // Habilitar el botón después de completar la solicitud
-                                                    });
-                                            }
-                                        });
-                                    } else {
-                                        Swal.fire('Error', 'Por favor complete todos los campos obligatorios.', 'error');
-                                    }
+                                            fetch('./controller/pedidos_controller.php', {
+                                                    method: 'POST',
+                                                    body: formData
+                                                })
+                                                .then(response => response.text())
+                                                .then(data => {
+                                                    Swal.fire('Éxito', 'Pedido realizado correctamente.', 'success');
+                                                    document.getElementById('modalContainer').style.display = 'none';
+                                                    localStorage.removeItem('shoppingCart'); // Limpiar el carrito después de la compra
+                                                    updateCartBadge(); // Actualizar la insignia del carrito si es necesario
+                                                })
+                                                .catch(error => {
+                                                    Swal.fire('Error', 'Error: ' + error.message, 'error');
+                                                })
+                                                .finally(() => {
+                                                    btnComprar.removeAttribute('disabled'); // Habilitar el botón después de completar la solicitud
+                                                });
+                                        }
+                                    });
                                 } else {
-                                    Swal.fire('Error', 'No hay productos en el carrito. Agrega productos antes de enviar el pedido.', 'error');
+                                    Swal.fire('Error', 'Por favor complete todos los campos obligatorios.', 'error');
                                 }
+                            } else {
+                                Swal.fire('Error', 'No hay productos en el carrito. Agrega productos antes de enviar el pedido.', 'error');
                             }
+                        }
 
-                            function updateCartBadge() {
-                                const cartProducts = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-                                document.querySelector('.cart-badge').textContent = cartProducts.length;
-                            }
+                        function updateCartBadge() {
+                            const cartProducts = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+                            document.querySelector('.cart-badge').textContent = cartProducts.length;
+                        }
 
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const menuLinks = document.querySelectorAll('.dashboard-menu a');
-                                const productCards = document.querySelectorAll('.dashboard-card');
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const menuLinks = document.querySelectorAll('.dashboard-menu a');
+                            const productCards = document.querySelectorAll('.dashboard-card');
 
-                                menuLinks.forEach(link => {
-                                    link.addEventListener('click', function(event) {
-                                        event.preventDefault();
-                                        const category = this.getAttribute('data-category').toLowerCase();
+                            menuLinks.forEach(link => {
+                                link.addEventListener('click', function(event) {
+                                    event.preventDefault();
+                                    const category = this.getAttribute('data-category').toLowerCase();
 
-                                        productCards.forEach(card => {
-                                            const productCategory = card.getAttribute('data-category').toLowerCase();
-                                            const productName = card.querySelector('.card-detail h4').textContent.toLowerCase();
+                                    productCards.forEach(card => {
+                                        const productCategory = card.getAttribute('data-category').toLowerCase();
+                                        const productName = card.querySelector('.card-detail h4').textContent.toLowerCase();
 
-                                            if (category === 'todo') {
+                                        if (category === 'todo') {
+                                            card.style.display = 'block';
+                                        } else {
+                                            if (productCategory.includes(category) || productName.includes(category)) {
                                                 card.style.display = 'block';
                                             } else {
-                                                if (productCategory.includes(category) || productName.includes(category)) {
-                                                    card.style.display = 'block';
-                                                } else {
-                                                    card.style.display = 'none';
-                                                }
+                                                card.style.display = 'none';
                                             }
-                                        });
+                                        }
                                     });
                                 });
                             });
-
-                            function closeForm() {
-                                document.getElementById('pedidoFormulario').style.display = 'none';
-                            }
                         });
+
+                        function closeForm() {
+                            document.getElementById('pedidoFormulario').style.display = 'none';
+                        }
                     </script>
-
-
 
 <script src="./js/index12.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-canvas/2.0.2/dom-canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.all.min.js"></script>
 </body>
-
-
 </html>
