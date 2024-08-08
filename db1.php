@@ -1,6 +1,6 @@
 <?php
 // Incluir el archivo de conexión
-require_once 'conexion.php';
+require_once './includes/conexion.php';
 
 // Función para ejecutar una consulta y manejar errores
 function executeQuery($conn, $sql) {
