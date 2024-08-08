@@ -19,8 +19,8 @@ $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
 
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
-$pedidos_web = isset($_GET['pedidos_web']) ? 1 : 0;
-$pedidos_admin = isset($_GET['pedidos_admin']) ? 1 : 0;
+$pedidos_web = isset($_GET['pedidos_web']);
+$pedidos_admin = isset($_GET['pedidos_admin']);
 
 $sql = "SELECT pedidos.id_pedido, usuarios.nombre_usuario, pedidos.fecha_pedido, pedidos.estado_pedido, pedidos.origen 
         FROM pedidos
@@ -67,13 +67,6 @@ if ($pedidos_web && !$pedidos_admin) {
 $result_total = mysqli_query($conn, $sql_total);
 $total_pedidos = mysqli_fetch_assoc($result_total)['total'];
 $total_paginas = ceil($total_pedidos / $items_por_pagina);
-
-function construirURL($pagina)
-{
-    $params = $_GET;
-    $params['pagina'] = $pagina;
-    return 'pedidos.php?' . http_build_query($params);
-}
 ?>
 <!DOCTYPE html>
 <html>
@@ -127,12 +120,12 @@ function construirURL($pagina)
                     <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
 
                     <label for="pedidos_web">
-                        <input type="checkbox" id="pedidos_web" name="pedidos_web" value="1" <?php echo $pedidos_web ? 'checked' : ''; ?>>
+                        <input type="checkbox" id="pedidos_web" name="pedidos_web" <?php echo $pedidos_web ? 'checked' : ''; ?>>
                         Pedidos web
                     </label>
 
                     <label for="pedidos_admin">
-                        <input type="checkbox" id="pedidos_admin" name="pedidos_admin" value="1" <?php echo $pedidos_admin ? 'checked' : ''; ?>>
+                        <input type="checkbox" id="pedidos_admin" name="pedidos_admin" <?php echo $pedidos_admin ? 'checked' : ''; ?>>
                         Pedidos creados por admin
                     </label>
 
@@ -172,17 +165,17 @@ function construirURL($pagina)
                 <?php
                 if ($total_paginas > 0) {
                     for ($i = 1; $i <= $total_paginas; $i++) {
-                        $url = construirURL($i);
                         if ($i == $pagina_actual) {
-                            echo "<a href='$url' class='active'>$i</a>";
+                            echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
                         } else {
-                            echo "<a href='$url'>$i</a>";
+                            echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
                         }
                     }
                 }
                 ?>
             </div>
         </div>
+    </div>
     </div>
 
     <div id="modalDetallesPedido" class="modal">
