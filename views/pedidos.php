@@ -103,6 +103,17 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <form method="GET" action="pedidos.php">
                         <label for="fecha">Filtrar por fecha:</label>
                         <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
+
+                        <label for="pedidos_web">
+                            <input type="checkbox" id="pedidos_web" name="pedidos_web" <?php echo isset($_GET['pedidos_web']) ? 'checked' : ''; ?>>
+                            Pedidos web
+                        </label>
+
+                        <label for="pedidos_admin">
+                            <input type="checkbox" id="pedidos_admin" name="pedidos_admin" <?php echo isset($_GET['pedidos_admin']) ? 'checked' : ''; ?>>
+                            Pedidos creados por admin
+                        </label>
+
                         <button type="submit">Filtrar</button>
                     </form>
                 </div>

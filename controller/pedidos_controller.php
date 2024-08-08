@@ -50,7 +50,7 @@ try {
         $nombre_cliente = $_POST['nombre_cliente'];
         $producto_id = $_POST['producto'];
         $cantidad = $_POST['cantidad'];
-        $id_usuario = $_SESSION['id_usuario'];
+        $id_usuario = $_SESSION['id_usuario']; // ID del administrador que crea el pedido
 
         // Iniciar transacción
         $conn->begin_transaction();
