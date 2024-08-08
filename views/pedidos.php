@@ -94,11 +94,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 </div>
             </div>
             <div class="content">
-                <div class="add-order-button">
-                    <button onclick="abrirModalAgregarPedido()" class="btn-agregar">
-                        <i class="fa fa-plus"></i> Agregar Pedido
-                    </button>
-                </div>
                 <div class="form-container">
                     <form method="GET" action="pedidos.php">
                         <label for="fecha">Filtrar por fecha:</label>
@@ -170,40 +165,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         </div>
     </div>
 
-    <div id="modalAgregarPedido" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="cerrarModalAgregarPedido()">&times;</span>
-            <h2>Agregar Nuevo Pedido</h2>
-            <form id="formAgregarPedido">
-                <div class="form-group">
-                    <label for="nombre_cliente">Nombre del Cliente:</label>
-                    <input type="text" id="nombre_cliente" name="nombre_cliente" required>
-                </div>
-                <div class="form-group">
-                    <label for="producto">Producto:</label>
-                    <select id="producto" name="producto" required>
-                        <option value="">Seleccione un producto</option>
-                        <?php
-                        // Consulta para obtener todos los productos
-                        $sql_productos = "SELECT id_producto, nombre_producto FROM productos";
-                        $result_productos = mysqli_query($conn, $sql_productos);
-
-                        while ($row_producto = mysqli_fetch_assoc($result_productos)) {
-                            echo "<option value='" . $row_producto['id_producto'] . "'>" . htmlspecialchars($row_producto['nombre_producto']) . "</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="cantidad">Cantidad:</label>
-                    <input type="number" id="cantidad" name="cantidad" min="1" required>
-                </div>
-                <button type="submit" class="btn-guardar">Guardar Pedido</button>
-            </form>
-        </div>
-    </div>
-
-
     <div id="modalEstadoPedido" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeEstadoModal()">&times;</span>
@@ -225,15 +186,16 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         function verDetallesPedido(idPedido) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    try {
-                        var response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                            var cliente = response.cliente;
-                            var detallesHtml = '';
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                var cliente = response.cliente;
+                                var detallesHtml = '';
 
-                            response.detalles.forEach(function(detalle) {
-                                detallesHtml += `
+                                response.detalles.forEach(function(detalle) {
+                                    detallesHtml += `
                                 <div class="producto-item">
                                     <span class="producto-nombre">${detalle.nombre_producto}</span>
                                     <div class="producto-detalles">
@@ -243,9 +205,9 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                                     </div>
                                 </div>
                             `;
-                            });
+                                });
 
-                            detallesHtml += `
+                                detallesHtml += `
                             <div class="producto-item total-compra">
                                 <span class="producto-nombre">Total Compra:</span>
                                 <div class="producto-detalles">
@@ -256,71 +218,33 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                             </div>
                         `;
 
-                            document.getElementById("detalles-pedido").innerHTML = detallesHtml;
-                            document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
-                            document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
-                            document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
-                            document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
+                                document.getElementById("detalles-pedido").innerHTML = detallesHtml;
+                                document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
+                                document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
+                                document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
+                                document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
 
-                            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                            modalDetallesPedido.style.display = "block";
-                            modalDetallesPedido.classList.add('show');
-                            modalDetallesPedido.querySelector('.modal-content').classList.add('show');
-                        } else {
-                            console.error("Error del servidor:", response.message);
-                            alert("Error al obtener detalles del pedido: " + response.message);
+                                var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+                                modalDetallesPedido.style.display = "block";
+                                modalDetallesPedido.classList.add('show');
+                                modalDetallesPedido.querySelector('.modal-content').classList.add('show');
+                            } else {
+                                console.error("Error del servidor:", response.message);
+                                alert("Error al obtener detalles del pedido: " + response.message);
+                            }
+                        } catch (e) {
+                            console.error("Error al parsear JSON:", xhr.responseText);
+                            alert("Error inesperado al obtener detalles del pedido");
                         }
-                    } catch (e) {
-                        console.error("Error al parsear JSON:", xhr.responseText);
-                        alert("Error inesperado al obtener detalles del pedido");
+                    } else {
+                        console.error("Error HTTP:", xhr.status);
+                        alert("Error de conexión al obtener detalles del pedido");
                     }
                 }
             };
             xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
             xhr.send();
         }
-
-        function abrirModalAgregarPedido() {
-            document.getElementById("modalAgregarPedido").style.display = "block";
-        }
-
-        function cerrarModalAgregarPedido() {
-            document.getElementById("modalAgregarPedido").style.display = "none";
-        }
-
-        document.getElementById("formAgregarPedido").onsubmit = function(event) {
-            event.preventDefault();
-            var formData = new FormData(this);
-
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            if (response.success) {
-                                alertify.success(response.message);
-                                cerrarModalAgregarPedido();
-                                setTimeout(function() {
-                                    location.reload();
-                                }, 1000);
-                            } else {
-                                alertify.error(response.message);
-                            }
-                        } catch (e) {
-                            console.error("Error al analizar la respuesta JSON:", e);
-                            alertify.error("Error inesperado al procesar la respuesta del servidor");
-                        }
-                    } else {
-                        console.error("Error HTTP:", xhr.status);
-                        alertify.error("Error de conexión al crear el pedido");
-                    }
-                }
-            };
-
-            xhr.open("POST", "../controller/pedidos_controller.php", true);
-            xhr.send(formData);
-        };
 
         function closeDetailsModal() {
             var modalDetallesPedido = document.getElementById("modalDetallesPedido");
@@ -402,13 +326,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 closeEstadoModal();
             }
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-            if (modalDetallesPedido) {
-                modalDetallesPedido.style.display = "none";
-            }
-        });
     </script>
 </body>
 
