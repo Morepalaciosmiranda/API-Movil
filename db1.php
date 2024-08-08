@@ -11,7 +11,7 @@ function executeQuery($conn, $sql) {
     }
 }
 
-// Verificar si la columna 'origen' ya existe
+// Verificar si la columna 'origen' ya existe en la tabla 'pedidos'
 $checkColumnSQL = "SHOW COLUMNS FROM pedidos LIKE 'origen'";
 $result = $conn->query($checkColumnSQL);
 
@@ -24,17 +24,17 @@ if ($result->num_rows == 0) {
 }
 
 // Actualizar los pedidos existentes
-// Asumimos que los pedidos creados por usuarios con rol 'Administrador' son de origen 'admin'
+// Asumimos que los pedidos creados por usuarios con id_rol = 1 son de origen 'admin'
+// Ajusta el número 1 si el id_rol para administradores es diferente
 $updatePedidosSQL = "
 UPDATE pedidos p
 JOIN usuarios u ON p.id_usuario = u.id_usuario
 SET p.origen = 'admin'
-WHERE u.rol = 'Administrador'
+WHERE u.id_rol = 1
 ";
 executeQuery($conn, $updatePedidosSQL);
 
 // Cerrar la conexión
 $conn->close();
-
 echo "Proceso completado.\n";
 ?>
