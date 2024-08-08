@@ -180,22 +180,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <input type="text" id="nombre_cliente" name="nombre_cliente" required>
                 </div>
                 <div class="form-group">
-                    <label for="calle">Calle:</label>
-                    <input type="text" id="calle" name="calle" required>
-                </div>
-                <div class="form-group">
-                    <label for="interior">Interior:</label>
-                    <input type="text" id="interior" name="interior" required>
-                </div>
-                <div class="form-group">
-                    <label for="barrio_cliente">Barrio:</label>
-                    <input type="text" id="barrio_cliente" name="barrio_cliente" required>
-                </div>
-                <div class="form-group">
-                    <label for="telefono_cliente">Teléfono:</label>
-                    <input type="tel" id="telefono_cliente" name="telefono_cliente" required>
-                </div>
-                <div class="form-group">
                     <label for="producto">Producto:</label>
                     <select id="producto" name="producto" required>
                         <option value="">Seleccione un producto</option>
@@ -324,6 +308,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                             }
                         } catch (e) {
                             console.error("Error al analizar la respuesta JSON:", e);
+                            console.error("Respuesta recibida:", xhr.responseText);
                             alertify.error("Error inesperado al procesar la respuesta del servidor");
                         }
                     } else {
