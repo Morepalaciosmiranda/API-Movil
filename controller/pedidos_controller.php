@@ -63,14 +63,14 @@ try {
             $pedido_id = $stmt->insert_id;
 
             // Obtener información del producto
-            $stmt = $conn->prepare("SELECT nombre_producto, precio FROM productos WHERE id_producto = ?");
+            $stmt = $conn->prepare("SELECT nombre_producto, valor_unitario FROM productos WHERE id_producto = ?");
             $stmt->bind_param("i", $producto_id);
             $stmt->execute();
             $result = $stmt->get_result();
             $producto = $result->fetch_assoc();
 
             $nombre_producto = $producto['nombre_producto'];
-            $precio_unitario = $producto['precio'];
+            $precio_unitario = $producto['valor_unitario'];
             $subtotal = $precio_unitario * $cantidad;
 
             // Insertar detalle del pedido
