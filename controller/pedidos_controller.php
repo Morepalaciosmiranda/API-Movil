@@ -50,15 +50,16 @@ try {
         $nombre_cliente = $_POST['nombre_cliente'];
         $producto_id = $_POST['producto'];
         $cantidad = $_POST['cantidad'];
-        $id_usuario = $_SESSION['id_usuario']; // ID del administrador que crea el pedido
+        $id_usuario = $_SESSION['id_usuario'];
+        $origen = 'admin'; // Marcamos el origen como 'admin' para pedidos creados desde la interfaz de administración
 
         // Iniciar transacción
         $conn->begin_transaction();
 
         try {
             // Insertar pedido
-            $stmt = $conn->prepare("INSERT INTO pedidos (fecha_pedido, estado_pedido, id_usuario) VALUES (NOW(), 'en proceso', ?)");
-            $stmt->bind_param("i", $id_usuario);
+            $stmt = $conn->prepare("INSERT INTO pedidos (fecha_pedido, estado_pedido, id_usuario, origen) VALUES (NOW(), 'en proceso', ?, ?)");
+            $stmt->bind_param("is", $id_usuario, $origen);
             $stmt->execute();
             $pedido_id = $stmt->insert_id;
 

@@ -14,22 +14,34 @@ if ($_SESSION['rol'] === 'Usuario') {
 
 include_once('../includes/conexion.php');
 
-
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
 
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
+$pedidos_web = isset($_GET['pedidos_web']);
+$pedidos_admin = isset($_GET['pedidos_admin']);
 
-$sql = "SELECT pedidos.id_pedido, usuarios.nombre_usuario, pedidos.fecha_pedido, pedidos.estado_pedido 
+$sql = "SELECT pedidos.id_pedido, usuarios.nombre_usuario, pedidos.fecha_pedido, pedidos.estado_pedido, pedidos.origen 
         FROM pedidos
-        JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario";
+        JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario
+        WHERE 1=1";
 
 if ($fecha_filtro) {
-    $sql .= " WHERE DATE(pedidos.fecha_pedido) = '$fecha_filtro'";
+    $sql .= " AND DATE(pedidos.fecha_pedido) = '$fecha_filtro'";
 }
-$sql .= " LIMIT $items_por_pagina OFFSET $offset";
 
+if ($pedidos_web && !$pedidos_admin) {
+    $sql .= " AND pedidos.origen = 'web'";
+} elseif (!$pedidos_web && $pedidos_admin) {
+    $sql .= " AND pedidos.origen = 'admin'";
+} elseif ($pedidos_web && $pedidos_admin) {
+    // Si ambos están marcados, no aplicamos filtro adicional
+} else {
+    // Si ninguno está marcado, mostramos todos los pedidos
+}
+
+$sql .= " ORDER BY pedidos.fecha_pedido DESC LIMIT $items_por_pagina OFFSET $offset";
 
 $result = mysqli_query($conn, $sql);
 
@@ -43,10 +55,14 @@ while ($row = mysqli_fetch_assoc($result)) {
     $pedidos[] = $row;
 }
 
-
-$sql_total = "SELECT COUNT(*) as total FROM pedidos";
+$sql_total = "SELECT COUNT(*) as total FROM pedidos WHERE 1=1";
 if ($fecha_filtro) {
-    $sql_total .= " WHERE DATE(fecha_pedido) = '$fecha_filtro'";
+    $sql_total .= " AND DATE(fecha_pedido) = '$fecha_filtro'";
+}
+if ($pedidos_web && !$pedidos_admin) {
+    $sql_total .= " AND origen = 'web'";
+} elseif (!$pedidos_web && $pedidos_admin) {
+    $sql_total .= " AND origen = 'admin'";
 }
 $result_total = mysqli_query($conn, $sql_total);
 $total_pedidos = mysqli_fetch_assoc($result_total)['total'];
@@ -99,66 +115,67 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                         <i class="fa fa-plus"></i> Agregar Pedido
                     </button>
                 </div>
-                <div class="form-container">
-                    <form method="GET" action="pedidos.php">
-                        <label for="fecha">Filtrar por fecha:</label>
-                        <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
+                <form method="GET" action="pedidos.php">
+                    <label for="fecha">Filtrar por fecha:</label>
+                    <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
 
-                        <label for="pedidos_web">
-                            <input type="checkbox" id="pedidos_web" name="pedidos_web" <?php echo isset($_GET['pedidos_web']) ? 'checked' : ''; ?>>
-                            Pedidos web
-                        </label>
+                    <label for="pedidos_web">
+                        <input type="checkbox" id="pedidos_web" name="pedidos_web" <?php echo $pedidos_web ? 'checked' : ''; ?>>
+                        Pedidos web
+                    </label>
 
-                        <label for="pedidos_admin">
-                            <input type="checkbox" id="pedidos_admin" name="pedidos_admin" <?php echo isset($_GET['pedidos_admin']) ? 'checked' : ''; ?>>
-                            Pedidos creados por admin
-                        </label>
+                    <label for="pedidos_admin">
+                        <input type="checkbox" id="pedidos_admin" name="pedidos_admin" <?php echo $pedidos_admin ? 'checked' : ''; ?>>
+                        Pedidos creados por admin
+                    </label>
 
-                        <button type="submit">Filtrar</button>
-                    </form>
-                </div>
-                <table class="content">
-                    <tr>
-                        <th>ID Pedido</th>
-                        <th>Nombre Usuario</th>
-                        <th>Fecha de Pedido</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                    <?php
-                    if (count($pedidos) > 0) {
-                        foreach ($pedidos as $row) {
-                            echo "<tr>";
-                            echo "<td>" . htmlspecialchars($row['id_pedido']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['nombre_usuario']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['fecha_pedido']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['estado_pedido']) . "</td>";
-                            echo '<td class="actions">';
-                            echo '<button class="details-btn" onclick="verDetallesPedido(' . $row['id_pedido'] . ')"><i class="fa fa-info-circle"></i></button>';
-                            echo '<button class="edit-btn" onclick="abrirModalEstado(' . $row['id_pedido'] . ', \'' . htmlspecialchars($row['estado_pedido'], ENT_QUOTES) . '\')"><i class="fa fa-edit"></i></button>';
-                            echo '</td>';
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='5'>No hay pedidos disponibles.</td></tr>";
+                    <button type="submit">Filtrar</button>
+                </form>
+            </div>
+            <table class="content">
+                <tr>
+                    <th>ID Pedido</th>
+                    <th>Nombre Usuario</th>
+                    <th>Fecha de Pedido</th>
+                    <th>Estado</th>
+                    <th>Origen</th>
+                    <th>Acciones</th>
+                </tr>
+                <?php
+                if (count($pedidos) > 0) {
+                    foreach ($pedidos as $row) {
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($row['id_pedido']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['nombre_usuario']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['fecha_pedido']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['estado_pedido']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['origen']) . "</td>";
+                        echo '<td class="actions">';
+                        echo '<button class="details-btn" onclick="verDetallesPedido(' . $row['id_pedido'] . ')"><i class="fa fa-info-circle"></i></button>';
+                        echo '<button class="edit-btn" onclick="abrirModalEstado(' . $row['id_pedido'] . ', \'' . htmlspecialchars($row['estado_pedido'], ENT_QUOTES) . '\')"><i class="fa fa-edit"></i></button>';
+                        echo '</td>';
+                        echo "</tr>";
                     }
-                    ?>
-                </table>
-                <div class="pagination">
-                    <?php
-                    if ($total_paginas > 0) {
-                        for ($i = 1; $i <= $total_paginas; $i++) {
-                            if ($i == $pagina_actual) {
-                                echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
-                            } else {
-                                echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
-                            }
+                } else {
+                    echo "<tr><td colspan='6'>No hay pedidos disponibles.</td></tr>";
+                }
+                ?>
+            </table>
+            <div class="pagination">
+                <?php
+                if ($total_paginas > 0) {
+                    for ($i = 1; $i <= $total_paginas; $i++) {
+                        if ($i == $pagina_actual) {
+                            echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
+                        } else {
+                            echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
                         }
                     }
-                    ?>
-                </div>
+                }
+                ?>
             </div>
         </div>
+    </div>
     </div>
 
     <div id="modalDetallesPedido" class="modal">
