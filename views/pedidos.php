@@ -100,6 +100,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                         <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
                         <button type="submit">Filtrar</button>
                     </form>
+                    <button class="add-pedido-btn" onclick="abrirModalNuevoPedido()">Agregar Pedido</button>
                 </div>
                 <table class="content">
                     <tr>
@@ -142,6 +143,37 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     ?>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="modalNuevoPedido" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeNuevoPedidoModal()">&times;</span>
+            <h2>Nuevo Pedido</h2>
+            <form id="formNuevoPedido">
+                <div class="form-group">
+                    <label for="producto">Producto:</label>
+                    <select id="producto" name="producto">
+                        <option value="">Selecciona un producto</option>
+                        <?php
+                        $sql_productos = "SELECT id_producto, nombre_producto FROM productos";
+                        $result_productos = mysqli_query($conn, $sql_productos);
+                        while ($row_producto = mysqli_fetch_assoc($result_productos)) {
+                            echo "<option value='" . $row_producto['id_producto'] . "'>" . $row_producto['nombre_producto'] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" id="cantidad" name="cantidad" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombreCliente">Nombre del Cliente:</label>
+                    <input type="text" id="nombreCliente" name="nombreCliente" required>
+                </div>
+                <button type="submit" class="btnGuardar">Guardar</button>
+            </form>
         </div>
     </div>
 
@@ -305,6 +337,57 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             xhr.open("POST", "../controller/pedidos_controller.php", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.send("pedido_id=" + encodeURIComponent(idPedido) + "&nuevo_estado=" + encodeURIComponent(estadoPedido));
+        };
+
+        function abrirModalNuevoPedido() {
+            var modalNuevoPedido = document.getElementById("modalNuevoPedido");
+            modalNuevoPedido.style.display = "block";
+            modalNuevoPedido.querySelector('.modal-content').classList.add('show');
+            modalNuevoPedido.classList.add('show');
+        }
+
+        function closeNuevoPedidoModal() {
+            var modalNuevoPedido = document.getElementById("modalNuevoPedido");
+            modalNuevoPedido.querySelector('.modal-content').classList.remove('show');
+            setTimeout(function() {
+                modalNuevoPedido.style.display = "none";
+            }, 300);
+        }
+
+        document.getElementById("formNuevoPedido").onsubmit = function(event) {
+            event.preventDefault();
+            var productoId = document.getElementById("producto").value;
+            var cantidad = document.getElementById("cantidad").value;
+            var nombreCliente = document.getElementById("nombreCliente").value;
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                alertify.success(response.message || "Pedido creado correctamente");
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                alertify.error(response.message || "Error al crear el pedido");
+                            }
+                        } catch (e) {
+                            console.error("Error al analizar la respuesta JSON:", e);
+                            console.error("Respuesta recibida:", xhr.responseText);
+                            alertify.error("Error inesperado en el servidor");
+                        }
+                    } else {
+                        console.error("Error HTTP:", xhr.status);
+                        alertify.error("Error de conexión al crear el pedido");
+                    }
+                }
+            };
+
+            xhr.open("POST", "../controller/pedidos_controller.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("producto=" + encodeURIComponent(productoId) + "&cantidad=" + encodeURIComponent(cantidad) + "&nombreCliente=" + encodeURIComponent(nombreCliente));
         };
 
         function toggleUserOptions() {
