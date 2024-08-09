@@ -48,13 +48,13 @@ function actualizarInsumosPorPedido($pedido_id)
 
 try {
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['producto']) && isset($_POST['cantidad']) && isset($_POST['nombreCliente'])) {
-        $producto_id = $_POST['producto'];
-        $cantidad = $_POST['cantidad'];
-        $nombre_cliente = $_POST['nombreCliente'];
+        $producto_id = $_POST['producto'] ?? 0;
+        $cantidad = $_POST['cantidad'] ?? 0;
+        $nombre_cliente = $_POST['nombreCliente'] ?? '';
         $direccion_cliente = $_POST['direccionCliente'] ?? '';
         $barrio_cliente = $_POST['barrioCliente'] ?? '';
         $telefono_cliente = $_POST['telefonoCliente'] ?? '';
-        $id_usuario = $_SESSION['id_usuario'];
+        $id_usuario = $_SESSION['id_usuario'] ?? 0;
 
         // Iniciar transacción
         $conn->begin_transaction();
@@ -73,8 +73,8 @@ try {
             $result = $stmt->get_result();
             $producto = $result->fetch_assoc();
 
-            $nombre_producto = $producto['nombre_producto'];
-            $precio_unitario = $producto['valor_unitario'];
+            $nombre_producto = $producto['nombre_producto'] ?? '';
+            $precio_unitario = $producto['valor_unitario'] ?? 0;
             $subtotal = $precio_unitario * $cantidad;
 
             // Insertar detalle del pedido
@@ -249,3 +249,4 @@ try {
 } catch (Exception $e) {
     send_json_response(false, 'Error inesperado: ' . $e->getMessage());
 }
+?>
