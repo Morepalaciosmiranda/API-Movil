@@ -4,8 +4,7 @@ ini_set('display_errors', 1);
 session_start();
 include '../includes/conexion.php';
 
-function send_json_response($success, $message = '')
-{
+function send_json_response($success, $message = '') {
     header('Content-Type: application/json');
     echo json_encode(['success' => $success, 'message' => $message]);
     exit;
