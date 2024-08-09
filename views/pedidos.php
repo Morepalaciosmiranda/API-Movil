@@ -377,6 +377,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             var direccionCliente = document.getElementById("direccionCliente").value;
             var barrioCliente = document.getElementById("barrioCliente").value;
             var telefonoCliente = document.getElementById("telefonoCliente").value;
+
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
@@ -403,12 +404,17 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 }
             };
 
-            xhr.send("producto=" + encodeURIComponent(productoId) +
+            xhr.open("POST", "../controller/pedidos_controller.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            var data = "producto=" + encodeURIComponent(productoId) +
                 "&cantidad=" + encodeURIComponent(cantidad) +
                 "&nombreCliente=" + encodeURIComponent(nombreCliente) +
                 "&direccionCliente=" + encodeURIComponent(direccionCliente) +
                 "&barrioCliente=" + encodeURIComponent(barrioCliente) +
-                "&telefonoCliente=" + encodeURIComponent(telefonoCliente));
+                "&telefonoCliente=" + encodeURIComponent(telefonoCliente);
+
+            xhr.send(data);
         };
 
         function toggleUserOptions() {
