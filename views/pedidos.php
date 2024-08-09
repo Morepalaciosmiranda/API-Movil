@@ -369,6 +369,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         document.getElementById("formNuevoPedido").onsubmit = function(event) {
             event.preventDefault();
             var formData = new FormData(this);
+
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {

@@ -66,26 +66,30 @@ try {
             $stmt->bind_param("i", $id_usuario);
             $stmt->execute();
             $pedido_id = $stmt->insert_id;
-    
+        
             // Obtener información del producto
             $stmt = $conn->prepare("SELECT nombre_producto, valor_unitario FROM productos WHERE id_producto = ?");
             $stmt->bind_param("i", $producto_id);
             $stmt->execute();
             $result = $stmt->get_result();
             $producto = $result->fetch_assoc();
-    
+        
             $nombre_producto = $producto['nombre_producto'];
             $precio_unitario = $producto['valor_unitario'];
             $subtotal = $precio_unitario * $cantidad;
-    
+        
             // Insertar detalle del pedido
             $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre, direccion, barrio, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("iiiddsssss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion, $barrio, $telefono);
-            $stmt->execute();
-    
+            
+            // Verifica que todos los campos estén definidos antes de ejecutar
+            if (!$stmt->execute()) {
+                throw new Exception("Error al insertar detalle del pedido: " . $stmt->error);
+            }
+        
             // Confirmar transacción
             $conn->commit();
-    
+        
             send_json_response(true, 'Pedido creado con éxito');
         } catch (Exception $e) {
             $conn->rollback();
