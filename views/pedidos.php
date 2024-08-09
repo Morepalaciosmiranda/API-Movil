@@ -1,5 +1,8 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
     header('Location: ../loginRegister.php');
@@ -400,8 +403,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 }
             };
 
-            xhr.open("POST", "../controller/pedidos_controller.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.send("producto=" + encodeURIComponent(productoId) +
                 "&cantidad=" + encodeURIComponent(cantidad) +
                 "&nombreCliente=" + encodeURIComponent(nombreCliente) +

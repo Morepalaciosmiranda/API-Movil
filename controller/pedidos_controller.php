@@ -4,7 +4,8 @@ ini_set('display_errors', 1);
 session_start();
 include '../includes/conexion.php';
 
-function send_json_response($success, $message = '') {
+function send_json_response($success, $message = '')
+{
     header('Content-Type: application/json');
     echo json_encode(['success' => $success, 'message' => $message]);
     exit;
@@ -45,6 +46,15 @@ function actualizarInsumosPorPedido($pedido_id)
 
     $stmt_productos_pedido->close();
 }
+$pedido_id = $pedido_id ?? 0;
+$producto_id = $producto_id ?? 0;
+$cantidad = $cantidad ?? 0;
+$precio_unitario = $precio_unitario ?? 0.0;
+$subtotal = $subtotal ?? 0.0;
+$nombre_cliente = $nombre_cliente ?? '';
+$direccion_cliente = $direccion_cliente ?? '';
+$barrio_cliente = $barrio_cliente ?? '';
+$telefono_cliente = $telefono_cliente ?? '';
 
 try {
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['producto']) && isset($_POST['cantidad']) && isset($_POST['nombreCliente'])) {
@@ -78,8 +88,9 @@ try {
             $subtotal = $precio_unitario * $cantidad;
 
             // Insertar detalle del pedido
+            // Insertar detalle del pedido
             $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre, direccion, barrio, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiiddsssss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion_cliente, $barrio_cliente, $telefono_cliente);
+            $stmt->bind_param("iiiddsss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion_cliente, $barrio_cliente, $telefono_cliente);
             $stmt->execute();
 
             // Confirmar transacción
@@ -249,4 +260,3 @@ try {
 } catch (Exception $e) {
     send_json_response(false, 'Error inesperado: ' . $e->getMessage());
 }
-?>
