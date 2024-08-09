@@ -177,10 +177,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <input type="text" id="direccion" name="direccion">
                 </div>
                 <div class="form-group">
-                    <label for="interior">Interior:</label>
-                    <input type="text" id="interior" name="interior">
-                </div>
-                <div class="form-group">
                     <label for="barrio">Barrio:</label>
                     <input type="text" id="barrio" name="barrio">
                 </div>

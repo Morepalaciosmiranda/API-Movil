@@ -54,7 +54,6 @@ try {
     
         // Campos opcionales
         $direccion = isset($_POST['direccion']) ? $_POST['direccion'] : '';
-        $interior = isset($_POST['interior']) ? $_POST['interior'] : '';
         $barrio = isset($_POST['barrio']) ? $_POST['barrio'] : '';
         $telefono = isset($_POST['telefono']) ? $_POST['telefono'] : '';
     
@@ -80,8 +79,8 @@ try {
             $subtotal = $precio_unitario * $cantidad;
     
             // Insertar detalle del pedido
-            $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre, direccion, interior, barrio, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiiddsssss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion, $interior, $barrio, $telefono);
+            $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre, direccion, barrio, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("iiiddsssss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion, $barrio, $telefono);
             $stmt->execute();
     
             // Confirmar transacción
