@@ -153,7 +153,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             <form id="formNuevoPedido">
                 <div class="form-group">
                     <label for="producto">Producto:</label>
-                    <select id="producto" name="producto">
+                    <select id="producto" name="producto" required>
                         <option value="">Selecciona un producto</option>
                         <?php
                         $sql_productos = "SELECT id_producto, nombre_producto FROM productos";
@@ -171,6 +171,22 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 <div class="form-group">
                     <label for="nombreCliente">Nombre del Cliente:</label>
                     <input type="text" id="nombreCliente" name="nombreCliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección:</label>
+                    <input type="text" id="direccion" name="direccion">
+                </div>
+                <div class="form-group">
+                    <label for="interior">Interior:</label>
+                    <input type="text" id="interior" name="interior">
+                </div>
+                <div class="form-group">
+                    <label for="barrio">Barrio:</label>
+                    <input type="text" id="barrio" name="barrio">
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="tel" id="telefono" name="telefono">
                 </div>
                 <button type="submit" class="btnGuardar">Guardar</button>
             </form>
