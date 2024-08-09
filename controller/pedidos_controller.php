@@ -4,15 +4,13 @@ ini_set('display_errors', 1);
 session_start();
 include '../includes/conexion.php';
 
-function send_json_response($success, $message = '')
-{
+function send_json_response($success, $message = '') {
     header('Content-Type: application/json');
     echo json_encode(['success' => $success, 'message' => $message]);
     exit;
 }
 
-function actualizarInsumosPorPedido($pedido_id)
-{
+function actualizarInsumosPorPedido($pedido_id) {
     global $conn;
 
     $sql_productos_pedido = "SELECT id_producto, cantidad FROM detalle_pedido WHERE id_pedido = ?";
@@ -46,25 +44,13 @@ function actualizarInsumosPorPedido($pedido_id)
 
     $stmt_productos_pedido->close();
 }
-$pedido_id = $pedido_id ?? 0;
-$producto_id = $producto_id ?? 0;
-$cantidad = $cantidad ?? 0;
-$precio_unitario = $precio_unitario ?? 0.0;
-$subtotal = $subtotal ?? 0.0;
-$nombre_cliente = $nombre_cliente ?? '';
-$direccion_cliente = $direccion_cliente ?? '';
-$barrio_cliente = $barrio_cliente ?? '';
-$telefono_cliente = $telefono_cliente ?? '';
 
 try {
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['producto']) && isset($_POST['cantidad']) && isset($_POST['nombreCliente'])) {
-        $producto_id = $_POST['producto'] ?? 0;
-        $cantidad = $_POST['cantidad'] ?? 0;
-        $nombre_cliente = $_POST['nombreCliente'] ?? '';
-        $direccion_cliente = $_POST['direccionCliente'] ?? '';
-        $barrio_cliente = $_POST['barrioCliente'] ?? '';
-        $telefono_cliente = $_POST['telefonoCliente'] ?? '';
-        $id_usuario = $_SESSION['id_usuario'] ?? 0;
+        $producto_id = $_POST['producto'];
+        $cantidad = $_POST['cantidad'];
+        $nombre_cliente = $_POST['nombreCliente'];
+        $id_usuario = $_SESSION['id_usuario'];
 
         // Iniciar transacción
         $conn->begin_transaction();
@@ -83,14 +69,13 @@ try {
             $result = $stmt->get_result();
             $producto = $result->fetch_assoc();
 
-            $nombre_producto = $producto['nombre_producto'] ?? '';
-            $precio_unitario = $producto['valor_unitario'] ?? 0;
+            $nombre_producto = $producto['nombre_producto'];
+            $precio_unitario = $producto['valor_unitario'];
             $subtotal = $precio_unitario * $cantidad;
 
             // Insertar detalle del pedido
-            // Insertar detalle del pedido
-            $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre, direccion, barrio, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiiddsss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion_cliente, $barrio_cliente, $telefono_cliente);
+            $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("iiidds", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente);
             $stmt->execute();
 
             // Confirmar transacción
@@ -102,7 +87,7 @@ try {
             send_json_response(false, 'Error al crear el pedido: ' . $e->getMessage());
         }
     } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombre_cliente']) && isset($_POST['calle'])  && isset($_POST['interior']) && isset($_POST['barrio_cliente']) && isset($_POST['telefono_cliente']) && isset($_POST['productos'])) {
-
+        
         $nombre = $_POST['nombre_cliente'];
         $calle = $_POST['calle'];
         $interior = $_POST['interior'];
@@ -128,7 +113,7 @@ try {
 
         $stmt = $conn->prepare("INSERT INTO pedidos (fecha_pedido, precio_domicilio, estado_pedido, id_usuario) VALUES (NOW(), 5000, 'en proceso', ?)");
         $stmt->bind_param("i", $id_usuario);
-
+        
         if ($stmt->execute()) {
             $pedido_id = $stmt->insert_id;
 
@@ -140,7 +125,7 @@ try {
                 $precio_producto = $producto['price'];
 
                 $stmt_detalle->bind_param("iissssdd", $pedido_id, $id_producto, $nombre, $direccion, $barrio, $telefono, $precio_producto, $precio_producto);
-
+                
                 if (!$stmt_detalle->execute()) {
                     send_json_response(false, 'Error al insertar detalle del pedido para el producto con ID ' . $id_producto . ': ' . $stmt_detalle->error);
                 }
@@ -260,3 +245,4 @@ try {
 } catch (Exception $e) {
     send_json_response(false, 'Error inesperado: ' . $e->getMessage());
 }
+?>

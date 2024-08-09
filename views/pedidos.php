@@ -1,8 +1,5 @@
 <?php
 session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
     header('Location: ../loginRegister.php');
@@ -156,7 +153,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             <form id="formNuevoPedido">
                 <div class="form-group">
                     <label for="producto">Producto:</label>
-                    <select id="producto" name="producto" required>
+                    <select id="producto" name="producto">
                         <option value="">Selecciona un producto</option>
                         <?php
                         $sql_productos = "SELECT id_producto, nombre_producto FROM productos";
@@ -174,18 +171,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 <div class="form-group">
                     <label for="nombreCliente">Nombre del Cliente:</label>
                     <input type="text" id="nombreCliente" name="nombreCliente" required>
-                </div>
-                <div class="form-group">
-                    <label for="direccionCliente">Dirección:</label>
-                    <input type="text" id="direccionCliente" name="direccionCliente">
-                </div>
-                <div class="form-group">
-                    <label for="barrioCliente">Barrio:</label>
-                    <input type="text" id="barrioCliente" name="barrioCliente">
-                </div>
-                <div class="form-group">
-                    <label for="telefonoCliente">Teléfono:</label>
-                    <input type="text" id="telefonoCliente" name="telefonoCliente">
                 </div>
                 <button type="submit" class="btnGuardar">Guardar</button>
             </form>
@@ -374,10 +359,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             var productoId = document.getElementById("producto").value;
             var cantidad = document.getElementById("cantidad").value;
             var nombreCliente = document.getElementById("nombreCliente").value;
-            var direccionCliente = document.getElementById("direccionCliente").value;
-            var barrioCliente = document.getElementById("barrioCliente").value;
-            var telefonoCliente = document.getElementById("telefonoCliente").value;
-
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
@@ -406,15 +387,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
             xhr.open("POST", "../controller/pedidos_controller.php", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-            var data = "producto=" + encodeURIComponent(productoId) +
-                "&cantidad=" + encodeURIComponent(cantidad) +
-                "&nombreCliente=" + encodeURIComponent(nombreCliente) +
-                "&direccionCliente=" + encodeURIComponent(direccionCliente) +
-                "&barrioCliente=" + encodeURIComponent(barrioCliente) +
-                "&telefonoCliente=" + encodeURIComponent(telefonoCliente);
-
-            xhr.send(data);
+            xhr.send("producto=" + encodeURIComponent(productoId) + "&cantidad=" + encodeURIComponent(cantidad) + "&nombreCliente=" + encodeURIComponent(nombreCliente));
         };
 
         function toggleUserOptions() {
