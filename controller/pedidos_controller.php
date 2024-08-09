@@ -91,55 +91,6 @@ try {
             $conn->rollback();
             send_json_response(false, 'Error al crear el pedido: ' . $e->getMessage());
         }
-    } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombre_cliente']) && isset($_POST['calle'])  && isset($_POST['interior']) && isset($_POST['barrio_cliente']) && isset($_POST['telefono_cliente']) && isset($_POST['productos'])) {
-        
-        $nombre = $_POST['nombre_cliente'];
-        $calle = $_POST['calle'];
-        $interior = $_POST['interior'];
-        $barrio = $_POST['barrio_cliente'];
-        $telefono = $_POST['telefono_cliente'];
-
-        if (empty($nombre) || empty($calle) || empty($interior) || empty($barrio) || empty($telefono)) {
-            send_json_response(false, 'No se recibieron todos los datos esperados desde el formulario.');
-        }
-
-        $direccion = "$calle, $interior";
-
-        $productos = json_decode($_POST['productos'], true);
-
-        if (!$productos) {
-            send_json_response(false, 'No se recibieron productos en la solicitud.');
-        }
-
-        if (!isset($_SESSION['id_usuario'])) {
-            send_json_response(false, 'No se encontró el id_usuario en la sesión.');
-        }
-        $id_usuario = $_SESSION['id_usuario'];
-
-        $stmt = $conn->prepare("INSERT INTO pedidos (fecha_pedido, precio_domicilio, estado_pedido, id_usuario) VALUES (NOW(), 5000, 'en proceso', ?)");
-        $stmt->bind_param("i", $id_usuario);
-        
-        if ($stmt->execute()) {
-            $pedido_id = $stmt->insert_id;
-
-            $stmt_detalle = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, nombre, direccion, barrio, telefono, cantidad, valor_unitario, subtotal) 
-                                            VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)");
-
-            foreach ($productos as $producto) {
-                $id_producto = $producto['id'];
-                $precio_producto = $producto['price'];
-
-                $stmt_detalle->bind_param("iissssdd", $pedido_id, $id_producto, $nombre, $direccion, $barrio, $telefono, $precio_producto, $precio_producto);
-                
-                if (!$stmt_detalle->execute()) {
-                    send_json_response(false, 'Error al insertar detalle del pedido para el producto con ID ' . $id_producto . ': ' . $stmt_detalle->error);
-                }
-            }
-
-            send_json_response(true, 'Pedido realizado con éxito.');
-        } else {
-            send_json_response(false, 'Error al realizar el pedido: ' . $stmt->error);
-        }
     } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['pedido_id']) && isset($_POST['nuevo_estado'])) {
         $pedido_id = $_POST['pedido_id'];
         $nuevo_estado = $_POST['nuevo_estado'];

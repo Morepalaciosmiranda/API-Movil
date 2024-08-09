@@ -368,9 +368,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
         document.getElementById("formNuevoPedido").onsubmit = function(event) {
             event.preventDefault();
-            var productoId = document.getElementById("producto").value;
-            var cantidad = document.getElementById("cantidad").value;
-            var nombreCliente = document.getElementById("nombreCliente").value;
+            var formData = new FormData(this);
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
@@ -398,8 +396,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             };
 
             xhr.open("POST", "../controller/pedidos_controller.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.send("producto=" + encodeURIComponent(productoId) + "&cantidad=" + encodeURIComponent(cantidad) + "&nombreCliente=" + encodeURIComponent(nombreCliente));
+            xhr.send(formData);
         };
 
         function toggleUserOptions() {
