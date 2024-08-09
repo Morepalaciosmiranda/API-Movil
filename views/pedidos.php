@@ -153,7 +153,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             <form id="formNuevoPedido">
                 <div class="form-group">
                     <label for="producto">Producto:</label>
-                    <select id="producto" name="producto" required>
+                    <select id="producto" name="producto">
                         <option value="">Selecciona un producto</option>
                         <?php
                         $sql_productos = "SELECT id_producto, nombre_producto FROM productos";
@@ -171,18 +171,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 <div class="form-group">
                     <label for="nombreCliente">Nombre del Cliente:</label>
                     <input type="text" id="nombreCliente" name="nombreCliente" required>
-                </div>
-                <div class="form-group">
-                    <label for="direccion">Dirección:</label>
-                    <input type="text" id="direccion" name="direccion">
-                </div>
-                <div class="form-group">
-                    <label for="barrio">Barrio:</label>
-                    <input type="text" id="barrio" name="barrio">
-                </div>
-                <div class="form-group">
-                    <label for="telefono">Teléfono:</label>
-                    <input type="tel" id="telefono" name="telefono">
                 </div>
                 <button type="submit" class="btnGuardar">Guardar</button>
             </form>
@@ -368,8 +356,9 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
         document.getElementById("formNuevoPedido").onsubmit = function(event) {
             event.preventDefault();
-            var formData = new FormData(this);
-
+            var productoId = document.getElementById("producto").value;
+            var cantidad = document.getElementById("cantidad").value;
+            var nombreCliente = document.getElementById("nombreCliente").value;
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
@@ -397,7 +386,8 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             };
 
             xhr.open("POST", "../controller/pedidos_controller.php", true);
-            xhr.send(formData);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("producto=" + encodeURIComponent(productoId) + "&cantidad=" + encodeURIComponent(cantidad) + "&nombreCliente=" + encodeURIComponent(nombreCliente));
         };
 
         function toggleUserOptions() {

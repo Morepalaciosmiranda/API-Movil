@@ -51,49 +51,89 @@ try {
         $cantidad = $_POST['cantidad'];
         $nombre_cliente = $_POST['nombreCliente'];
         $id_usuario = $_SESSION['id_usuario'];
-    
-        // Campos opcionales
-        $direccion = isset($_POST['direccion']) ? $_POST['direccion'] : '';
-        $barrio = isset($_POST['barrio']) ? $_POST['barrio'] : '';
-        $telefono = isset($_POST['telefono']) ? $_POST['telefono'] : '';
-    
+
         // Iniciar transacción
         $conn->begin_transaction();
-    
+
         try {
             // Insertar pedido
             $stmt = $conn->prepare("INSERT INTO pedidos (fecha_pedido, estado_pedido, id_usuario) VALUES (NOW(), 'en proceso', ?)");
             $stmt->bind_param("i", $id_usuario);
             $stmt->execute();
             $pedido_id = $stmt->insert_id;
-        
+
             // Obtener información del producto
             $stmt = $conn->prepare("SELECT nombre_producto, valor_unitario FROM productos WHERE id_producto = ?");
             $stmt->bind_param("i", $producto_id);
             $stmt->execute();
             $result = $stmt->get_result();
             $producto = $result->fetch_assoc();
-        
+
             $nombre_producto = $producto['nombre_producto'];
             $precio_unitario = $producto['valor_unitario'];
             $subtotal = $precio_unitario * $cantidad;
-        
+
             // Insertar detalle del pedido
-            $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre, direccion, barrio, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiiddsssss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion, $barrio, $telefono);
-            
-            // Verifica que todos los campos estén definidos antes de ejecutar
-            if (!$stmt->execute()) {
-                throw new Exception("Error al insertar detalle del pedido: " . $stmt->error);
-            }
-        
+            $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("iiidds", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente);
+            $stmt->execute();
+
             // Confirmar transacción
             $conn->commit();
-        
+
             send_json_response(true, 'Pedido creado con éxito');
         } catch (Exception $e) {
             $conn->rollback();
             send_json_response(false, 'Error al crear el pedido: ' . $e->getMessage());
+        }
+    } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombre_cliente']) && isset($_POST['calle'])  && isset($_POST['interior']) && isset($_POST['barrio_cliente']) && isset($_POST['telefono_cliente']) && isset($_POST['productos'])) {
+        
+        $nombre = $_POST['nombre_cliente'];
+        $calle = $_POST['calle'];
+        $interior = $_POST['interior'];
+        $barrio = $_POST['barrio_cliente'];
+        $telefono = $_POST['telefono_cliente'];
+
+        if (empty($nombre) || empty($calle) || empty($interior) || empty($barrio) || empty($telefono)) {
+            send_json_response(false, 'No se recibieron todos los datos esperados desde el formulario.');
+        }
+
+        $direccion = "$calle, $interior";
+
+        $productos = json_decode($_POST['productos'], true);
+
+        if (!$productos) {
+            send_json_response(false, 'No se recibieron productos en la solicitud.');
+        }
+
+        if (!isset($_SESSION['id_usuario'])) {
+            send_json_response(false, 'No se encontró el id_usuario en la sesión.');
+        }
+        $id_usuario = $_SESSION['id_usuario'];
+
+        $stmt = $conn->prepare("INSERT INTO pedidos (fecha_pedido, precio_domicilio, estado_pedido, id_usuario) VALUES (NOW(), 5000, 'en proceso', ?)");
+        $stmt->bind_param("i", $id_usuario);
+        
+        if ($stmt->execute()) {
+            $pedido_id = $stmt->insert_id;
+
+            $stmt_detalle = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, nombre, direccion, barrio, telefono, cantidad, valor_unitario, subtotal) 
+                                            VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)");
+
+            foreach ($productos as $producto) {
+                $id_producto = $producto['id'];
+                $precio_producto = $producto['price'];
+
+                $stmt_detalle->bind_param("iissssdd", $pedido_id, $id_producto, $nombre, $direccion, $barrio, $telefono, $precio_producto, $precio_producto);
+                
+                if (!$stmt_detalle->execute()) {
+                    send_json_response(false, 'Error al insertar detalle del pedido para el producto con ID ' . $id_producto . ': ' . $stmt_detalle->error);
+                }
+            }
+
+            send_json_response(true, 'Pedido realizado con éxito.');
+        } else {
+            send_json_response(false, 'Error al realizar el pedido: ' . $stmt->error);
         }
     } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['pedido_id']) && isset($_POST['nuevo_estado'])) {
         $pedido_id = $_POST['pedido_id'];
