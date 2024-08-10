@@ -9,7 +9,8 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-function obtenerProductos() {
+function obtenerProductos()
+{
     global $conn;
     $productos = [];
 
@@ -25,7 +26,8 @@ function obtenerProductos() {
     return $productos;
 }
 
-function procesarProducto() {
+function procesarProducto()
+{
     global $conn;
     $respuesta = ['exito' => false, 'mensaje' => ''];
 
@@ -46,14 +48,20 @@ function procesarProducto() {
             }
             $consulta_cantidad_stmt->bind_param("i", $insumo_id);
             $consulta_cantidad_stmt->execute();
-            $consulta_cantidad_stmt->bind_result($cantidad_disponible);
-            $consulta_cantidad_stmt->fetch();
+            $resultado = $consulta_cantidad_stmt->get_result();
+            if ($resultado->num_rows > 0) {
+                $fila = $resultado->fetch_assoc();
+                $cantidad_disponible = $fila['cantidad'];
+            } else {
+                throw new Exception("No se encontró el insumo con ID: " . $insumo_id);
+            }
             $consulta_cantidad_stmt->close();
 
             if ($cantidad_insumo > $cantidad_disponible) {
-                throw new Exception("No hay suficientes insumos disponibles de ese tipo.");
+                throw new Exception("No hay suficientes insumos disponibles para el insumo con ID: " . $insumo_id);
             }
         }
+
 
         $imagen = $_FILES['imagen'];
         $imagen_tmp_name = $imagen['tmp_name'];
@@ -63,8 +71,8 @@ function procesarProducto() {
             throw new Exception("Error al cargar la imagen: " . $imagen_error);
         }
 
-        $upload_dir = '../uploads/';
-        
+        $upload_dir = '/tmp/uploads/';
+
         // Verificar y crear el directorio si no existe
         if (!is_dir($upload_dir)) {
             if (!mkdir($upload_dir, 0755, true)) {
@@ -130,7 +138,8 @@ function procesarProducto() {
     return $respuesta;
 }
 
-function editarProducto() {
+function editarProducto()
+{
     global $conn;
     $respuesta = ['exito' => false, 'mensaje' => ''];
 
@@ -144,7 +153,7 @@ function editarProducto() {
             $imagen = $_FILES['imagen_edit'];
             $imagen_tmp_name = $imagen['tmp_name'];
             $imagen_nombre = uniqid('producto_') . '_' . basename($imagen['name']);
-            $upload_dir = '../uploads/';
+            $upload_dir = '/tmp/uploads/';
             $imagen_destino = $upload_dir . $imagen_nombre;
 
             // Verificar y crear el directorio si no existe
@@ -196,7 +205,8 @@ function editarProducto() {
     return $respuesta;
 }
 
-function eliminarProducto($id_producto) {
+function eliminarProducto($id_producto)
+{
     global $conn;
     $respuesta = ['exito' => false, 'mensaje' => ''];
 
@@ -250,4 +260,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $conn->close();
-?>

@@ -106,7 +106,6 @@ $insumos = obtenerInsumos();
                                 ?>
                             </tbody>
                         </table>
-
                     </div>
 
                     <div class="pagination">
@@ -166,7 +165,6 @@ $insumos = obtenerInsumos();
             </div>
         </div>
 
-
         <div id="modalEditarProducto" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="cerrarModalEditar()">&times;</span>
@@ -186,21 +184,21 @@ $insumos = obtenerInsumos();
             </div>
         </div>
 
-
         <script>
+        document.addEventListener('DOMContentLoaded', function() {
             var modalAgregar = document.getElementById("modalAgregarProducto");
             var modalEditar = document.getElementById("modalEditarProducto");
             var insumoCount = 1;
 
-            function abrirModalAgregar() {
+            window.abrirModalAgregar = function() {
                 modalAgregar.style.display = "block";
             }
 
-            function cerrarModalAgregar() {
+            window.cerrarModalAgregar = function() {
                 modalAgregar.style.display = "none";
             }
 
-            function abrirModalEditar(id, nombre, descripcion, precio) {
+            window.abrirModalEditar = function(id, nombre, descripcion, precio) {
                 document.getElementById("edit-id").value = id;
                 document.getElementById("edit-nombre").value = nombre;
                 document.getElementById("edit-descripcion").value = descripcion;
@@ -209,7 +207,7 @@ $insumos = obtenerInsumos();
                 modalEditar.style.display = "block";
             }
 
-            function cerrarModalEditar() {
+            window.cerrarModalEditar = function() {
                 modalEditar.style.display = "none";
             }
 
@@ -222,37 +220,37 @@ $insumos = obtenerInsumos();
                 }
             }
 
-            function agregarInsumo() {
+            window.agregarInsumo = function() {
                 insumoCount++;
                 var newInsumoDiv = document.createElement("div");
                 newInsumoDiv.id = "insumo-" + insumoCount;
                 newInsumoDiv.className = "insumo-item";
 
                 newInsumoDiv.innerHTML = `
-        <label for="insumo">Insumo:</label>
-        <select id="insumo_${insumoCount}" name="insumo_id[]" required>
-            <?php foreach ($insumos as $insumo) { ?>
-                <option value="<?php echo $insumo['id_insumo']; ?>"><?php echo $insumo['nombre_insumo']; ?></option>
-            <?php } ?>
-        </select>
+                    <label for="insumo">Insumo:</label>
+                    <select id="insumo_${insumoCount}" name="insumo_id[]" required>
+                        <?php foreach ($insumos as $insumo) { ?>
+                            <option value="<?php echo $insumo['id_insumo']; ?>"><?php echo $insumo['nombre_insumo']; ?></option>
+                        <?php } ?>
+                    </select>
 
-        <label for="cantidad_insumo">Cantidad de Insumo:</label>
-        <input type="number" id="cantidad_insumo_${insumoCount}" name="cantidad_insumo[]" required><br><br>
+                    <label for="cantidad_insumo">Cantidad de Insumo:</label>
+                    <input type="number" id="cantidad_insumo_${insumoCount}" name="cantidad_insumo[]" required><br><br>
 
-        <button type="button" onclick="eliminarInsumo('insumo-${insumoCount}')">Eliminar</button>
-    `;
+                    <button type="button" onclick="eliminarInsumo('insumo-${insumoCount}')">Eliminar</button>
+                `;
 
                 document.getElementById("insumos-container").appendChild(newInsumoDiv);
             }
 
-            function eliminarInsumo(idInsumo) {
+            window.eliminarInsumo = function(idInsumo) {
                 var insumoDiv = document.getElementById(idInsumo);
                 if (insumoDiv) {
                     insumoDiv.parentNode.removeChild(insumoDiv);
                 }
             }
 
-            function confirmarEliminacion(id) {
+            window.confirmarEliminacion = function(id) {
                 Swal.fire({
                     title: '¿Estás seguro de eliminar este producto?',
                     text: "No podrás revertir esto!",
@@ -406,7 +404,7 @@ $insumos = obtenerInsumos();
                 });
             });
 
-            function buscarProducto() {
+            window.buscarProducto = function() {
                 var input, filter, table, tr, td, i, txtValue;
                 input = document.getElementById("search");
                 filter = input.value.toUpperCase();
@@ -425,8 +423,8 @@ $insumos = obtenerInsumos();
                     }
                 }
             }
+        });
         </script>
-        <script src="../js/validaciones.js"></script>
+    </div>
 </body>
-
 </html>
