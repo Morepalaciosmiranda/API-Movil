@@ -38,31 +38,6 @@ function procesarProducto()
         $insumo_ids = $_POST['insumo_id'];
         $cantidades_insumo = $_POST['cantidad_insumo'];
 
-        foreach ($insumo_ids as $index => $insumo_id) {
-            $cantidad_insumo = $cantidades_insumo[$index];
-
-            $consulta_cantidad_sql = "SELECT cantidad FROM insumos WHERE id_insumo = ?";
-            $consulta_cantidad_stmt = $conn->prepare($consulta_cantidad_sql);
-            if (!$consulta_cantidad_stmt) {
-                throw new Exception("Error al preparar la consulta de cantidad: " . $conn->error);
-            }
-            $consulta_cantidad_stmt->bind_param("i", $insumo_id);
-            $consulta_cantidad_stmt->execute();
-            $resultado = $consulta_cantidad_stmt->get_result();
-            if ($resultado->num_rows > 0) {
-                $fila = $resultado->fetch_assoc();
-                $cantidad_disponible = $fila['cantidad'];
-            } else {
-                throw new Exception("No se encontró el insumo con ID: " . $insumo_id);
-            }
-            $consulta_cantidad_stmt->close();
-
-            if ($cantidad_insumo > $cantidad_disponible) {
-                throw new Exception("No hay suficientes insumos disponibles para el insumo con ID: " . $insumo_id);
-            }
-        }
-
-
         $imagen = $_FILES['imagen'];
         $imagen_tmp_name = $imagen['tmp_name'];
         $imagen_error = $imagen['error'];
@@ -108,21 +83,22 @@ function procesarProducto()
 
         $producto_id = $conn->insert_id;
 
+        // Insertar en la tabla productos_insumos en lugar de actualizar insumos
         foreach ($insumo_ids as $index => $insumo_id) {
             $cantidad_insumo = $cantidades_insumo[$index];
 
-            $update_sql = "UPDATE insumos SET cantidad = cantidad - ? WHERE id_insumo = ?";
-            $update_stmt = $conn->prepare($update_sql);
-            if (!$update_stmt) {
-                throw new Exception("Error al preparar la consulta de actualización: " . $conn->error);
+            $insert_producto_insumo_sql = "INSERT INTO productos_insumos (id_producto, id_insumo, cantidad) VALUES (?, ?, ?)";
+            $insert_producto_insumo_stmt = $conn->prepare($insert_producto_insumo_sql);
+            if (!$insert_producto_insumo_stmt) {
+                throw new Exception("Error al preparar la consulta de inserción de producto_insumo: " . $conn->error);
             }
 
-            if (!$update_stmt->bind_param("ii", $cantidad_insumo, $insumo_id)) {
-                throw new Exception("Error al enlazar parámetros: " . $update_stmt->error);
+            if (!$insert_producto_insumo_stmt->bind_param("iii", $producto_id, $insumo_id, $cantidad_insumo)) {
+                throw new Exception("Error al enlazar parámetros: " . $insert_producto_insumo_stmt->error);
             }
 
-            if (!$update_stmt->execute()) {
-                throw new Exception("Error al ejecutar la consulta de actualización: " . $update_stmt->error);
+            if (!$insert_producto_insumo_stmt->execute()) {
+                throw new Exception("Error al ejecutar la consulta de inserción de producto_insumo: " . $insert_producto_insumo_stmt->error);
             }
         }
 
