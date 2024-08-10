@@ -13,36 +13,46 @@ function send_json_response($success, $message = '') {
 function actualizarInsumosPorPedido($pedido_id) {
     global $conn;
 
-    $sql_productos_pedido = "SELECT id_producto, cantidad FROM detalle_pedido WHERE id_pedido = ?";
-    $stmt_productos_pedido = $conn->prepare($sql_productos_pedido);
-    $stmt_productos_pedido->bind_param('i', $pedido_id);
-    $stmt_productos_pedido->execute();
-    $result_productos_pedido = $stmt_productos_pedido->get_result();
+    try {
+        $sql_productos_pedido = "SELECT id_producto, cantidad FROM detalle_pedido WHERE id_pedido = ?";
+        $stmt_productos_pedido = $conn->prepare($sql_productos_pedido);
+        $stmt_productos_pedido->bind_param('i', $pedido_id);
+        $stmt_productos_pedido->execute();
+        $result_productos_pedido = $stmt_productos_pedido->get_result();
 
-    while ($row_producto = $result_productos_pedido->fetch_assoc()) {
-        $id_producto = $row_producto['id_producto'];
-        $cantidad_producto = $row_producto['cantidad'];
+        while ($row_producto = $result_productos_pedido->fetch_assoc()) {
+            $id_producto = $row_producto['id_producto'];
+            $cantidad_producto = $row_producto['cantidad'];
 
-        $sql_insumos_producto = "SELECT id_insumo, cantidad_insumo FROM productos_insumos WHERE id_producto = ?";
-        $stmt_insumos_producto = $conn->prepare($sql_insumos_producto);
-        $stmt_insumos_producto->bind_param('i', $id_producto);
-        $stmt_insumos_producto->execute();
-        $result_insumos_producto = $stmt_insumos_producto->get_result();
+            $sql_insumos_producto = "SELECT id_insumo, cantidad FROM productos_insumos WHERE id_producto = ?";
+            $stmt_insumos_producto = $conn->prepare($sql_insumos_producto);
+            $stmt_insumos_producto->bind_param('i', $id_producto);
+            $stmt_insumos_producto->execute();
+            $result_insumos_producto = $stmt_insumos_producto->get_result();
 
-        while ($row_insumo = $result_insumos_producto->fetch_assoc()) {
-            $insumo_id = $row_insumo['id_insumo'];
-            $cantidad_insumo = $row_insumo['cantidad_insumo'] * $cantidad_producto;
+            while ($row_insumo = $result_insumos_producto->fetch_assoc()) {
+                $insumo_id = $row_insumo['id_insumo'];
+                $cantidad_insumo = $row_insumo['cantidad'] * $cantidad_producto;
 
-            $sql_actualizar_insumo = "UPDATE insumos SET cantidad = cantidad - ? WHERE id_insumo = ?";
-            $stmt_actualizar_insumo = $conn->prepare($sql_actualizar_insumo);
-            $stmt_actualizar_insumo->bind_param('ii', $cantidad_insumo, $insumo_id);
-            $stmt_actualizar_insumo->execute();
+                $sql_actualizar_insumo = "UPDATE insumos SET cantidad = cantidad - ? WHERE id_insumo = ?";
+                $stmt_actualizar_insumo = $conn->prepare($sql_actualizar_insumo);
+                if (!$stmt_actualizar_insumo) {
+                    throw new Exception("Error preparing update statement: " . $conn->error);
+                }
+                $stmt_actualizar_insumo->bind_param('ii', $cantidad_insumo, $insumo_id);
+                if (!$stmt_actualizar_insumo->execute()) {
+                    throw new Exception("Error executing update: " . $stmt_actualizar_insumo->error);
+                }
+                $stmt_actualizar_insumo->close();
+            }
+
+            $stmt_insumos_producto->close();
         }
 
-        $stmt_insumos_producto->close();
+        $stmt_productos_pedido->close();
+    } catch (Exception $e) {
+        throw new Exception("Error en actualizarInsumosPorPedido: " . $e->getMessage());
     }
-
-    $stmt_productos_pedido->close();
 }
 
 try {
