@@ -82,37 +82,47 @@ try {
         $producto_id = $_POST['producto'];
         $cantidad = $_POST['cantidad'];
         $nombre_cliente = $_POST['nombreCliente'];
+        $calle = isset($_POST['calle']) ? $_POST['calle'] : '';
+        $interior = isset($_POST['interior']) ? $_POST['interior'] : '';
+        $barrio = isset($_POST['barrio_cliente']) ? $_POST['barrio_cliente'] : '';
+        $telefono = isset($_POST['telefono_cliente']) ? $_POST['telefono_cliente'] : '';
         $id_usuario = $_SESSION['id_usuario'];
-
+    
         // Iniciar transacción
         $conn->begin_transaction();
-
+    
         try {
             // Insertar pedido
             $stmt = $conn->prepare("INSERT INTO pedidos (fecha_pedido, estado_pedido, id_usuario) VALUES (NOW(), 'en proceso', ?)");
             $stmt->bind_param("i", $id_usuario);
             $stmt->execute();
             $pedido_id = $stmt->insert_id;
-
+    
             // Obtener información del producto
             $stmt = $conn->prepare("SELECT nombre_producto, valor_unitario FROM productos WHERE id_producto = ?");
             $stmt->bind_param("i", $producto_id);
             $stmt->execute();
             $result = $stmt->get_result();
             $producto = $result->fetch_assoc();
-
+    
             $nombre_producto = $producto['nombre_producto'];
             $precio_unitario = $producto['valor_unitario'];
             $subtotal = $precio_unitario * $cantidad;
-
+    
+            // Construir dirección completa
+            $direccion = $calle;
+            if (!empty($interior)) {
+                $direccion .= ", " . $interior;
+            }
+    
             // Insertar detalle del pedido
-            $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiidds", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente);
+            $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre, direccion, barrio, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("iiiddsssss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion, $barrio, $telefono);
             $stmt->execute();
-
+    
             // Confirmar transacción
             $conn->commit();
-
+    
             send_json_response(true, 'Pedido creado con éxito');
         } catch (Exception $e) {
             $conn->rollback();

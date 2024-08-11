@@ -102,7 +102,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     </form>
                 </div>
                 <table class="content">
-                <button class="add-pedido-btn" onclick="abrirModalNuevoPedido()">Agregar Pedido</button>
+                    <button class="add-pedido-btn" onclick="abrirModalNuevoPedido()">Agregar Pedido</button>
                     <tr>
                         <th>ID Pedido</th>
                         <th>Nombre Usuario</th>
@@ -152,8 +152,12 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             <h2>Nuevo Pedido</h2>
             <form id="formNuevoPedido">
                 <div class="form-group">
+                    <label for="nombreCliente">Nombre del Cliente:</label>
+                    <input type="text" id="nombreCliente" name="nombreCliente" required>
+                </div>
+                <div class="form-group">
                     <label for="producto">Producto:</label>
-                    <select id="producto" name="producto">
+                    <select id="producto" name="producto" required>
                         <option value="">Selecciona un producto</option>
                         <?php
                         $sql_productos = "SELECT id_producto, nombre_producto FROM productos";
@@ -169,8 +173,30 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <input type="number" id="cantidad" name="cantidad" min="1" required>
                 </div>
                 <div class="form-group">
-                    <label for="nombreCliente">Nombre del Cliente:</label>
-                    <input type="text" id="nombreCliente" name="nombreCliente" required>
+                    <label for="calle">Dirección:</label>
+                    <input type="text" id="calle" name="calle">
+                </div>
+                <div class="form-group">
+                    <label for="interior">Interior:</label>
+                    <input type="text" id="interior" name="interior">
+                </div>
+                <div class="form-group">
+                    <label for="barrio_cliente">Barrio:</label>
+                    <input type="text" id="barrio_cliente" name="barrio_cliente" list="barrios">
+                    <datalist id="barrios">
+                        <option value="Amazonas">
+                        <option value="Araucarias">
+                        <option value="Bello Horizonte">
+                        <option value="Central">
+                        <option value="Niquía">
+                        <option value="Pachelly">
+                        <option value="París">
+                        <option value="Trapiche">
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label for="telefono_cliente">Teléfono:</label>
+                    <input type="text" id="telefono_cliente" name="telefono_cliente" pattern="\d{10}" title="El número de teléfono debe tener 10 dígitos y solo contener números">
                 </div>
                 <button type="submit" class="btnGuardar">Guardar</button>
             </form>
@@ -356,9 +382,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
         document.getElementById("formNuevoPedido").onsubmit = function(event) {
             event.preventDefault();
-            var productoId = document.getElementById("producto").value;
-            var cantidad = document.getElementById("cantidad").value;
-            var nombreCliente = document.getElementById("nombreCliente").value;
+            var formData = new FormData(this);
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
@@ -386,8 +410,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             };
 
             xhr.open("POST", "../controller/pedidos_controller.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.send("producto=" + encodeURIComponent(productoId) + "&cantidad=" + encodeURIComponent(cantidad) + "&nombreCliente=" + encodeURIComponent(nombreCliente));
+            xhr.send(formData);
         };
 
         function toggleUserOptions() {
