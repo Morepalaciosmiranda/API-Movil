@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 session_start();
 include '../includes/conexion.php';
 
@@ -10,6 +10,10 @@ function send_json_response($success, $message = '')
     echo json_encode(['success' => $success, 'message' => $message]);
     exit;
 }
+
+set_exception_handler(function($e) {
+    send_json_response(false, 'Error del servidor: ' . $e->getMessage());
+});
 
 function actualizarInsumosPorPedido($pedido_id)
 {
@@ -87,42 +91,41 @@ try {
         $barrio = isset($_POST['barrio_cliente']) ? $_POST['barrio_cliente'] : '';
         $telefono = isset($_POST['telefono_cliente']) ? $_POST['telefono_cliente'] : '';
         $id_usuario = $_SESSION['id_usuario'];
-    
+
         // Iniciar transacción
         $conn->begin_transaction();
-    
+
         try {
             // Insertar pedido
             $stmt = $conn->prepare("INSERT INTO pedidos (fecha_pedido, estado_pedido, id_usuario) VALUES (NOW(), 'en proceso', ?)");
             $stmt->bind_param("i", $id_usuario);
             $stmt->execute();
             $pedido_id = $stmt->insert_id;
-    
+
             // Obtener información del producto
             $stmt = $conn->prepare("SELECT nombre_producto, valor_unitario FROM productos WHERE id_producto = ?");
             $stmt->bind_param("i", $producto_id);
             $stmt->execute();
             $result = $stmt->get_result();
             $producto = $result->fetch_assoc();
-    
+
             $nombre_producto = $producto['nombre_producto'];
             $precio_unitario = $producto['valor_unitario'];
             $subtotal = $precio_unitario * $cantidad;
-    
+
             // Construir dirección completa
             $direccion = $calle;
             if (!empty($interior)) {
                 $direccion .= ", " . $interior;
             }
-    
             // Insertar detalle del pedido
             $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre, direccion, barrio, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiiddsssss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion, $barrio, $telefono);
+            $stmt->bind_param("iiiddssss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion, $barrio, $telefono);
             $stmt->execute();
-    
+
             // Confirmar transacción
             $conn->commit();
-    
+
             send_json_response(true, 'Pedido creado con éxito');
         } catch (Exception $e) {
             $conn->rollback();
@@ -131,10 +134,10 @@ try {
     } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombre_cliente']) && isset($_POST['calle'])  && isset($_POST['interior']) && isset($_POST['barrio_cliente']) && isset($_POST['telefono_cliente']) && isset($_POST['productos'])) {
 
         $nombre = $_POST['nombre_cliente'];
-        $calle = $_POST['calle'];
-        $interior = $_POST['interior'];
-        $barrio = $_POST['barrio_cliente'];
-        $telefono = $_POST['telefono_cliente'];
+        $calle = isset($_POST['calle']) ? $_POST['calle'] : '';
+        $interior = isset($_POST['interior']) ? $_POST['interior'] : '';
+        $barrio = isset($_POST['barrio_cliente']) ? $_POST['barrio_cliente'] : '';
+        $telefono = isset($_POST['telefono_cliente']) ? $_POST['telefono_cliente'] : '';
 
         if (empty($nombre) || empty($calle) || empty($interior) || empty($barrio) || empty($telefono)) {
             send_json_response(false, 'No se recibieron todos los datos esperados desde el formulario.');

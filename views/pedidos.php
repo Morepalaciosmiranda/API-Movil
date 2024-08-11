@@ -386,25 +386,20 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            if (response.success) {
-                                alertify.success(response.message || "Pedido creado correctamente");
-                                setTimeout(function() {
-                                    location.reload();
-                                }, 1000);
-                            } else {
-                                alertify.error(response.message || "Error al crear el pedido");
-                            }
-                        } catch (e) {
-                            console.error("Error al analizar la respuesta JSON:", e);
-                            console.error("Respuesta recibida:", xhr.responseText);
-                            alertify.error("Error inesperado en el servidor");
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            alertify.success(response.message || "Pedido creado correctamente");
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            alertify.error(response.message || "Error al crear el pedido");
                         }
-                    } else {
-                        console.error("Error HTTP:", xhr.status);
-                        alertify.error("Error de conexión al crear el pedido");
+                    } catch (e) {
+                        console.error("Error al analizar la respuesta JSON:", e);
+                        console.error("Respuesta recibida:", xhr.responseText);
+                        alertify.error("Error inesperado en el servidor: " + xhr.responseText);
                     }
                 }
             };
