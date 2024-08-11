@@ -261,15 +261,14 @@ body {
 
 .modal-content {
     background-color: #000000;
-    margin: 5% auto;
-    padding: 30px;
+    margin: 15% auto;
+    padding: 20px;
     border: 1px solid #ff5a0e;
     width: 80%;
-    max-width: 500px;
+    max-width: 600px;
     border-radius: 8px;
     color: #ffffff;
     position: relative;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .close {
@@ -277,14 +276,13 @@ body {
     float: right;
     font-size: 28px;
     font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s;
 }
 
 .close:hover,
 .close:focus {
-    color: #ff5a0e;
+    color: black;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .modal.show .modal-content {
@@ -568,25 +566,6 @@ button[type="submit"]:hover {
     filter: blur(5px);
 }
 
-#add-pedido-btn {
-    background-color: #f28123; /* Verde */
-    border: none;
-    color: #fff;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px -15px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-#add-pedido-btn:hover {
-    background-color: #000000; /* Verde más oscuro */
-    transform: scale(1.05); /* Agrandar ligeramente */
-}
-
 #modalDetallesPedido {
     display: none;
     position: fixed;
@@ -714,110 +693,38 @@ button[type="submit"]:hover {
     background-color: #e54e00;
 }
 
-/* Estilos para la modal de Nuevo Pedido */
-#modalNuevoPedido .modal-content {
-    background-color: #000000;
-    color: #ffffff;
-    padding: 30px;
-    border: 2px solid #ff6600;
-    border-radius: 10px;
+#formAgregarPedido .form-group {
+    margin-bottom: 15px;
 }
 
-#modalNuevoPedido h2 {
-    color: #ff6600;
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-}
-
-#formNuevoPedido .form-group {
-    margin-bottom: 20px;
-}
-
-#formNuevoPedido label {
+#formAgregarPedido label {
     display: block;
     margin-bottom: 5px;
-    color: #ff6600;
-    font-weight: bold;
-    font-size: 16px;
+    color: #ff5a0e;
 }
 
-#formNuevoPedido input[type="text"],
-#formNuevoPedido input[type="number"],
-#formNuevoPedido input[type="tel"],
-#formNuevoPedido select {
+#formAgregarPedido input,
+#formAgregarPedido select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ff6600;
-    border-radius: 5px;
+    padding: 8px;
+    border: 1px solid #333;
+    border-radius: 4px;
     background-color: #1a1a1a;
     color: #ffffff;
-    font-size: 16px;
-    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-#formNuevoPedido input[type="text"]:focus,
-#formNuevoPedido input[type="number"]:focus,
-#formNuevoPedido input[type="tel"]:focus,
-#formNuevoPedido select:focus {
-    border-color: #ff8c00;
-    box-shadow: 0 0 5px rgba(255, 102, 0, 0.5);
-    outline: none;
-}
-
-#formNuevoPedido select {
-    appearance: none;
-    background-image: url('data:image/svg+xml;utf8,<svg fill="%23ff6600" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 30px;
-}
-
-#formNuevoPedido .btnGuardar {
-    background-color: #ff6600;
-    color: white;
+#formAgregarPedido button {
+    background-color: #ff5a0e;
+    color: #ffffff;
     border: none;
-    padding: 12px 20px;
-    border-radius: 5px;
+    padding: 10px 15px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 18px;
-    width: 100%;
-    transition: background-color 0.3s, transform 0.2s;
+    font-size: 16px;
 }
 
-#formNuevoPedido .btnGuardar:hover {
-    background-color: #ff8c00;
-    transform: translateY(-2px);
-}
-
-#formNuevoPedido .btnGuardar:active {
-    transform: translateY(0);
-}
-
-#modalNuevoPedido .close {
-    color: #ff6600;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    transition: color 0.3s;
-}
-
-#modalNuevoPedido .close:hover {
-    color: #ff8c00;
-}
-
-/* Estilos para el datalist */
-#formNuevoPedido datalist {
-    background-color: #1a1a1a;
-    color: #ffffff;
-    border: 1px solid #ff6600;
-    border-radius: 0 0 5px 5px;
-}
-
-#formNuevoPedido input[list]::-webkit-calendar-picker-indicator {
-    color: #ff6600;
+#formAgregarPedido button:hover {
+    background-color: #e54e00;
 }
 
 #modalEstadoPedido {
@@ -944,4 +851,118 @@ button[type="submit"]:hover {
     color: #ff5a0e;
     text-decoration: none;
     cursor: pointer;
+}
+
+#modalNuevoPedido {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    overflow: auto;
+}
+
+#modalNuevoPedido .modal-content {
+    background-color: #000000;
+    margin: 5% auto;
+    padding: 30px;
+    border: 2px solid #ff5a0e;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 90, 14, 0.3);
+}
+
+#modalNuevoPedido h2 {
+    color: #ff5a0e;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+#modalNuevoPedido .form-group {
+    margin-bottom: 20px;
+}
+
+#modalNuevoPedido label {
+    display: block;
+    color: #ffffff;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#modalNuevoPedido input[type="text"],
+#modalNuevoPedido input[type="number"],
+#modalNuevoPedido select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ff5a0e;
+    border-radius: 5px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+#modalNuevoPedido input[type="text"]:focus,
+#modalNuevoPedido input[type="number"]:focus,
+#modalNuevoPedido select:focus {
+    outline: none;
+    border-color: #ff8c00;
+    box-shadow: 0 0 5px rgba(255, 140, 0, 0.5);
+}
+
+#modalNuevoPedido select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23ffffff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+#modalNuevoPedido .btnGuardar {
+    background-color: #ff5a0e;
+    color: #ffffff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#modalNuevoPedido .btnGuardar:hover {
+    background-color: #ff8c00;
+}
+
+#modalNuevoPedido .close {
+    color: #ff5a0e;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+#modalNuevoPedido .close:hover {
+    color: #ff8c00;
+}
+
+/* Estilo para el datalist */
+#modalNuevoPedido datalist {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    #modalNuevoPedido .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
 }

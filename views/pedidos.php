@@ -152,15 +152,11 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             <h2>Nuevo Pedido</h2>
             <form id="formNuevoPedido">
                 <div class="form-group">
-                    <label for="nombreCliente">Nombre del Cliente</label>
+                    <label for="nombreCliente">Nombre del Cliente:</label>
                     <input type="text" id="nombreCliente" name="nombreCliente" required>
                 </div>
                 <div class="form-group">
-                    <label for="telefono_cliente">Teléfono</label>
-                    <input type="tel" id="telefono_cliente" name="telefono_cliente" pattern="\d{10}" title="El número de teléfono debe tener 10 dígitos y solo contener números" required>
-                </div>
-                <div class="form-group">
-                    <label for="producto">Producto</label>
+                    <label for="producto">Producto:</label>
                     <select id="producto" name="producto" required>
                         <option value="">Selecciona un producto</option>
                         <?php
@@ -173,20 +169,20 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="cantidad">Cantidad</label>
+                    <label for="cantidad">Cantidad:</label>
                     <input type="number" id="cantidad" name="cantidad" min="1" required>
                 </div>
                 <div class="form-group">
-                    <label for="calle">Dirección</label>
-                    <input type="text" id="calle" name="calle" required>
+                    <label for="calle">Dirección:</label>
+                    <input type="text" id="calle" name="calle">
                 </div>
                 <div class="form-group">
-                    <label for="interior">Interior</label>
+                    <label for="interior">Interior:</label>
                     <input type="text" id="interior" name="interior">
                 </div>
                 <div class="form-group">
-                    <label for="barrio_cliente">Barrio</label>
-                    <input type="text" id="barrio_cliente" name="barrio_cliente" list="barrios" required>
+                    <label for="barrio_cliente">Barrio:</label>
+                    <input type="text" id="barrio_cliente" name="barrio_cliente" list="barrios">
                     <datalist id="barrios">
                         <option value="Amazonas">
                         <option value="Araucarias">
@@ -198,7 +194,11 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                         <option value="Trapiche">
                     </datalist>
                 </div>
-                <button type="submit" class="btnGuardar">Guardar Pedido</button>
+                <div class="form-group">
+                    <label for="telefono_cliente">Teléfono:</label>
+                    <input type="text" id="telefono_cliente" name="telefono_cliente" pattern="\d{10}" title="El número de teléfono debe tener 10 dígitos y solo contener números">
+                </div>
+                <button type="submit" class="btnGuardar">Guardar</button>
             </form>
         </div>
     </div>
