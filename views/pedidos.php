@@ -242,12 +242,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
     <script>
         function verDetallesPedido(idPedido) {
-            // Asegurarse de que se ha pasado un idPedido válido
-            if (!idPedido) {
-                console.error("No se proporcionó un ID de pedido válido");
-                return;
-            }
-
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
@@ -260,26 +254,26 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
 
                                 response.detalles.forEach(function(detalle) {
                                     detallesHtml += `
-                            <div class="producto-item">
-                                <span class="producto-nombre">${detalle.nombre_producto}</span>
-                                <div class="producto-detalles">
-                                    <span>Cantidad: ${detalle.cantidad}</span>
-                                    <span>Precio: $${detalle.valor_unitario}</span>
-                                    <span>Total: $${detalle.subtotal}</span>
+                                <div class="producto-item">
+                                    <span class="producto-nombre">${detalle.nombre_producto}</span>
+                                    <div class="producto-detalles">
+                                        <span>Cantidad: ${detalle.cantidad}</span>
+                                        <span>Precio: $${detalle.valor_unitario}</span>
+                                        <span>Total: $${detalle.subtotal}</span>
+                                    </div>
                                 </div>
-                            </div>
                             `;
                                 });
 
                                 detallesHtml += `
-                        <div class="producto-item total-compra">
-                            <span class="producto-nombre">Total Compra:</span>
-                            <div class="producto-detalles">
-                                <span></span>
-                                <span></span>
-                                <span>$${response.total_compra}</span>
+                            <div class="producto-item total-compra">
+                                <span class="producto-nombre">Total Compra:</span>
+                                <div class="producto-detalles">
+                                    <span></span>
+                                    <span></span>
+                                    <span>$${response.total_compra}</span>
+                                </div>
                             </div>
-                        </div>
                         `;
 
                                 document.getElementById("detalles-pedido").innerHTML = detallesHtml;
