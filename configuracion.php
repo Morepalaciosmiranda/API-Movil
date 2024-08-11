@@ -192,12 +192,13 @@ if (isset($_GET['error'])) {
                         <span><strong>Domicilio:</strong> <?php echo $pedido['precio_domicilio']; ?></span>
                         <span><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></span>
                         <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
+                        <span><strong>Minutos desde pedido:</strong> <?php echo $pedido['minutos_desde_pedido']; ?></span>
                     </div>
                     <?php
                     $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' &&
                         $pedido['estado_pedido'] != 'cancelado' &&
                         $pedido['minutos_desde_pedido'] <= 10;
-
+                        var_dump($pedido['estado_pedido'], $pedido['minutos_desde_pedido'], $puedeSerCancelado);
                     if ($puedeSerCancelado) :
                     ?>
                         <div class="pedido-actions">
@@ -219,7 +220,7 @@ if (isset($_GET['error'])) {
             <h3 onclick="mostrarPedidos()"><i class="fas fa-shopping-cart fa-sm"></i> Mis pedidos</h3>
         </div>
     </div>
-    <script src="./js/configuracion2.js"></script>
+    <script src="./js/configuracion.js"></script>
 </body>
 
 </html>

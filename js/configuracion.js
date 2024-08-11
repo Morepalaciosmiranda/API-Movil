@@ -97,23 +97,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
             },
             body: JSON.stringify({ field: field, value: value })
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                alert('Datos actualizados correctamente');
-                location.reload();
-            } else if (data.message) {
-                alert(data.message);  // Mostrar mensaje de error al usuario
-            } else {
-                alert('Error al actualizar datos');
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('Datos actualizados correctamente');
+                    location.reload();
+                } else if (data.message) {
+                    alert(data.message);  // Mostrar mensaje de error al usuario
+                } else {
+                    alert('Error al actualizar datos');
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }
 });
 
@@ -148,26 +148,36 @@ function confirmCancel(idPedido, minutosDesdePedido) {
 
 // Función para actualizar el estado de los botones de cancelar
 function actualizarBotonesCancelar() {
+    console.log('Actualizando botones de cancelar');
     const pedidoItems = document.querySelectorAll('.pedido-item');
     pedidoItems.forEach(item => {
         const estadoPedido = item.querySelector('.pedido-info span:nth-child(5)').textContent.split(': ')[1];
         const idPedido = item.querySelector('.pedido-info span:nth-child(1)').textContent.split(': ')[1];
-        const minutosDesdePedido = parseInt(item.querySelector('.pedido-info span:nth-child(6)').textContent.split(': ')[1]);
+        const minutosDesdePedido = parseInt(item.querySelector('.pedido-info span:nth-child(7)').textContent.split(': ')[1]);
         const cancelarButton = document.getElementById('cancelarButton_' + idPedido);
-        
+
+        console.log(`Pedido ${idPedido}: Estado - ${estadoPedido}, Minutos - ${minutosDesdePedido}`);
+
         if (cancelarButton) {
             if (estadoPedido === 'entregado' || estadoPedido === 'cancelado' || minutosDesdePedido > 10) {
+                console.log(`Ocultando botón para pedido ${idPedido}`);
                 cancelarButton.style.display = 'none';
             } else {
+                console.log(`Mostrando botón para pedido ${idPedido}`);
                 cancelarButton.style.display = 'inline-block';
             }
+        } else {
+            console.log(`Botón no encontrado para pedido ${idPedido}`);
         }
     });
 }
 
 // Llamar a la función cuando se carga la página
-document.addEventListener('DOMContentLoaded', actualizarBotonesCancelar);
-setInterval(actualizarBotonesCancelar, 60000); // Actualizar cada minuto
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM cargado, llamando a actualizarBotonesCancelar');
+    actualizarBotonesCancelar();
+});
+setInterval(actualizarBotonesCancelar, 60000);
 
 function mostrarDetallesPedido(idPedido) {
     fetch(`obtener_detalles_pedido.php?idPedido=${idPedido}`)
