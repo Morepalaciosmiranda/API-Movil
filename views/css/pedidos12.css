@@ -714,6 +714,22 @@ button[type="submit"]:hover {
     background-color: #e54e00;
 }
 
+/* Estilos para la modal de Nuevo Pedido */
+#modalNuevoPedido .modal-content {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 30px;
+    border: 2px solid #ff6600;
+    border-radius: 10px;
+}
+
+#modalNuevoPedido h2 {
+    color: #ff6600;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
 #formNuevoPedido .form-group {
     margin-bottom: 20px;
 }
@@ -721,43 +737,87 @@ button[type="submit"]:hover {
 #formNuevoPedido label {
     display: block;
     margin-bottom: 5px;
-    color: #ff5a0e;
+    color: #ff6600;
     font-weight: bold;
+    font-size: 16px;
 }
 
-#formNuevoPedido input,
+#formNuevoPedido input[type="text"],
+#formNuevoPedido input[type="number"],
+#formNuevoPedido input[type="tel"],
 #formNuevoPedido select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #333;
-    border-radius: 4px;
+    border: 1px solid #ff6600;
+    border-radius: 5px;
     background-color: #1a1a1a;
     color: #ffffff;
     font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#formNuevoPedido input[type="text"]:focus,
+#formNuevoPedido input[type="number"]:focus,
+#formNuevoPedido input[type="tel"]:focus,
+#formNuevoPedido select:focus {
+    border-color: #ff8c00;
+    box-shadow: 0 0 5px rgba(255, 102, 0, 0.5);
+    outline: none;
 }
 
 #formNuevoPedido select {
     appearance: none;
-    background-image: url('data:image/svg+xml;utf8,<svg fill="%23ffffff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23ff6600" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
     background-repeat: no-repeat;
-    background-position-x: 98%;
-    background-position-y: 50%;
+    background-position: right 10px center;
+    padding-right: 30px;
 }
 
 #formNuevoPedido .btnGuardar {
-    background-color: #ff5a0e;
+    background-color: #ff6600;
     color: white;
     border: none;
     padding: 12px 20px;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     width: 100%;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 #formNuevoPedido .btnGuardar:hover {
-    background-color: #e54e00;
+    background-color: #ff8c00;
+    transform: translateY(-2px);
+}
+
+#formNuevoPedido .btnGuardar:active {
+    transform: translateY(0);
+}
+
+#modalNuevoPedido .close {
+    color: #ff6600;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    transition: color 0.3s;
+}
+
+#modalNuevoPedido .close:hover {
+    color: #ff8c00;
+}
+
+/* Estilos para el datalist */
+#formNuevoPedido datalist {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #ff6600;
+    border-radius: 0 0 5px 5px;
+}
+
+#formNuevoPedido input[list]::-webkit-calendar-picker-indicator {
+    color: #ff6600;
 }
 
 #modalEstadoPedido {
