@@ -193,12 +193,13 @@ if (isset($_GET['error'])) {
                         <span><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></span>
                         <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
                     </div>
-                    <?php
-                    $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' &&
-                        $pedido['estado_pedido'] != 'cancelado' &&
-                        $pedido['minutos_desde_pedido'] <= 10;
-
-                    if ($puedeSerCancelado) :
+                    <?php 
+                    $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' && 
+                                         $pedido['estado_pedido'] != 'cancelado' && 
+                                         $pedido['minutos_desde_pedido'] <= 10 && 
+                                         !in_array($pedido['id_pedido'], $cancelled_orders);
+                    
+                    if ($puedeSerCancelado) : 
                     ?>
                         <div class="pedido-actions">
                             <form method="POST" action="./controller/cambiar_estado_pedido.php" id="cancelarForm_<?php echo $pedido['id_pedido']; ?>">
@@ -211,14 +212,15 @@ if (isset($_GET['error'])) {
                 </div>
             <?php endforeach; ?>
         </div>
+    </div>
 
-        <div class="container2">
-            <div class="navigation">
-                <h3 onclick="mostrarAjustes()"><i class="fas fa-cog fa-sm"></i> Ajustes de cuenta</h3>
-                <h3 onclick="mostrarPedidos()"><i class="fas fa-shopping-cart fa-sm"></i> Mis pedidos</h3>
-            </div>
+    <div class="container2">
+        <div class="navigation">
+            <h3 onclick="mostrarAjustes()"><i class="fas fa-cog fa-sm"></i> Ajustes de cuenta</h3>
+            <h3 onclick="mostrarPedidos()"><i class="fas fa-shopping-cart fa-sm"></i> Mis pedidos</h3>
         </div>
-        <script src="./js/configuracion2.js"></script>
+    </div>
+    <script src="./js/configuracion2.js"></script>
 </body>
 
 </html>

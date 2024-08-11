@@ -141,6 +141,7 @@ function confirmCancel(idPedido, minutosDesdePedido) {
     }).then((result) => {
         if (result.isConfirmed) {
             document.getElementById('cancelarForm_' + idPedido).submit();
+            document.getElementById('cancelarButton_' + idPedido).style.display = 'none';
         }
     });
 }
@@ -152,16 +153,9 @@ function actualizarBotonesCancelar() {
         const estadoPedido = item.querySelector('.pedido-info span:nth-child(5)').textContent.split(': ')[1];
         const idPedido = item.querySelector('.pedido-info span:nth-child(1)').textContent.split(': ')[1];
         const cancelarButton = document.getElementById('cancelarButton_' + idPedido);
-        const fechaPedido = new Date(item.querySelector('.pedido-info span:nth-child(2)').textContent.split(': ')[1]);
-        const ahora = new Date();
-        const minutosDesdePedido = (ahora - fechaPedido) / (1000 * 60);
-
-        if (cancelarButton) {
-            if (estadoPedido === 'entregado' || estadoPedido === 'cancelado' || minutosDesdePedido > 10) {
-                cancelarButton.style.display = 'none';
-            } else {
-                cancelarButton.style.display = 'block';
-            }
+        
+        if (estadoPedido === 'entregado' && cancelarButton) {
+            cancelarButton.style.display = 'none';
         }
     });
 }
