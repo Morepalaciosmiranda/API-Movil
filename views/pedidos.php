@@ -100,9 +100,9 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                         <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
                         <button type="submit">Filtrar</button>
                     </form>
-                    <button class="add-pedido-btn" onclick="abrirModalNuevoPedido()">Agregar Pedido</button>
                 </div>
                 <table class="content">
+                <button class="add-pedido-btn" onclick="abrirModalNuevoPedido()">Agregar Pedido</button>
                     <tr>
                         <th>ID Pedido</th>
                         <th>Nombre Usuario</th>
