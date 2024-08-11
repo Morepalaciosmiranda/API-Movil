@@ -282,6 +282,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                                 document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
                                 document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
 
+
                                 var modalDetallesPedido = document.getElementById("modalDetallesPedido");
                                 modalDetallesPedido.style.display = "block";
                                 modalDetallesPedido.classList.add('show');
