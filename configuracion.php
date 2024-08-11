@@ -193,13 +193,12 @@ if (isset($_GET['error'])) {
                         <span><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></span>
                         <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
                     </div>
-                    <?php 
-                    $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' && 
-                                         $pedido['estado_pedido'] != 'cancelado' && 
-                                         $pedido['minutos_desde_pedido'] <= 10 && 
-                                         !in_array($pedido['id_pedido'], $cancelled_orders);
-                    
-                    if ($puedeSerCancelado) : 
+                    <?php
+                    $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' &&
+                        $pedido['estado_pedido'] != 'cancelado' &&
+                        $pedido['minutos_desde_pedido'] <= 10;
+
+                    if ($puedeSerCancelado) :
                     ?>
                         <div class="pedido-actions">
                             <form method="POST" action="./controller/cambiar_estado_pedido.php" id="cancelarForm_<?php echo $pedido['id_pedido']; ?>">

@@ -152,19 +152,22 @@ function actualizarBotonesCancelar() {
     pedidoItems.forEach(item => {
         const estadoPedido = item.querySelector('.pedido-info span:nth-child(5)').textContent.split(': ')[1];
         const idPedido = item.querySelector('.pedido-info span:nth-child(1)').textContent.split(': ')[1];
+        const minutosDesdePedido = parseInt(item.querySelector('.pedido-info span:nth-child(6)').textContent.split(': ')[1]);
         const cancelarButton = document.getElementById('cancelarButton_' + idPedido);
         
-        if (estadoPedido === 'entregado' && cancelarButton) {
-            cancelarButton.style.display = 'none';
+        if (cancelarButton) {
+            if (estadoPedido === 'entregado' || estadoPedido === 'cancelado' || minutosDesdePedido > 10) {
+                cancelarButton.style.display = 'none';
+            } else {
+                cancelarButton.style.display = 'inline-block';
+            }
         }
     });
 }
 
 // Llamar a la función cuando se carga la página
 document.addEventListener('DOMContentLoaded', actualizarBotonesCancelar);
-
-// Actualizar cada minuto
-setInterval(actualizarBotonesCancelar, 60000);
+setInterval(actualizarBotonesCancelar, 60000); // Actualizar cada minuto
 
 function mostrarDetallesPedido(idPedido) {
     fetch(`obtener_detalles_pedido.php?idPedido=${idPedido}`)
