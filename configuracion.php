@@ -8,13 +8,11 @@ if (!isset($_SESSION['correo_electronico'])) {
 }
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
-
     header('Location: loginRegister.php');
     exit();
 }
 
 if ($_SESSION['rol'] !== 'Usuario') {
-
     header('Location: ./no_autorizado.php');
     exit();
 }
@@ -38,7 +36,8 @@ if ($result->num_rows > 0) {
     exit();
 }
 
-$sql_pedidos = "SELECT pedidos.id_pedido, pedidos.fecha_pedido, pedidos.precio_domicilio, pedidos.estado_pedido, usuarios.nombre_usuario, SUM(detalle_pedido.subtotal) as subtotal_cliente 
+$sql_pedidos = "SELECT pedidos.id_pedido, pedidos.fecha_pedido, pedidos.precio_domicilio, pedidos.estado_pedido, usuarios.nombre_usuario, SUM(detalle_pedido.subtotal) as subtotal_cliente, 
+                TIMESTAMPDIFF(MINUTE, pedidos.fecha_pedido, NOW()) as minutos_desde_pedido
                 FROM pedidos 
                 JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario 
                 JOIN detalle_pedido ON pedidos.id_pedido = detalle_pedido.id_pedido
@@ -56,6 +55,34 @@ while ($row_pedido = $result_pedidos->fetch_assoc()) {
 }
 
 $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['cancelado_exitosamente'] : [];
+
+// Manejo de mensajes y errores
+if (isset($_GET['mensaje'])) {
+    $mensaje = '';
+    switch ($_GET['mensaje']) {
+        case 'pedido_cancelado':
+            $mensaje = "El pedido ha sido cancelado exitosamente.";
+            break;
+    }
+}
+
+if (isset($_GET['error'])) {
+    $error = '';
+    switch ($_GET['error']) {
+        case 'error_cancelacion':
+            $error = "Hubo un error al intentar cancelar el pedido.";
+            break;
+        case 'tiempo_excedido':
+            $error = "No se puede cancelar el pedido después de 10 minutos de realizado.";
+            break;
+        case 'pedido_entregado':
+            $error = "No se puede cancelar un pedido que ya ha sido entregado.";
+            break;
+        case 'pedido_ya_cancelado':
+            $error = "Este pedido ya ha sido cancelado anteriormente.";
+            break;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -76,6 +103,15 @@ $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['canc
             <img src="./img/LogoExterminio.png" alt="Logo">
         </div>
     </nav>
+
+    <?php if (isset($mensaje)): ?>
+        <div class="alert alert-success"><?php echo $mensaje; ?></div>
+    <?php endif; ?>
+
+    <?php if (isset($error)): ?>
+        <div class="alert alert-danger"><?php echo $error; ?></div>
+    <?php endif; ?>
+
     <div class="container" id="ajustes-container">
         <div class="title">
             <h2>Información de la cuenta</h2>
@@ -117,7 +153,6 @@ $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['canc
         </div>
     </div>
 
-
     <div id="email-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -128,7 +163,6 @@ $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['canc
             </form>
         </div>
     </div>
-
 
     <div id="password-modal" class="modal">
         <div class="modal-content">
@@ -159,12 +193,19 @@ $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['canc
                         <span><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></span>
                         <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
                     </div>
-                    <?php if ($pedido['estado_pedido'] != 'cancelado' && !in_array($pedido['id_pedido'], $cancelled_orders)) : ?>
+                    <?php 
+                    $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' && 
+                                         $pedido['estado_pedido'] != 'cancelado' && 
+                                         $pedido['minutos_desde_pedido'] <= 10 && 
+                                         !in_array($pedido['id_pedido'], $cancelled_orders);
+                    
+                    if ($puedeSerCancelado) : 
+                    ?>
                         <div class="pedido-actions">
                             <form method="POST" action="./controller/cambiar_estado_pedido.php" id="cancelarForm_<?php echo $pedido['id_pedido']; ?>">
                                 <input type="hidden" name="id_pedido" value="<?php echo $pedido['id_pedido']; ?>">
                                 <input type="hidden" name="nuevo_estado" value="cancelado">
-                                <button type="button" class="cancelar-button" id="cancelarButton_<?php echo $pedido['id_pedido']; ?>" onclick="confirmCancel('<?php echo $pedido['id_pedido']; ?>')">Cancelar Pedido</button>
+                                <button type="button" class="cancelar-button" id="cancelarButton_<?php echo $pedido['id_pedido']; ?>" onclick="confirmCancel('<?php echo $pedido['id_pedido']; ?>', <?php echo $pedido['minutos_desde_pedido']; ?>)">Cancelar Pedido</button>
                             </form>
                         </div>
                     <?php endif; ?>
@@ -173,7 +214,6 @@ $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['canc
         </div>
     </div>
 
-
     <div class="container2">
         <div class="navigation">
             <h3 onclick="mostrarAjustes()"><i class="fas fa-cog fa-sm"></i> Ajustes de cuenta</h3>
@@ -181,54 +221,6 @@ $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['canc
         </div>
     </div>
     <script src="./js/configuracion2.js"></script>
-    <script>
-        function mostrarAjustes() {
-            document.getElementById('ajustes-container').style.display = 'block';
-            document.getElementById('pedidos-container').style.display = 'none';
-        }
-
-        function mostrarPedidos() {
-            document.getElementById('ajustes-container').style.display = 'none';
-            document.getElementById('pedidos-container').style.display = 'block';
-        }
-
-        function confirmCancel(idPedido) {
-            Swal.fire({
-                title: '¿Está seguro de cancelar el pedido?',
-                text: "Esta acción no se puede deshacer.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, cancelar',
-                cancelButtonText: 'No, mantener'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('cancelarForm_' + idPedido).submit();
-                    document.getElementById('cancelarButton_' + idPedido).style.display = 'none';
-                }
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            <?php if (isset($_SESSION['cancelado_exitosamente'])) : ?>
-                // Swal.fire({
-                //     icon: 'success',
-                //     title: 'Pedido cancelado exitosamente',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
-
-                var cancelledOrders = <?php echo json_encode($_SESSION['cancelado_exitosamente']); ?>;
-                cancelledOrders.forEach(function(idPedidoCancelado) {
-                    var cancelButton = document.getElementById('cancelarButton_' + idPedidoCancelado);
-                    if (cancelButton) {
-                        cancelButton.style.display = 'none';
-                    }
-                });
-            <?php endif; ?>
-        });
-    </script>
 </body>
 
 </html>

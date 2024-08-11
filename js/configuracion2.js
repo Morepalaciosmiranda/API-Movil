@@ -115,9 +115,56 @@ document.addEventListener('DOMContentLoaded', (event) => {
         })
         .catch(error => console.error('Error:', error));
     }
-    
 });
 
+function confirmCancel(idPedido, minutosDesdePedido) {
+    if (minutosDesdePedido > 10) {
+        Swal.fire({
+            title: 'No se puede cancelar',
+            text: "Han pasado más de 10 minutos desde que se realizó el pedido.",
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: '¿Está seguro de cancelar el pedido?',
+        text: "Esta acción no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'No, mantener'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('cancelarForm_' + idPedido).submit();
+            document.getElementById('cancelarButton_' + idPedido).style.display = 'none';
+        }
+    });
+}
+
+// Función para actualizar el estado de los botones de cancelar
+function actualizarBotonesCancelar() {
+    const pedidoItems = document.querySelectorAll('.pedido-item');
+    pedidoItems.forEach(item => {
+        const estadoPedido = item.querySelector('.pedido-info span:nth-child(5)').textContent.split(': ')[1];
+        const idPedido = item.querySelector('.pedido-info span:nth-child(1)').textContent.split(': ')[1];
+        const cancelarButton = document.getElementById('cancelarButton_' + idPedido);
+        
+        if (estadoPedido === 'entregado' && cancelarButton) {
+            cancelarButton.style.display = 'none';
+        }
+    });
+}
+
+// Llamar a la función cuando se carga la página
+document.addEventListener('DOMContentLoaded', actualizarBotonesCancelar);
+
+// Actualizar cada minuto
+setInterval(actualizarBotonesCancelar, 60000);
 
 function mostrarDetallesPedido(idPedido) {
     fetch(`obtener_detalles_pedido.php?idPedido=${idPedido}`)
@@ -146,3 +193,26 @@ function mostrarDetallesPedido(idPedido) {
         .catch(error => console.error('Error:', error));
 }
 
+// Función para mostrar mensajes de éxito o error
+function mostrarMensaje(tipo, mensaje) {
+    Swal.fire({
+        icon: tipo,
+        title: tipo === 'success' ? 'Éxito' : 'Error',
+        text: mensaje,
+        timer: 3000,
+        showConfirmButton: false
+    });
+}
+
+// Verificar si hay mensajes de éxito o error en la URL
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mensaje = urlParams.get('mensaje');
+    const error = urlParams.get('error');
+
+    if (mensaje) {
+        mostrarMensaje('success', mensaje);
+    } else if (error) {
+        mostrarMensaje('error', error);
+    }
+});
