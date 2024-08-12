@@ -2,6 +2,8 @@
 include './includes/conexion.php';
 session_start();
 
+date_default_timezone_set('America/Bogota'); // Ajusta esto a tu zona horaria correcta
+
 if (!isset($_SESSION['correo_electronico'])) {
     header("Location: loginRegister.php");
     exit();
@@ -37,7 +39,7 @@ if ($result->num_rows > 0) {
 }
 
 $sql_pedidos = "SELECT pedidos.id_pedido, pedidos.fecha_pedido, pedidos.precio_domicilio, pedidos.estado_pedido, usuarios.nombre_usuario, SUM(detalle_pedido.subtotal) as subtotal_cliente, 
-                TIMESTAMPDIFF(MINUTE, pedidos.fecha_pedido, NOW()) as minutos_desde_pedido
+                NOW() as fecha_actual
                 FROM pedidos 
                 JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario 
                 JOIN detalle_pedido ON pedidos.id_pedido = detalle_pedido.id_pedido
@@ -55,11 +57,10 @@ while ($row_pedido = $result_pedidos->fetch_assoc()) {
     $pedidos[] = $row_pedido;
 }
 
-// Calcular correctamente los minutos desde el pedido
 foreach ($pedidos as &$pedido) {
     $fecha_pedido = new DateTime($pedido['fecha_pedido']);
-    $ahora = new DateTime();
-    $intervalo = $fecha_pedido->diff($ahora);
+    $fecha_actual = new DateTime($pedido['fecha_actual']);
+    $intervalo = $fecha_pedido->diff($fecha_actual);
     $pedido['minutos_desde_pedido'] = $intervalo->days * 24 * 60 + $intervalo->h * 60 + $intervalo->i;
 }
 
@@ -192,7 +193,10 @@ if (isset($_GET['error'])) {
             <h3>En este apartado aparecen todos los pedidos que hagas a través de nuestra página</h3>
         </div>
         <div class="pedidos-lista">
-            <?php foreach ($pedidos as $pedido) : ?>
+            <?php 
+            var_dump($pedidos); // Depuración temporal
+            foreach ($pedidos as $pedido) : 
+            ?>
                 <div class="pedido-item">
                     <div class="pedido-info">
                         <span><strong>Número:</strong> <?php echo $pedido['id_pedido']; ?></span>
@@ -202,11 +206,14 @@ if (isset($_GET['error'])) {
                         <span><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></span>
                         <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
                         <span><strong>Minutos desde pedido:</strong> <?php echo $pedido['minutos_desde_pedido']; ?></span>
+                        <span><strong>Fecha actual:</strong> <?php echo $pedido['fecha_actual']; ?></span>
                     </div>
                     <?php 
                     $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' && 
                                          $pedido['estado_pedido'] != 'cancelado' && 
                                          $pedido['minutos_desde_pedido'] <= 10;
+                    
+                    echo "Debug: estado=" . $pedido['estado_pedido'] . ", minutos=" . $pedido['minutos_desde_pedido'] . ", puede ser cancelado=" . ($puedeSerCancelado ? 'true' : 'false');
                     
                     if ($puedeSerCancelado) : 
                     ?>
@@ -233,7 +240,7 @@ if (isset($_GET['error'])) {
             <h3 onclick="mostrarPedidos()"><i class="fas fa-shopping-cart fa-sm"></i> Mis pedidos</h3>
         </div>
     </div>
-    <script src="./js/configuracion.js"></script>
+    <script src="./js/configuracion2.js"></script>
 </body>
 
 </html>
