@@ -151,7 +151,6 @@ function actualizarBotonesCancelar() {
     const pedidoItems = document.querySelectorAll('.pedido-item');
     pedidoItems.forEach(item => {
         const estadoPedido = item.querySelector('.pedido-info span:nth-child(5)').textContent.split(': ')[1];
-        const idPedido = item.querySelector('.pedido-info span:nth-child(1)').textContent.split(': ')[1];
         const minutosDesdePedidoSpan = item.querySelector('.pedido-info span:nth-child(7)');
         let minutosDesdePedido = 0;
         if (minutosDesdePedidoSpan) {

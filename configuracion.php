@@ -193,10 +193,7 @@ if (isset($_GET['error'])) {
             <h3>En este apartado aparecen todos los pedidos que hagas a través de nuestra página</h3>
         </div>
         <div class="pedidos-lista">
-            <?php 
-            var_dump($pedidos); // Depuración temporal
-            foreach ($pedidos as $pedido) : 
-            ?>
+            <?php foreach ($pedidos as $pedido) : ?>
                 <div class="pedido-item">
                     <div class="pedido-info">
                         <span><strong>Número:</strong> <?php echo $pedido['id_pedido']; ?></span>
@@ -212,8 +209,6 @@ if (isset($_GET['error'])) {
                     $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' && 
                                          $pedido['estado_pedido'] != 'cancelado' && 
                                          $pedido['minutos_desde_pedido'] <= 10;
-                    
-                    echo "Debug: estado=" . $pedido['estado_pedido'] . ", minutos=" . $pedido['minutos_desde_pedido'] . ", puede ser cancelado=" . ($puedeSerCancelado ? 'true' : 'false');
                     
                     if ($puedeSerCancelado) : 
                     ?>
