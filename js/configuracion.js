@@ -152,16 +152,21 @@ function actualizarBotonesCancelar() {
     pedidoItems.forEach(item => {
         const estadoPedido = item.querySelector('.pedido-info span:nth-child(5)').textContent.split(': ')[1];
         const idPedido = item.querySelector('.pedido-info span:nth-child(1)').textContent.split(': ')[1];
-        const minutosDesdePedido = parseInt(item.querySelector('.pedido-info span:nth-child(7)').textContent.split(': ')[1]);
-        const cancelarButton = document.getElementById('cancelarButton_' + idPedido);
+        const minutosDesdePedidoSpan = item.querySelector('.pedido-info span:nth-child(7)');
+        let minutosDesdePedido = 0;
+        if (minutosDesdePedidoSpan) {
+            minutosDesdePedido = parseInt(minutosDesdePedidoSpan.textContent.split(': ')[1]);
+        }
+        const cancelarButton = item.querySelector('.cancelar-button');
+        const noCancelarMensaje = item.querySelector('.pedido-actions p');
         
-        if (cancelarButton) {
+        if (cancelarButton && noCancelarMensaje) {
             if (estadoPedido === 'entregado' || estadoPedido === 'cancelado' || minutosDesdePedido > 10) {
                 cancelarButton.style.display = 'none';
-                item.querySelector('.pedido-actions p').style.display = 'block';
+                noCancelarMensaje.style.display = 'block';
             } else {
                 cancelarButton.style.display = 'inline-block';
-                item.querySelector('.pedido-actions p').style.display = 'none';
+                noCancelarMensaje.style.display = 'none';
             }
         }
     });

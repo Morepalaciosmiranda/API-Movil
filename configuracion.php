@@ -42,7 +42,8 @@ $sql_pedidos = "SELECT pedidos.id_pedido, pedidos.fecha_pedido, pedidos.precio_d
                 JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario 
                 JOIN detalle_pedido ON pedidos.id_pedido = detalle_pedido.id_pedido
                 WHERE pedidos.id_usuario = ?
-                GROUP BY pedidos.id_pedido";
+                GROUP BY pedidos.id_pedido
+                ORDER BY pedidos.fecha_pedido DESC";
 
 $stmt_pedidos = $conn->prepare($sql_pedidos);
 $stmt_pedidos->bind_param("i", $id_usuario);
@@ -52,6 +53,14 @@ $result_pedidos = $stmt_pedidos->get_result();
 $pedidos = [];
 while ($row_pedido = $result_pedidos->fetch_assoc()) {
     $pedidos[] = $row_pedido;
+}
+
+// Calcular correctamente los minutos desde el pedido
+foreach ($pedidos as &$pedido) {
+    $fecha_pedido = new DateTime($pedido['fecha_pedido']);
+    $ahora = new DateTime();
+    $intervalo = $fecha_pedido->diff($ahora);
+    $pedido['minutos_desde_pedido'] = $intervalo->days * 24 * 60 + $intervalo->h * 60 + $intervalo->i;
 }
 
 $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['cancelado_exitosamente'] : [];
@@ -194,12 +203,12 @@ if (isset($_GET['error'])) {
                         <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
                         <span><strong>Minutos desde pedido:</strong> <?php echo $pedido['minutos_desde_pedido']; ?></span>
                     </div>
-                    <?php
-                    $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' &&
-                        $pedido['estado_pedido'] != 'cancelado' &&
-                        $pedido['minutos_desde_pedido'] <= 10;
-
-                    if ($puedeSerCancelado) :
+                    <?php 
+                    $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' && 
+                                         $pedido['estado_pedido'] != 'cancelado' && 
+                                         $pedido['minutos_desde_pedido'] <= 10;
+                    
+                    if ($puedeSerCancelado) : 
                     ?>
                         <div class="pedido-actions">
                             <form method="POST" action="./controller/cambiar_estado_pedido.php" id="cancelarForm_<?php echo $pedido['id_pedido']; ?>">
