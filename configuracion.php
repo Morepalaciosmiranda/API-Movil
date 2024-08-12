@@ -2,7 +2,7 @@
 include './includes/conexion.php';
 session_start();
 
-date_default_timezone_set('America/Bogota'); // Ajusta esto a tu zona horaria correcta
+date_default_timezone_set('America/Bogota');
 
 if (!isset($_SESSION['correo_electronico'])) {
     header("Location: loginRegister.php");
@@ -60,8 +60,8 @@ while ($row_pedido = $result_pedidos->fetch_assoc()) {
 foreach ($pedidos as &$pedido) {
     $fecha_pedido = new DateTime($pedido['fecha_pedido']);
     $fecha_actual = new DateTime($pedido['fecha_actual']);
-    $intervalo = $fecha_pedido->diff($fecha_actual);
-    $pedido['minutos_desde_pedido'] = $intervalo->days * 24 * 60 + $intervalo->h * 60 + $intervalo->i;
+    $intervalo = $fecha_actual->getTimestamp() - $fecha_pedido->getTimestamp();
+    $pedido['minutos_desde_pedido'] = floor($intervalo / 60);
 }
 
 $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['cancelado_exitosamente'] : [];
@@ -204,13 +204,14 @@ if (isset($_GET['error'])) {
                         <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
                         <span><strong>Minutos desde pedido:</strong> <?php echo $pedido['minutos_desde_pedido']; ?></span>
                         <span><strong>Fecha actual:</strong> <?php echo $pedido['fecha_actual']; ?></span>
+                        <span><strong>Tiempo restante para cancelar:</strong> <?php echo max(0, 10 - $pedido['minutos_desde_pedido']); ?> minutos</span>
                     </div>
-                    <?php 
-                    $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' && 
-                                         $pedido['estado_pedido'] != 'cancelado' && 
-                                         $pedido['minutos_desde_pedido'] <= 10;
-                    
-                    if ($puedeSerCancelado) : 
+                    <?php
+                    $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' &&
+                        $pedido['estado_pedido'] != 'cancelado' &&
+                        $pedido['minutos_desde_pedido'] <= 10;
+
+                    if ($puedeSerCancelado) :
                     ?>
                         <div class="pedido-actions">
                             <form method="POST" action="./controller/cambiar_estado_pedido.php" id="cancelarForm_<?php echo $pedido['id_pedido']; ?>">
