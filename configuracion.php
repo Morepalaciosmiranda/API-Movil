@@ -198,7 +198,7 @@ if (isset($_GET['error'])) {
                     $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' &&
                         $pedido['estado_pedido'] != 'cancelado' &&
                         $pedido['minutos_desde_pedido'] <= 10;
-                        var_dump($pedido['estado_pedido'], $pedido['minutos_desde_pedido'], $puedeSerCancelado);
+
                     if ($puedeSerCancelado) :
                     ?>
                         <div class="pedido-actions">
@@ -207,6 +207,10 @@ if (isset($_GET['error'])) {
                                 <input type="hidden" name="nuevo_estado" value="cancelado">
                                 <button type="button" class="cancelar-button" id="cancelarButton_<?php echo $pedido['id_pedido']; ?>" onclick="confirmCancel('<?php echo $pedido['id_pedido']; ?>', <?php echo $pedido['minutos_desde_pedido']; ?>)">Cancelar Pedido</button>
                             </form>
+                        </div>
+                    <?php else: ?>
+                        <div class="pedido-actions">
+                            <p>No se puede cancelar este pedido</p>
                         </div>
                     <?php endif; ?>
                 </div>

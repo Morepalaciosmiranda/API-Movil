@@ -148,36 +148,28 @@ function confirmCancel(idPedido, minutosDesdePedido) {
 
 // Función para actualizar el estado de los botones de cancelar
 function actualizarBotonesCancelar() {
-    console.log('Actualizando botones de cancelar');
     const pedidoItems = document.querySelectorAll('.pedido-item');
     pedidoItems.forEach(item => {
         const estadoPedido = item.querySelector('.pedido-info span:nth-child(5)').textContent.split(': ')[1];
         const idPedido = item.querySelector('.pedido-info span:nth-child(1)').textContent.split(': ')[1];
         const minutosDesdePedido = parseInt(item.querySelector('.pedido-info span:nth-child(7)').textContent.split(': ')[1]);
         const cancelarButton = document.getElementById('cancelarButton_' + idPedido);
-
-        console.log(`Pedido ${idPedido}: Estado - ${estadoPedido}, Minutos - ${minutosDesdePedido}`);
-
+        
         if (cancelarButton) {
             if (estadoPedido === 'entregado' || estadoPedido === 'cancelado' || minutosDesdePedido > 10) {
-                console.log(`Ocultando botón para pedido ${idPedido}`);
                 cancelarButton.style.display = 'none';
+                item.querySelector('.pedido-actions p').style.display = 'block';
             } else {
-                console.log(`Mostrando botón para pedido ${idPedido}`);
                 cancelarButton.style.display = 'inline-block';
+                item.querySelector('.pedido-actions p').style.display = 'none';
             }
-        } else {
-            console.log(`Botón no encontrado para pedido ${idPedido}`);
         }
     });
 }
 
-// Llamar a la función cuando se carga la página
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM cargado, llamando a actualizarBotonesCancelar');
-    actualizarBotonesCancelar();
-});
-setInterval(actualizarBotonesCancelar, 60000);
+document.addEventListener('DOMContentLoaded', actualizarBotonesCancelar);
+setInterval(actualizarBotonesCancelar, 60000); // Actualizar cada minuto
+
 
 function mostrarDetallesPedido(idPedido) {
     fetch(`obtener_detalles_pedido.php?idPedido=${idPedido}`)
