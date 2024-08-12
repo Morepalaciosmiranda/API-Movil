@@ -240,7 +240,7 @@ if (isset($_GET['error'])) {
             <h3 onclick="mostrarPedidos()"><i class="fas fa-shopping-cart fa-sm"></i> Mis pedidos</h3>
         </div>
     </div>
-    <script src="./js/configuracion2.js"></script>
+    <script src="./js/configuracion.js"></script>
 </body>
 
 </html>
