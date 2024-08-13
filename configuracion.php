@@ -58,10 +58,7 @@ while ($row_pedido = $result_pedidos->fetch_assoc()) {
 }
 
 foreach ($pedidos as &$pedido) {
-    $fecha_pedido = new DateTime($pedido['fecha_pedido']);
-    $fecha_actual = new DateTime($pedido['fecha_actual']);
-    $intervalo = $fecha_actual->getTimestamp() - $fecha_pedido->getTimestamp();
-    $pedido['minutos_desde_pedido'] = floor($intervalo / 60);
+    $pedido['minutos_desde_pedido'] = isset($pedido['minutos_desde_pedido']) ? $pedido['minutos_desde_pedido'] : 0;
 }
 
 $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['cancelado_exitosamente'] : [];
@@ -203,7 +200,7 @@ if (isset($_GET['error'])) {
                         <span><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></span>
                         <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
                         <span><strong>Minutos desde pedido:</strong> <?php echo $pedido['minutos_desde_pedido']; ?></span>
-                        <span><strong>Fecha actual:</strong> <?php echo $pedido['fecha_actual']; ?></span>
+                        <span><strong>Fecha actual:</strong> <?php echo date('Y-m-d H:i:s'); ?></span>
                         <span><strong>Tiempo restante para cancelar:</strong> <?php echo max(0, 10 - $pedido['minutos_desde_pedido']); ?> minutos</span>
                     </div>
                     <?php
