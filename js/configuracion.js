@@ -141,7 +141,6 @@ function confirmCancel(idPedido, minutosDesdePedido) {
     }).then((result) => {
         if (result.isConfirmed) {
             document.getElementById('cancelarForm_' + idPedido).submit();
-            document.getElementById('cancelarButton_' + idPedido).style.display = 'none';
         }
     });
 }
@@ -160,7 +159,7 @@ function actualizarBotonesCancelar() {
         const noCancelarMensaje = item.querySelector('.pedido-actions p');
         
         if (cancelarButton && noCancelarMensaje) {
-            if (estadoPedido === 'entregado' || estadoPedido === 'cancelado' || minutosDesdePedido > 10) {
+            if (estadoPedido === 'Entregado' || estadoPedido === 'Cancelado' || minutosDesdePedido > 10) {
                 cancelarButton.style.display = 'none';
                 noCancelarMensaje.style.display = 'block';
             } else {

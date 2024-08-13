@@ -39,7 +39,7 @@ if ($result->num_rows > 0) {
 }
 
 $sql_pedidos = "SELECT pedidos.id_pedido, pedidos.fecha_pedido, pedidos.precio_domicilio, pedidos.estado_pedido, usuarios.nombre_usuario, SUM(detalle_pedido.subtotal) as subtotal_cliente, 
-                NOW() as fecha_actual
+                TIMESTAMPDIFF(MINUTE, pedidos.fecha_pedido, NOW()) as minutos_desde_pedido
                 FROM pedidos 
                 JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario 
                 JOIN detalle_pedido ON pedidos.id_pedido = detalle_pedido.id_pedido
@@ -207,8 +207,8 @@ if (isset($_GET['error'])) {
                         <span><strong>Tiempo restante para cancelar:</strong> <?php echo max(0, 10 - $pedido['minutos_desde_pedido']); ?> minutos</span>
                     </div>
                     <?php
-                    $puedeSerCancelado = $pedido['estado_pedido'] != 'entregado' &&
-                        $pedido['estado_pedido'] != 'cancelado' &&
+                    $puedeSerCancelado = $pedido['estado_pedido'] != 'Entregado' &&
+                        $pedido['estado_pedido'] != 'Cancelado' &&
                         $pedido['minutos_desde_pedido'] <= 10;
 
                     if ($puedeSerCancelado) :
@@ -216,7 +216,7 @@ if (isset($_GET['error'])) {
                         <div class="pedido-actions">
                             <form method="POST" action="./controller/cambiar_estado_pedido.php" id="cancelarForm_<?php echo $pedido['id_pedido']; ?>">
                                 <input type="hidden" name="id_pedido" value="<?php echo $pedido['id_pedido']; ?>">
-                                <input type="hidden" name="nuevo_estado" value="cancelado">
+                                <input type="hidden" name="nuevo_estado" value="Cancelado">
                                 <button type="button" class="cancelar-button" id="cancelarButton_<?php echo $pedido['id_pedido']; ?>" onclick="confirmCancel('<?php echo $pedido['id_pedido']; ?>', <?php echo $pedido['minutos_desde_pedido']; ?>)">Cancelar Pedido</button>
                             </form>
                         </div>
