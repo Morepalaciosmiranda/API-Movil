@@ -186,10 +186,10 @@ if (isset($_GET['error'])) {
             <h3>En este apartado aparecen todos los pedidos que hagas a través de nuestra página</h3>
         </div>
         <div class="pedidos-lista">
-            <?php foreach ($pedidos as $pedido) : 
+            <?php foreach ($pedidos as $pedido) :
                 $puedeSerCancelado = $pedido['estado_pedido'] != 'Entregado' &&
-                                     $pedido['estado_pedido'] != 'Cancelado' &&
-                                     $pedido['segundos_desde_pedido'] < 600;
+                    $pedido['estado_pedido'] != 'Cancelado' &&
+                    $pedido['segundos_desde_pedido'] < 600;
 
                 $tiempoRestante = max(0, 600 - $pedido['segundos_desde_pedido']);
                 $minutosRestantes = floor($tiempoRestante / 60);

@@ -178,8 +178,9 @@ function actualizarTiempoRestante() {
     const pedidoItems = document.querySelectorAll('.pedido-item');
     pedidoItems.forEach(item => {
         const tiempoTranscurridoSpan = item.querySelector('span:nth-child(7)');
-        const tiempoRestanteSpan = item.querySelector('span:nth-child(9)');
+        const tiempoRestanteSpan = item.querySelector('span:nth-child(8)');
         const cancelarButton = item.querySelector('.cancelar-button');
+        const noCancelarMensaje = item.querySelector('.pedido-actions p');
 
         if (tiempoTranscurridoSpan && tiempoRestanteSpan) {
             let segundosTranscurridos = parseInt(tiempoTranscurridoSpan.textContent.split(':')[1].trim().split(' ')[0]) * 60 + 
@@ -193,9 +194,9 @@ function actualizarTiempoRestante() {
             tiempoTranscurridoSpan.textContent = `Tiempo transcurrido: ${Math.floor(segundosTranscurridos / 60)} minutos y ${segundosTranscurridos % 60} segundos`;
             tiempoRestanteSpan.textContent = `Tiempo restante para cancelar: ${minutosRestantes} minutos y ${segundosRestantes} segundos`;
 
-            if (segundosTranscurridos >= 600 && cancelarButton) {
-                cancelarButton.style.display = 'none';
-                item.querySelector('.pedido-actions p').style.display = 'block';
+            if (segundosTranscurridos >= 600) {
+                if (cancelarButton) cancelarButton.style.display = 'none';
+                if (noCancelarMensaje) noCancelarMensaje.style.display = 'block';
             }
         }
     });
