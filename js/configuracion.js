@@ -177,26 +177,32 @@ setInterval(actualizarBotonesCancelar, 60000); // Actualizar cada minuto
 function actualizarTiempoRestante() {
     const pedidoItems = document.querySelectorAll('.pedido-item');
     pedidoItems.forEach(item => {
+        const fechaPedidoSpan = item.querySelector('span:nth-child(2)');
         const tiempoTranscurridoSpan = item.querySelector('span:nth-child(7)');
-        const tiempoRestanteSpan = item.querySelector('span:nth-child(8)');
+        const fechaActualSpan = item.querySelector('span:nth-child(8)');
+        const tiempoRestanteSpan = item.querySelector('span:nth-child(9)');
         const cancelarButton = item.querySelector('.cancelar-button');
         const noCancelarMensaje = item.querySelector('.pedido-actions p');
 
-        if (tiempoTranscurridoSpan && tiempoRestanteSpan) {
-            let segundosTranscurridos = parseInt(tiempoTranscurridoSpan.textContent.split(':')[1].trim().split(' ')[0]) * 60 + 
-                                        parseInt(tiempoTranscurridoSpan.textContent.split('y')[1].trim().split(' ')[0]);
-            segundosTranscurridos++;
+        if (fechaPedidoSpan && tiempoTranscurridoSpan && fechaActualSpan && tiempoRestanteSpan) {
+            const fechaPedido = new Date(fechaPedidoSpan.textContent.split(': ')[1]);
+            const fechaActual = new Date();
+            const segundosTranscurridos = Math.floor((fechaActual - fechaPedido) / 1000);
 
             let tiempoRestante = Math.max(0, 600 - segundosTranscurridos);
             let minutosRestantes = Math.floor(tiempoRestante / 60);
             let segundosRestantes = tiempoRestante % 60;
 
             tiempoTranscurridoSpan.textContent = `Tiempo transcurrido: ${Math.floor(segundosTranscurridos / 60)} minutos y ${segundosTranscurridos % 60} segundos`;
+            fechaActualSpan.textContent = `Fecha actual: ${fechaActual.toLocaleString()}`;
             tiempoRestanteSpan.textContent = `Tiempo restante para cancelar: ${minutosRestantes} minutos y ${segundosRestantes} segundos`;
 
             if (segundosTranscurridos >= 600) {
                 if (cancelarButton) cancelarButton.style.display = 'none';
                 if (noCancelarMensaje) noCancelarMensaje.style.display = 'block';
+            } else {
+                if (cancelarButton) cancelarButton.style.display = 'inline-block';
+                if (noCancelarMensaje) noCancelarMensaje.style.display = 'none';
             }
         }
     });
