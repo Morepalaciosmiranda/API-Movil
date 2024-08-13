@@ -178,9 +178,9 @@ function actualizarTiempoRestante() {
     const pedidoItems = document.querySelectorAll('.pedido-item');
     pedidoItems.forEach(item => {
         const fechaPedidoSpan = item.querySelector('span:nth-child(2)');
-        const tiempoTranscurridoSpan = item.querySelector('span:nth-child(7)');
-        const fechaActualSpan = item.querySelector('span:nth-child(8)');
-        const tiempoRestanteSpan = item.querySelector('span:nth-child(9)');
+        const tiempoTranscurridoSpan = item.querySelector('.tiempo-transcurrido');
+        const fechaActualSpan = item.querySelector('.fecha-actual');
+        const tiempoRestanteSpan = item.querySelector('.tiempo-restante');
         const cancelarButton = item.querySelector('.cancelar-button');
         const noCancelarMensaje = item.querySelector('.pedido-actions p');
 
@@ -193,9 +193,9 @@ function actualizarTiempoRestante() {
             let minutosRestantes = Math.floor(tiempoRestante / 60);
             let segundosRestantes = tiempoRestante % 60;
 
-            tiempoTranscurridoSpan.textContent = `Tiempo transcurrido: ${Math.floor(segundosTranscurridos / 60)} minutos y ${segundosTranscurridos % 60} segundos`;
-            fechaActualSpan.textContent = `Fecha actual: ${fechaActual.toLocaleString()}`;
-            tiempoRestanteSpan.textContent = `Tiempo restante para cancelar: ${minutosRestantes} minutos y ${segundosRestantes} segundos`;
+            tiempoTranscurridoSpan.textContent = `${Math.floor(segundosTranscurridos / 60)} minutos y ${segundosTranscurridos % 60} segundos`;
+            fechaActualSpan.textContent = fechaActual.toLocaleString();
+            tiempoRestanteSpan.textContent = `${minutosRestantes} minutos y ${segundosRestantes} segundos`;
 
             if (segundosTranscurridos >= 600) {
                 if (cancelarButton) cancelarButton.style.display = 'none';
