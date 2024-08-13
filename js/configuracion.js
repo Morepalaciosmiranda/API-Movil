@@ -117,8 +117,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 });
 
-function confirmCancel(idPedido, minutosDesdePedido) {
-    if (minutosDesdePedido > 10) {
+function confirmCancel(idPedido, segundosDesdePedido) {
+    if (segundosDesdePedido >= 600) {
         Swal.fire({
             title: 'No se puede cancelar',
             text: "Han pasado más de 10 minutos desde que se realizó el pedido.",
@@ -157,7 +157,7 @@ function actualizarBotonesCancelar() {
         }
         const cancelarButton = item.querySelector('.cancelar-button');
         const noCancelarMensaje = item.querySelector('.pedido-actions p');
-        
+
         if (cancelarButton && noCancelarMensaje) {
             if (estadoPedido === 'Entregado' || estadoPedido === 'Cancelado' || minutosDesdePedido > 10) {
                 cancelarButton.style.display = 'none';
@@ -172,6 +172,37 @@ function actualizarBotonesCancelar() {
 
 document.addEventListener('DOMContentLoaded', actualizarBotonesCancelar);
 setInterval(actualizarBotonesCancelar, 60000); // Actualizar cada minuto
+
+
+function actualizarTiempoRestante() {
+    const pedidoItems = document.querySelectorAll('.pedido-item');
+    pedidoItems.forEach(item => {
+        const tiempoTranscurridoSpan = item.querySelector('span:nth-child(7)');
+        const tiempoRestanteSpan = item.querySelector('span:nth-child(9)');
+        const cancelarButton = item.querySelector('.cancelar-button');
+
+        if (tiempoTranscurridoSpan && tiempoRestanteSpan) {
+            let segundosTranscurridos = parseInt(tiempoTranscurridoSpan.textContent.split(':')[1].trim().split(' ')[0]) * 60 + 
+                                        parseInt(tiempoTranscurridoSpan.textContent.split('y')[1].trim().split(' ')[0]);
+            segundosTranscurridos++;
+
+            let tiempoRestante = Math.max(0, 600 - segundosTranscurridos);
+            let minutosRestantes = Math.floor(tiempoRestante / 60);
+            let segundosRestantes = tiempoRestante % 60;
+
+            tiempoTranscurridoSpan.textContent = `Tiempo transcurrido: ${Math.floor(segundosTranscurridos / 60)} minutos y ${segundosTranscurridos % 60} segundos`;
+            tiempoRestanteSpan.textContent = `Tiempo restante para cancelar: ${minutosRestantes} minutos y ${segundosRestantes} segundos`;
+
+            if (segundosTranscurridos >= 600 && cancelarButton) {
+                cancelarButton.style.display = 'none';
+                item.querySelector('.pedido-actions p').style.display = 'block';
+            }
+        }
+    });
+}
+
+// Actualizar el tiempo cada segundo
+setInterval(actualizarTiempoRestante, 1000);
 
 
 function mostrarDetallesPedido(idPedido) {

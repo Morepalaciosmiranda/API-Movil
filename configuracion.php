@@ -39,7 +39,7 @@ if ($result->num_rows > 0) {
 }
 
 $sql_pedidos = "SELECT pedidos.id_pedido, pedidos.fecha_pedido, pedidos.precio_domicilio, pedidos.estado_pedido, usuarios.nombre_usuario, SUM(detalle_pedido.subtotal) as subtotal_cliente, 
-                TIMESTAMPDIFF(MINUTE, pedidos.fecha_pedido, NOW()) as minutos_desde_pedido
+                TIMESTAMPDIFF(SECOND, pedidos.fecha_pedido, NOW()) as segundos_desde_pedido
                 FROM pedidos 
                 JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario 
                 JOIN detalle_pedido ON pedidos.id_pedido = detalle_pedido.id_pedido
@@ -55,10 +55,6 @@ $result_pedidos = $stmt_pedidos->get_result();
 $pedidos = [];
 while ($row_pedido = $result_pedidos->fetch_assoc()) {
     $pedidos[] = $row_pedido;
-}
-
-foreach ($pedidos as &$pedido) {
-    $pedido['minutos_desde_pedido'] = isset($pedido['minutos_desde_pedido']) ? $pedido['minutos_desde_pedido'] : 0;
 }
 
 $cancelled_orders = isset($_SESSION['cancelado_exitosamente']) ? $_SESSION['cancelado_exitosamente'] : [];
@@ -190,7 +186,15 @@ if (isset($_GET['error'])) {
             <h3>En este apartado aparecen todos los pedidos que hagas a través de nuestra página</h3>
         </div>
         <div class="pedidos-lista">
-            <?php foreach ($pedidos as $pedido) : ?>
+            <?php foreach ($pedidos as $pedido) : 
+                $puedeSerCancelado = $pedido['estado_pedido'] != 'Entregado' &&
+                                     $pedido['estado_pedido'] != 'Cancelado' &&
+                                     $pedido['segundos_desde_pedido'] < 600;
+
+                $tiempoRestante = max(0, 600 - $pedido['segundos_desde_pedido']);
+                $minutosRestantes = floor($tiempoRestante / 60);
+                $segundosRestantes = $tiempoRestante % 60;
+            ?>
                 <div class="pedido-item">
                     <div class="pedido-info">
                         <span><strong>Número:</strong> <?php echo $pedido['id_pedido']; ?></span>
@@ -199,25 +203,19 @@ if (isset($_GET['error'])) {
                         <span><strong>Domicilio:</strong> <?php echo $pedido['precio_domicilio']; ?></span>
                         <span><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></span>
                         <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
-                        <span><strong>Minutos desde pedido:</strong> <?php echo $pedido['minutos_desde_pedido']; ?></span>
+                        <span><strong>Tiempo transcurrido:</strong> <?php echo floor($pedido['segundos_desde_pedido'] / 60); ?> minutos y <?php echo $pedido['segundos_desde_pedido'] % 60; ?> segundos</span>
                         <span><strong>Fecha actual:</strong> <?php echo date('Y-m-d H:i:s'); ?></span>
-                        <span><strong>Tiempo restante para cancelar:</strong> <?php echo max(0, 10 - $pedido['minutos_desde_pedido']); ?> minutos</span>
+                        <span><strong>Tiempo restante para cancelar:</strong> <?php echo $minutosRestantes; ?> minutos y <?php echo $segundosRestantes; ?> segundos</span>
                     </div>
-                    <?php
-                    $puedeSerCancelado = $pedido['estado_pedido'] != 'Entregado' &&
-                        $pedido['estado_pedido'] != 'Cancelado' &&
-                        $pedido['minutos_desde_pedido'] <= 10;
-
-                    if ($puedeSerCancelado) :
-                    ?>
+                    <?php if ($puedeSerCancelado) : ?>
                         <div class="pedido-actions">
                             <form method="POST" action="./controller/cambiar_estado_pedido.php" id="cancelarForm_<?php echo $pedido['id_pedido']; ?>">
                                 <input type="hidden" name="id_pedido" value="<?php echo $pedido['id_pedido']; ?>">
                                 <input type="hidden" name="nuevo_estado" value="Cancelado">
-                                <button type="button" class="cancelar-button" id="cancelarButton_<?php echo $pedido['id_pedido']; ?>" onclick="confirmCancel('<?php echo $pedido['id_pedido']; ?>', <?php echo $pedido['minutos_desde_pedido']; ?>)">Cancelar Pedido</button>
+                                <button type="button" class="cancelar-button" onclick="confirmCancel('<?php echo $pedido['id_pedido']; ?>', <?php echo $pedido['segundos_desde_pedido']; ?>)">Cancelar Pedido</button>
                             </form>
                         </div>
-                    <?php else: ?>
+                    <?php else : ?>
                         <div class="pedido-actions">
                             <p>No se puede cancelar este pedido</p>
                         </div>
