@@ -176,34 +176,29 @@ setInterval(actualizarBotonesCancelar, 60000); // Actualizar cada minuto
 
 function actualizarTiempoRestante() {
     const pedidoItems = document.querySelectorAll('.pedido-item');
+    const ahora = new Date();
+
     pedidoItems.forEach(item => {
-        const fechaPedidoSpan = item.querySelector('span:nth-child(2)');
+        const fechaPedido = new Date(item.dataset.fechaPedido);
         const tiempoTranscurridoSpan = item.querySelector('.tiempo-transcurrido');
-        const fechaActualSpan = item.querySelector('.fecha-actual');
         const tiempoRestanteSpan = item.querySelector('.tiempo-restante');
         const cancelarButton = item.querySelector('.cancelar-button');
         const noCancelarMensaje = item.querySelector('.pedido-actions p');
 
-        if (fechaPedidoSpan && tiempoTranscurridoSpan && fechaActualSpan && tiempoRestanteSpan) {
-            const fechaPedido = new Date(fechaPedidoSpan.textContent.split(': ')[1]);
-            const fechaActual = new Date();
-            const segundosTranscurridos = Math.floor((fechaActual - fechaPedido) / 1000);
+        const segundosTranscurridos = Math.floor((ahora - fechaPedido) / 1000);
+        const tiempoRestante = Math.max(0, 600 - segundosTranscurridos);
+        const minutosRestantes = Math.floor(tiempoRestante / 60);
+        const segundosRestantes = tiempoRestante % 60;
 
-            let tiempoRestante = Math.max(0, 600 - segundosTranscurridos);
-            let minutosRestantes = Math.floor(tiempoRestante / 60);
-            let segundosRestantes = tiempoRestante % 60;
+        tiempoTranscurridoSpan.textContent = `${Math.floor(segundosTranscurridos / 60)} minutos y ${segundosTranscurridos % 60} segundos`;
+        tiempoRestanteSpan.textContent = `${minutosRestantes} minutos y ${segundosRestantes} segundos`;
 
-            tiempoTranscurridoSpan.textContent = `${Math.floor(segundosTranscurridos / 60)} minutos y ${segundosTranscurridos % 60} segundos`;
-            fechaActualSpan.textContent = fechaActual.toLocaleString();
-            tiempoRestanteSpan.textContent = `${minutosRestantes} minutos y ${segundosRestantes} segundos`;
-
-            if (segundosTranscurridos >= 600) {
-                if (cancelarButton) cancelarButton.style.display = 'none';
-                if (noCancelarMensaje) noCancelarMensaje.style.display = 'block';
-            } else {
-                if (cancelarButton) cancelarButton.style.display = 'inline-block';
-                if (noCancelarMensaje) noCancelarMensaje.style.display = 'none';
-            }
+        if (segundosTranscurridos >= 600) {
+            if (cancelarButton) cancelarButton.style.display = 'none';
+            if (noCancelarMensaje) noCancelarMensaje.style.display = 'block';
+        } else {
+            if (cancelarButton) cancelarButton.style.display = 'inline-block';
+            if (noCancelarMensaje) noCancelarMensaje.style.display = 'none';
         }
     });
 }
