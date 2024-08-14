@@ -293,17 +293,26 @@ body {
     max-width: 1200px;
     background-color: #fff;
     position: absolute;
-    left: 1110px;
+    left: 50%;
     top: 100px;
     transform: translateX(-50%);
-    border: 2px solid black;
-    padding: 20px;
+    border: 2px solid #e77122;
+    border-radius: 10px;
+    padding: 30px;
     margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.titlePedido, .subtitle {
-    text-align: center;
-    margin-bottom: 20px;
+.titlePedido h2 {
+    font-size: 28px;
+    color: #e77122;
+    margin-bottom: 10px;
+}
+
+.subtitle h3 {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 30px;
 }
 
 .pedidos-lista {
@@ -311,45 +320,59 @@ body {
 }
 
 .pedido-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #000000;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.pedido-item:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
 
 .pedido-info {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
 }
 
 .pedido-info span {
-    flex-basis: calc(33.333% - 10px);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 16px;
+    color: #333;
+}
+
+.pedido-info strong {
+    color: #e77122;
+    font-weight: bold;
 }
 
 .pedido-actions {
-    flex-shrink: 0;
-    margin-left: 20px;
+    margin-top: 20px;
+    text-align: right;
 }
 
 .cancelar-button {
-    background-color: #ee540d;
+    background-color: #e77122;
     color: #ffffff;
     border: none;
-    padding: 5px 10px;
-    font-size: 14px;
-    border-radius: 3px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .cancelar-button:hover {
-    background-color: #d24400;
+    background-color: #d65f00;
+}
+
+/* Estilos para el tiempo restante */
+.tiempo-restante {
+    font-weight: bold;
+    color: #e77122;
 }
 
 .swal2-popup {
