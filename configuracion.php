@@ -39,18 +39,17 @@ if ($result->num_rows > 0) {
 }
 
 $sql_pedidos = "SELECT pedidos.id_pedido, 
-                       pedidos.fecha_pedido, 
+                       pedidos.timestamp_pedido, 
                        pedidos.precio_domicilio, 
                        pedidos.estado_pedido, 
                        usuarios.nombre_usuario, 
-                       SUM(detalle_pedido.subtotal) as subtotal_cliente,
-                       TIMESTAMPDIFF(SECOND, pedidos.fecha_pedido, UTC_TIMESTAMP()) as segundos_desde_pedido
+                       SUM(detalle_pedido.subtotal) as subtotal_cliente
                 FROM pedidos 
                 JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario 
                 JOIN detalle_pedido ON pedidos.id_pedido = detalle_pedido.id_pedido
                 WHERE pedidos.id_usuario = ?
                 GROUP BY pedidos.id_pedido
-                ORDER BY pedidos.fecha_pedido DESC";
+                ORDER BY pedidos.timestamp_pedido DESC";
 
 $stmt_pedidos = $conn->prepare($sql_pedidos);
 $stmt_pedidos->bind_param("i", $id_usuario);
@@ -192,7 +191,11 @@ if (isset($_GET['error'])) {
         </div>
         <div class="pedidos-lista">
             <?php foreach ($pedidos as $pedido) :
-                $segundos_desde_pedido = $pedido['segundos_desde_pedido'];
+                $fecha_pedido = new DateTime($pedido['timestamp_pedido'], new DateTimeZone('UTC'));
+                $fecha_actual = new DateTime('now', new DateTimeZone('UTC'));
+                $intervalo = $fecha_actual->diff($fecha_pedido);
+                $segundos_desde_pedido = $intervalo->days * 86400 + $intervalo->h * 3600 + $intervalo->i * 60 + $intervalo->s;
+
                 $puedeSerCancelado = $pedido['estado_pedido'] != 'Entregado' &&
                     $pedido['estado_pedido'] != 'Cancelado' &&
                     $segundos_desde_pedido < 600;
@@ -201,10 +204,10 @@ if (isset($_GET['error'])) {
                 $minutosRestantes = floor($tiempoRestante / 60);
                 $segundosRestantes = $tiempoRestante % 60;
             ?>
-                <div class="pedido-item" data-fecha-pedido="<?php echo $pedido['fecha_pedido']; ?>">
+                <div class="pedido-item" data-timestamp="<?php echo $pedido['timestamp_pedido']; ?>">
                     <div class="pedido-info">
                         <span><strong>Número:</strong> <?php echo $pedido['id_pedido']; ?></span>
-                        <span><strong>Fecha:</strong> <?php echo $pedido['fecha_pedido']; ?></span>
+                        <span><strong>Fecha:</strong> <?php echo $fecha_pedido->format('Y-m-d H:i:s'); ?></span>
                         <span><strong>Nombre:</strong> <?php echo $pedido['nombre_usuario']; ?></span>
                         <span><strong>Domicilio:</strong> <?php echo $pedido['precio_domicilio']; ?></span>
                         <span><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></span>

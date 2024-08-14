@@ -179,7 +179,7 @@ function actualizarTiempoRestante() {
     const ahora = new Date();
 
     pedidoItems.forEach(item => {
-        const fechaPedido = new Date(item.dataset.fechaPedido);
+        const fechaPedido = new Date(item.dataset.timestamp + 'Z');  // 'Z' asegura que la fecha se interprete como UTC
         const tiempoTranscurridoSpan = item.querySelector('.tiempo-transcurrido');
         const tiempoRestanteSpan = item.querySelector('.tiempo-restante');
         const cancelarButton = item.querySelector('.cancelar-button');

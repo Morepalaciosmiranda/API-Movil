@@ -18,4 +18,5 @@ if (!mysqli_real_connect($conn, $host, $username, $password, $database, $port)) 
 }
 
 $conn->set_charset("utf8");
+$conn->query("SET time_zone = '+00:00'");
 ?>
