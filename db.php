@@ -1,24 +1,31 @@
 <?php
-// Incluir el archivo de conexión
-require_once './includes/conexion.php';
+// Incluye el archivo de conexión
+include './includes/conexion.php';
 
-// SQL para crear la tabla productos_insumos
-$sql = "CREATE TABLE IF NOT EXISTS productos_insumos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    id_producto INT NOT NULL,
-    id_insumo INT NOT NULL,
-    cantidad INT NOT NULL,
-    FOREIGN KEY (id_producto) REFERENCES productos(id_producto),
-    FOREIGN KEY (id_insumo) REFERENCES insumos(id_insumo)
-)";
+// Verifica si la columna ya existe
+$checkColumn = "SHOW COLUMNS FROM pedidos LIKE 'timestamp_pedido'";
+$result = $conn->query($checkColumn);
 
-// Ejecutar la consulta
-if (mysqli_query($conn, $sql)) {
-    echo "La tabla productos_insumos ha sido creada exitosamente.";
+if ($result->num_rows == 0) {
+    // La columna no existe, así que la agregamos
+    $addColumn = "ALTER TABLE pedidos ADD COLUMN timestamp_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP";
+    
+    if ($conn->query($addColumn) === TRUE) {
+        echo "La columna 'timestamp_pedido' se ha agregado correctamente a la tabla 'pedidos'.";
+        
+        // Actualiza los registros existentes
+        $updateExisting = "UPDATE pedidos SET timestamp_pedido = fecha_pedido WHERE timestamp_pedido IS NULL";
+        if ($conn->query($updateExisting) === TRUE) {
+            echo "<br>Los registros existentes se han actualizado con éxito.";
+        } else {
+            echo "<br>Error al actualizar los registros existentes: " . $conn->error;
+        }
+    } else {
+        echo "Error al agregar la columna: " . $conn->error;
+    }
 } else {
-    echo "Error al crear la tabla: " . mysqli_error($conn);
+    echo "La columna 'timestamp_pedido' ya existe en la tabla 'pedidos'.";
 }
 
-// Cerrar la conexión
-mysqli_close($conn);
-?>
+// Cierra la conexión
+$conn->close();
