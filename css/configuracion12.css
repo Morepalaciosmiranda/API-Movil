@@ -293,14 +293,12 @@ body {
     max-width: 1200px;
     background-color: #fff;
     position: absolute;
-    left: 50%;
+    left: 1110px;
     top: 100px;
     transform: translateX(-50%);
-    border: 2px solid #e77122;
-    border-radius: 10px;
-    padding: 30px;
+    border: 2px solid black;
+    padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .titlePedido h2 {
