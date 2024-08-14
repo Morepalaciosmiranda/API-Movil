@@ -118,8 +118,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 function confirmCancel(idPedido, segundosDesdePedido) {
-    const tiempoRestante = 600 - segundosDesdePedido;
-    if (tiempoRestante <= 0) {
+    if (segundosDesdePedido >= 600) {
         Swal.fire({
             title: 'No se puede cancelar',
             text: "Han pasado más de 10 minutos desde que se realizó el pedido.",
@@ -180,7 +179,7 @@ function actualizarTiempoRestante() {
     const ahora = new Date();
 
     pedidoItems.forEach(item => {
-        const fechaPedido = new Date(item.dataset.timestamp + 'Z');
+        const fechaPedido = new Date(item.dataset.timestamp + 'Z');  // 'Z' asegura que la fecha se interprete como UTC
         const tiempoTranscurridoSpan = item.querySelector('.tiempo-transcurrido');
         const tiempoRestanteSpan = item.querySelector('.tiempo-restante');
         const cancelarButton = item.querySelector('.cancelar-button');
@@ -194,10 +193,7 @@ function actualizarTiempoRestante() {
         tiempoTranscurridoSpan.textContent = `${Math.floor(segundosTranscurridos / 60)} minutos y ${segundosTranscurridos % 60} segundos`;
         tiempoRestanteSpan.textContent = `${minutosRestantes} minutos y ${segundosRestantes} segundos`;
 
-        // Actualizar el atributo data-segundos-desde-pedido
-        item.dataset.segundosDesdePedido = segundosTranscurridos;
-
-        if (tiempoRestante <= 0) {
+        if (segundosTranscurridos >= 600) {
             if (cancelarButton) cancelarButton.style.display = 'none';
             if (noCancelarMensaje) noCancelarMensaje.style.display = 'block';
         } else {
@@ -206,6 +202,7 @@ function actualizarTiempoRestante() {
         }
     });
 }
+
 // Actualizar el tiempo cada segundo
 setInterval(actualizarTiempoRestante, 1000);
 

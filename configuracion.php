@@ -204,7 +204,17 @@ if (isset($_GET['error'])) {
                 $minutosRestantes = floor($tiempoRestante / 60);
                 $segundosRestantes = $tiempoRestante % 60;
             ?>
-                <div class="pedido-item" data-timestamp="<?php echo $pedido['timestamp_pedido']; ?>" data-segundos-desde-pedido="<?php echo $segundos_desde_pedido; ?>">
+                <div class="pedido-item" data-timestamp="<?php echo $pedido['timestamp_pedido']; ?>">
+                    <div class="pedido-info">
+                        <span><strong>Número:</strong> <?php echo $pedido['id_pedido']; ?></span>
+                        <span><strong>Fecha:</strong> <?php echo $fecha_pedido->format('Y-m-d H:i:s'); ?></span>
+                        <span><strong>Nombre:</strong> <?php echo $pedido['nombre_usuario']; ?></span>
+                        <span><strong>Domicilio:</strong> <?php echo $pedido['precio_domicilio']; ?></span>
+                        <span><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></span>
+                        <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
+                        <span><strong>Tiempo transcurrido:</strong> <span class="tiempo-transcurrido"><?php echo floor($segundos_desde_pedido / 60); ?> minutos y <?php echo $segundos_desde_pedido % 60; ?> segundos</span></span>
+                        <span><strong>Tiempo restante para cancelar:</strong> <span class="tiempo-restante"><?php echo $minutosRestantes; ?> minutos y <?php echo $segundosRestantes; ?> segundos</span></span>
+                    </div>
                     <?php if ($puedeSerCancelado) : ?>
                         <div class="pedido-actions">
                             <form method="POST" action="./controller/cambiar_estado_pedido.php" id="cancelarForm_<?php echo $pedido['id_pedido']; ?>">
@@ -219,32 +229,8 @@ if (isset($_GET['error'])) {
                         </div>
                     <?php endif; ?>
                 </div>
-                <div class="pedido-info">
-                    <span><strong>Número:</strong> <?php echo $pedido['id_pedido']; ?></span>
-                    <span><strong>Fecha:</strong> <?php echo $fecha_pedido->format('Y-m-d H:i:s'); ?></span>
-                    <span><strong>Nombre:</strong> <?php echo $pedido['nombre_usuario']; ?></span>
-                    <span><strong>Domicilio:</strong> <?php echo $pedido['precio_domicilio']; ?></span>
-                    <span><strong>Estado:</strong> <?php echo $pedido['estado_pedido']; ?></span>
-                    <span><strong>Total:</strong> <?php echo isset($pedido['subtotal_cliente']) ? $pedido['subtotal_cliente'] : 'No disponible'; ?></span>
-                    <span><strong>Tiempo transcurrido:</strong> <span class="tiempo-transcurrido"><?php echo floor($segundos_desde_pedido / 60); ?> minutos y <?php echo $segundos_desde_pedido % 60; ?> segundos</span></span>
-                    <span><strong>Tiempo restante para cancelar:</strong> <span class="tiempo-restante"><?php echo $minutosRestantes; ?> minutos y <?php echo $segundosRestantes; ?> segundos</span></span>
-                </div>
-                <?php if ($puedeSerCancelado) : ?>
-                    <div class="pedido-actions">
-                        <form method="POST" action="./controller/cambiar_estado_pedido.php" id="cancelarForm_<?php echo $pedido['id_pedido']; ?>">
-                            <input type="hidden" name="id_pedido" value="<?php echo $pedido['id_pedido']; ?>">
-                            <input type="hidden" name="nuevo_estado" value="Cancelado">
-                            <button type="button" class="cancelar-button" onclick="confirmCancel('<?php echo $pedido['id_pedido']; ?>', <?php echo $segundos_desde_pedido; ?>)">Cancelar Pedido</button>
-                        </form>
-                    </div>
-                <?php else : ?>
-                    <div class="pedido-actions">
-                        <p>No se puede cancelar este pedido</p>
-                    </div>
-                <?php endif; ?>
+            <?php endforeach; ?>
         </div>
-    <?php endforeach; ?>
-    </div>
     </div>
 
     <div class="container2">
