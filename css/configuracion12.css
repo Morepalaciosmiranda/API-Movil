@@ -302,15 +302,20 @@ body {
 }
 
 .titlePedido h2 {
-    font-size: 28px;
+    font-size: 32px;
     color: #e77122;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
 .subtitle h3 {
     font-size: 18px;
-    color: #666;
-    margin-bottom: 30px;
+    color: #555;
+    margin-bottom: 40px;
+    text-align: center;
+    font-weight: 400;
 }
 
 .pedidos-lista {
@@ -318,36 +323,46 @@ body {
 }
 
 .pedido-item {
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
     transition: all 0.3s ease;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .pedido-item:hover {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 113, 34, 0.1);
+    transform: translateY(-3px);
 }
 
 .pedido-info {
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
+    gap: 20px;
 }
 
 .pedido-info span {
     font-size: 16px;
     color: #333;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .pedido-info strong {
     color: #e77122;
-    font-weight: bold;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
 }
 
 .pedido-actions {
+    flex-basis: 100%;
     margin-top: 20px;
     text-align: right;
 }
@@ -356,22 +371,31 @@ body {
     background-color: #e77122;
     color: #ffffff;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 25px;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 30px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
 }
 
 .cancelar-button:hover {
     background-color: #d65f00;
+    box-shadow: 0 4px 8px rgba(231, 113, 34, 0.3);
 }
 
 /* Estilos para el tiempo restante */
 .tiempo-restante {
     font-weight: bold;
     color: #e77122;
+    background-color: rgba(231, 113, 34, 0.1);
+    padding: 5px 10px;
+    border-radius: 15px;
+    display: inline-block;
 }
+
 
 .swal2-popup {
     background-color: rgb(0, 0, 0) !important;
