@@ -1,4 +1,9 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', '/path/to/error.log'); // Ajusta esta ruta según tu configuración
+
 header('Content-Type: application/json');
 include '../includes/conexion.php';
 require '../phpmailer/PHPMailer.php';
@@ -75,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['temp_registro'] = [
         'nombre_usuario' => $nombre_usuario,
         'correo_electronico' => $correo_electronico,
-        'contraseña' => $contraseña,
+        'contraseña' => password_hash($contraseña, PASSWORD_DEFAULT),
         'codigo_verificacion' => $codigo_verificacion
     ];
 
