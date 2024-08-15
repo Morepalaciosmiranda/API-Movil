@@ -101,6 +101,15 @@
         </div>
     </div>
 
+    <div id="verification-modal" class="modal">
+        <div class="modal-content">
+            <h2>Verificación de Correo Electrónico</h2>
+            <p>Se ha enviado un código de verificación a su correo electrónico. Por favor, ingréselo a continuación:</p>
+            <input type="text" id="verification-code" placeholder="Código de verificación">
+            <button onclick="verifyCode()">Verificar</button>
+        </div>
+    </div>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const signupLinks = document.querySelectorAll('.login-signup');
@@ -274,19 +283,19 @@
                         })
                         .then(response => response.json())
                         .then(data => {
-                            if (data.status === 'error') {
+                            if (data.status === 'verification_needed') {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'Verificación Necesaria',
+                                    text: data.message,
+                                }).then(() => {
+                                    document.getElementById('verification-modal').style.display = 'block';
+                                });
+                            } else if (data.status === 'error') {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
                                     text: data.message,
-                                });
-                            } else if (data.status === 'success') {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Registro exitoso',
-                                    text: data.message,
-                                }).then(() => {
-                                    document.getElementById('sign-in').click();
                                 });
                             }
                         })
@@ -299,6 +308,7 @@
                             });
                         });
                 }
+
             }
         });
 
@@ -362,6 +372,46 @@
                         });
                     });
             }
+        }
+
+        function verifyCode() {
+            const code = document.getElementById('verification-code').value;
+            fetch('./controller/verify_code.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'codigo_verificacion': code
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Registro Exitoso',
+                            text: data.message,
+                        }).then(() => {
+                            document.getElementById('verification-modal').style.display = 'none';
+                            // Redirigir al inicio de sesión o realizar otras acciones necesarias
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message,
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error en el servidor. Por favor, inténtelo de nuevo más tarde.',
+                    });
+                });
         }
     </script>
 </body>

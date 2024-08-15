@@ -1,5 +1,12 @@
 <?php
 include '../includes/conexion.php';
+require '../phpmailer/PHPMailer.php';
+require '../phpmailer/SMTP.php';
+require '../phpmailer/Exception.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre_usuario = mysqli_real_escape_string($conn, $_POST['nombre_usuario']);
@@ -59,47 +66,66 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $stmt_check->close();
 
-    // Hashing de la contraseña
-    $hashed_password = password_hash($contraseña, PASSWORD_DEFAULT);
+    // Generar código de verificación
+    $codigo_verificacion = rand(100000, 999999);
 
-    // Obtención del ID de rol "Usuario"
-    $sql_rol = "SELECT id_rol FROM roles WHERE nombre_rol = 'Usuario'";
-    $result_rol = $conn->query($sql_rol);
+    // Guardar datos temporalmente en la sesión
+    session_start();
+    $_SESSION['temp_registro'] = [
+        'nombre_usuario' => $nombre_usuario,
+        'correo_electronico' => $correo_electronico,
+        'contraseña' => $contraseña,
+        'codigo_verificacion' => $codigo_verificacion
+    ];
 
-    if ($result_rol->num_rows > 0) {
-        $row_rol = $result_rol->fetch_assoc();
-        $id_rol_usuario = $row_rol['id_rol'];
-
-        // Inserción del nuevo usuario en la base de datos
-        $sql = "INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena, id_rol, estado_usuario) VALUES (?, ?, ?, ?, 'activo')";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssi", $nombre_usuario, $correo_electronico, $hashed_password, $id_rol_usuario);
-
-        if ($stmt->execute()) {
-            session_start();
-            $_SESSION['correo_electronico'] = $correo_electronico;
-            echo json_encode([
-                'status' => 'success',
-                'message' => 'Registro exitoso. Redirigiendo al inicio de sesión...'
-            ]);
-            exit();
-        } else {
-            error_log("Error en el registro: " . $stmt->error);
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Error en el registro: ' . $stmt->error
-            ]);
-        }
+    // Enviar correo de verificación
+    if (enviar_correo_verificacion($correo_electronico, $codigo_verificacion)) {
+        echo json_encode([
+            'status' => 'verification_needed',
+            'message' => 'Se ha enviado un código de verificación a su correo electrónico.'
+        ]);
     } else {
-        error_log('No se encontró el rol "Usuario" en la base de datos.');
         echo json_encode([
             'status' => 'error',
-            'message' => 'No se encontró el rol "Usuario" en la base de datos.'
+            'message' => 'Error al enviar el correo de verificación. Por favor, inténtelo de nuevo.'
         ]);
     }
-
-    $stmt->close();
+} else {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Método de solicitud inválido.'
+    ]);
 }
 
 $conn->close();
+
+function enviar_correo_verificacion($correo, $codigo) {
+    $mail = new PHPMailer(true);
+
+    try {
+        //Configuración del servidor
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com'; // Cambia esto al servidor SMTP que uses
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'palaciosmirandayefersondavid@gmail.com'; // SMTP username
+        $mail->Password   = 'daak kwzv olrb ygfd'; // SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+
+        //Destinatarios
+        $mail->setFrom('palaciosmirandayefersondavid@gmail.com', 'Exterminio');
+        $mail->addAddress($correo);
+
+        //Contenido
+        $mail->isHTML(true);
+        $mail->Subject = 'Verificación de Correo Electrónico - Exterminio';
+        $mail->Body    = "Tu código de verificación es: <b>$codigo</b>";
+
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        error_log("Error al enviar correo: {$mail->ErrorInfo}");
+        return false;
+    }
+}
 ?>
