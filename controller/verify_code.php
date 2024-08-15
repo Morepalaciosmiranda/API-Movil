@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 include '../includes/conexion.php';
+error_log("Conexión a la base de datos establecida: " . ($conn ? "Sí" : "No"));
 
 session_start();
 
