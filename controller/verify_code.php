@@ -1,6 +1,8 @@
 <?php
+header('Content-Type: application/json');
 session_start();
 include '../includes/conexion.php';
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $codigo_ingresado = $_POST['codigo_verificacion'];

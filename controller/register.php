@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: application/json');
 include '../includes/conexion.php';
 require '../phpmailer/PHPMailer.php';
 require '../phpmailer/SMTP.php';
