@@ -9,9 +9,10 @@ header('Content-Type: application/json');
 // Incluir el archivo de conexión
 include '../includes/conexion.php';
 
-require '../phpmailer/PHPMailer.php';
-require '../phpmailer/SMTP.php';
-require '../phpmailer/Exception.php';
+error_log("Intentando cargar PHPMailer desde: " . __DIR__ . '/../phpmailer/PHPMailer.php');
+require '../vendor/phpmailer/phpmailer/src/PHPMailer.php';
+require '../vendor/phpmailer/phpmailer/src/SMTP.php';
+require '../vendor/phpmailer/phpmailer/src/Exception.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -150,9 +151,12 @@ function enviar_correo_verificacion($correo, $codigo) {
         $mail->send();
         error_log("Correo enviado exitosamente a: " . $correo);
         return true;
-    } catch (Exception $e) {
-        error_log("Error al enviar correo a {$correo}: " . $mail->ErrorInfo);
-        return false;
+    }catch (Exception $e) {
+        error_log("Error en register.php: " . $e->getMessage());
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Ocurrió un error en el servidor. Por favor, inténtelo de nuevo más tarde.'
+        ]);
     }
 }
 ?>
