@@ -105,7 +105,9 @@ function obtenerInsumos() {
     global $conn;
     $insumos = array();
 
-    $consulta = "SELECT * FROM insumos";
+    $consulta = "SELECT i.*, p.nombre_proveedor 
+                 FROM insumos i 
+                 JOIN proveedores p ON i.id_proveedor = p.id_proveedor";
     $resultado = $conn->query($consulta);
 
     if ($resultado->num_rows > 0) {
@@ -121,7 +123,10 @@ function buscarInsumosPorNombre($nombre) {
     global $conn;
     $insumos = array();
 
-    $consulta = "SELECT * FROM insumos WHERE nombre_insumo LIKE '%$nombre%'";
+    $consulta = "SELECT i.*, p.nombre_proveedor 
+                 FROM insumos i 
+                 JOIN proveedores p ON i.id_proveedor = p.id_proveedor 
+                 WHERE i.nombre_insumo LIKE '%$nombre%'";
     $resultado = $conn->query($consulta);
 
     if ($resultado->num_rows > 0) {
@@ -131,7 +136,4 @@ function buscarInsumosPorNombre($nombre) {
     }
 
     return $insumos;
-    
-    
-    
 }
