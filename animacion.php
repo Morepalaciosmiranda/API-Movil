@@ -7,10 +7,7 @@ if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['id_usuario'])) 
     header('Location: ../loginRegister.php');
     exit();
 }
-
-
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
