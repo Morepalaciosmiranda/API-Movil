@@ -1,4 +1,6 @@
 <?php
+error_log("Directorio actual: " . __DIR__);
+error_log("Intentando cargar PHPMailer desde: " . __DIR__ . '/../vendor/phpmailer/phpmailer/src/PHPMailer.php');
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -9,10 +11,10 @@ header('Content-Type: application/json');
 // Incluir el archivo de conexión
 include '../includes/conexion.php';
 
-error_log("Intentando cargar PHPMailer desde: " . __DIR__ . '/../phpmailer/PHPMailer.php');
-require '../vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require '../vendor/phpmailer/phpmailer/src/SMTP.php';
-require '../vendor/phpmailer/phpmailer/src/Exception.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/PHPMailer.php';
+require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/SMTP.php';
+require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/Exception.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
