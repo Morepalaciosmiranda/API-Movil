@@ -3,7 +3,7 @@ require_once __DIR__ . '/../libraries/tcpdf/tcpdf.php';
 include_once "../includes/conexion.php";
 
 // Obtener todas las ventas
-$sql = "SELECT v.id_venta, v.fecha_venta, u.nombre_usuario, p.nombre_producto, dv.cantidad, dv.precio_unitario
+$sql = "SELECT v.id_venta, v.fecha_venta, u.nombre_usuario, p.nombre_producto, dv.cantidad, dv.valor_unitario
         FROM ventas v
         JOIN usuarios u ON v.id_usuario = u.id_usuario
         JOIN detalle_venta dv ON v.id_venta = dv.id_venta
