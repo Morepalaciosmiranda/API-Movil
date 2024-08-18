@@ -1,7 +1,6 @@
 <?php
 include_once "../includes/conexion.php";
 
-
 session_start();
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
@@ -9,7 +8,6 @@ if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
     exit();
 }
 
-// Excluir específicamente el rol "Usuario"
 if ($_SESSION['rol'] === 'Usuario') {
     header('Location: ../no_autorizado.php');
     exit();
@@ -31,9 +29,7 @@ if ($fecha_filtro) {
     $sql .= " WHERE DATE(ventas.fecha_venta) = ?";
 }
 
-$sql .= " ORDER BY ventas.fecha_venta DESC"; 
-
-$sql .= " LIMIT ? OFFSET ?";
+$sql .= " ORDER BY ventas.fecha_venta DESC LIMIT ? OFFSET ?";
 
 $stmt = $conn->prepare($sql);
 
@@ -46,7 +42,6 @@ if ($fecha_filtro) {
 $stmt->execute();
 $resultado = $stmt->get_result();
 
-// Consulta para contar el total de ventas
 $sql_total = "SELECT COUNT(*) as total FROM ventas";
 if ($fecha_filtro) {
     $sql_total .= " WHERE DATE(fecha_venta) = ?";
@@ -65,7 +60,6 @@ $total_paginas = ceil($total_ventas / $items_por_pagina);
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -74,9 +68,9 @@ $total_paginas = ceil($total_ventas / $items_por_pagina);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="./css/ventas11.css">
 </head>
-
 <body>
     <div class="container">
         <?php include 'sidebar.php'; ?>
@@ -111,65 +105,68 @@ $total_paginas = ceil($total_ventas / $items_por_pagina);
                         <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
                         <button type="submit">Filtrar</button>
                     </form>
+                    <button onclick="generarPDFGeneral()">Generar PDF General</button>
                 </div>
-                        <br>
-                        <div class="table-container">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre Usuario</th>
-                                        <th>Nombre Producto</th>
-                                        <th># De Venta</th>
-                                        <th>Fecha Venta</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="ventasTableBody">
-                                    <?php
-                                    if ($resultado && $resultado->num_rows > 0) {
-                                        while ($fila = $resultado->fetch_assoc()) {
-                                            echo "<tr>";
-                                            echo "<td>" . htmlspecialchars($fila['nombre_usuario']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($fila['nombre_producto']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($fila['id_pedido']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($fila['fecha_venta']) . "</td>";
-                                            echo "<td class='actions'>";
-                                            echo "<button class='details-btn' onclick='verDetallesVenta(" . htmlspecialchars($fila['id_venta']) . ")'><i class='fa fa-info-circle'></i></button>";
-                                            echo "</td>";
-                                            echo "</tr>";
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='5'>No hay ventas registradas</td></tr>";
-                                    }
-                                    ?>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="pagination">
+                <br>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre Usuario</th>
+                                <th>Nombre Producto</th>
+                                <th># De Venta</th>
+                                <th>Fecha Venta</th>
+                                <th>Acciones</th>
+                                <th>PDF</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ventasTableBody">
                             <?php
-                            if ($total_paginas > 0) {
-                                for ($i = 1; $i <= $total_paginas; $i++) {
-                                    if ($i == $pagina_actual) {
-                                        echo "<a href='ventas.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
-                                    } else {
-                                        echo "<a href='ventas.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
-                                    }
+                            if ($resultado && $resultado->num_rows > 0) {
+                                while ($fila = $resultado->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($fila['nombre_usuario']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($fila['nombre_producto']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($fila['id_pedido']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($fila['fecha_venta']) . "</td>";
+                                    echo "<td class='actions'>";
+                                    echo "<button class='details-btn' onclick='verDetallesVenta(" . htmlspecialchars($fila['id_venta']) . ")'><i class='fa fa-info-circle'></i></button>";
+                                    echo "</td>";
+                                    echo "<td>";
+                                    echo "<button class='pdf-btn' onclick='generarPDFIndividual(" . htmlspecialchars($fila['id_venta']) . ")'><i class='fa fa-file-pdf-o'></i></button>";
+                                    echo "</td>";
+                                    echo "</tr>";
                                 }
+                            } else {
+                                echo "<tr><td colspan='6'>No hay ventas registradas</td></tr>";
                             }
                             ?>
-                        </div>
+                        </tbody>
+                    </table>
+                </div>
 
-                        <div id="modalDetallesVenta" class="modal">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h2></h2>
-                                    <button class="close-btn" onclick="cerrarModalDetallesVenta()">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <div id="detalles-venta"></div>
-                                </div>
-                            </div>
+                <div class="pagination">
+                    <?php
+                    if ($total_paginas > 0) {
+                        for ($i = 1; $i <= $total_paginas; $i++) {
+                            if ($i == $pagina_actual) {
+                                echo "<a href='ventas.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
+                            } else {
+                                echo "<a href='ventas.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
+                            }
+                        }
+                    }
+                    ?>
+                </div>
+
+                <div id="modalDetallesVenta" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2></h2>
+                            <button class="close-btn" onclick="cerrarModalDetallesVenta()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="detalles-venta"></div>
                         </div>
                     </div>
                 </div>
@@ -223,7 +220,14 @@ $total_paginas = ceil($total_ventas / $items_por_pagina);
                 cerrarModalDetallesVenta();
             }
         }
+
+        function generarPDFIndividual(idVenta) {
+            window.open('generar_pdf_venta.php?id_venta=' + idVenta, '_blank');
+        }
+
+        function generarPDFGeneral() {
+            window.open('generar_pdf_general.php', '_blank');
+        }
     </script>
 </body>
-
 </html>
