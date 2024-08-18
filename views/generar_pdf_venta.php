@@ -1,5 +1,5 @@
 <?php
-require_once '../exterminio1/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/tecnickcom/tcpdf/tcpdf.php';
 include_once "../includes/conexion.php";
 
 if (isset($_GET['id_venta'])) {
