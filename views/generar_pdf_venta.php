@@ -1,5 +1,5 @@
 <?php
-require_once '/var/www/html/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 include_once "../includes/conexion.php";
 
 if (isset($_GET['id_venta'])) {
