@@ -1,5 +1,11 @@
 <?php
-require_once "../vendor/tecnickcom/tcpdf/tcpdf.php";
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+echo "Current directory: " . __DIR__ . "<br>";
+echo "TCPDF path: " . __DIR__ . '/../vendor/tecnickcom/tcpdf/tcpdf.php' . "<br>";
+echo "File exists: " . (file_exists(__DIR__ . '/../vendor/tecnickcom/tcpdf/tcpdf.php') ? 'Yes' : 'No') . "<br>";
+die();
 include_once "../includes/conexion.php";
 
 if (isset($_GET['id_venta'])) {
