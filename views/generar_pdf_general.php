@@ -1,5 +1,5 @@
 <?php
-require_once 'vendor/autoload.php';
+require_once './vendor/autoload.php';
 include_once "../includes/conexion.php";
 
 // Obtener todas las ventas
