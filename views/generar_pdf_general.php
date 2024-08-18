@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../vendor/tecnickcom/tcpdf/tcpdf.php';
+require_once "../vendor/tecnickcom/tcpdf/tcpdf.php";
 include_once "../includes/conexion.php";
 
 // Obtener todas las ventas
