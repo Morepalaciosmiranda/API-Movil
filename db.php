@@ -1,5 +1,5 @@
 <?php
-// Incluye el archivo de conexión
+// Incluye el archivo de conexiónN
 include './includes/conexion.php';
 
 // Verifica si la columna ya existe
