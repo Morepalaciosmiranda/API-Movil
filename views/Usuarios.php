@@ -104,7 +104,6 @@ $result = $conn->query($sql);
                     </div>
                 </div>
                 <div class="content">
-                    <button id="createRoleBtn" class="btn btn-primary"><i class="fa fa-plus"></i> Crear Rol</button>
                     <table>
                         <thead>
                             <tr>
@@ -237,37 +236,7 @@ $result = $conn->query($sql);
             </div>
         </div>
 
-        <div id="createRoleModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeCreateRoleModal()">&times;</span>
-                <h2>Crear Nuevo Rol</h2>
-                <form id="createRoleForm">
-                    <label for="roleName">Nombre del Rol:</label>
-                    <input type="text" id="roleName" name="roleName" required>
-
-                    <h3>Asignar Permisos:</h3>
-                    <div id="permissionsList">
-                        <?php
-                        $sql = "SELECT * FROM permisos";
-                        $result = $conn->query($sql);
-
-                        if ($result && $result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                echo "<div class='checkbox-container'>";
-                                echo "<input type='checkbox' id='permiso_" . $row["id_permiso"] . "' name='permissions[]' value='" . $row["id_permiso"] . "'>";
-                                echo "<label for='permiso_" . $row["id_permiso"] . "'>" . $row["nombre_permiso"] . "</label>";
-                                echo "</div>";
-                            }
-                        } else {
-                            echo "<p>No se encontraron permisos.</p>";
-                        }
-                        ?>
-                    </div>
-                    <button type="submit" class='btn btn-primary'><i class='fa fa-check'></i> Crear Rol</button>
-                </form>
-            </div>
-        </div>
-
+        
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script>
             var modal = document.getElementById('permissionsModal');

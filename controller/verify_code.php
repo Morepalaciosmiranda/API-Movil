@@ -1,70 +1,42 @@
 <?php
-header('Content-Type: application/json');
-include '../includes/conexion.php';
-error_log("Conexión a la base de datos establecida: " . ($conn ? "Sí" : "No"));
-
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_SESSION['temp_registro']) && isset($_POST['codigo_verificacion'])) {
-        $temp_registro = $_SESSION['temp_registro'];
-        $codigo_ingresado = $_POST['codigo_verificacion'];
+    $codigo_verificacion = $_POST['codigo_verificacion'];
 
-        if ($codigo_ingresado == $temp_registro['codigo_verificacion']) {
-            // El código es correcto, procede con el registro
-            $nombre_usuario = $temp_registro['nombre_usuario'];
-            $correo_electronico = $temp_registro['correo_electronico'];
-            $hashed_password = $temp_registro['contraseña'];
+    if ($codigo_verificacion == $_SESSION['codigo_verificacion']) {
+        include '../includes/conexion.php';
 
-            // Obtener el ID del rol "Usuario"
-            $sql_rol = "SELECT id_rol FROM roles WHERE nombre_rol = 'Usuario'";
-            $result_rol = $conn->query($sql_rol);
+        $user = $_SESSION['registro_temporal'];
 
-            if ($result_rol->num_rows > 0) {
-                $row_rol = $result_rol->fetch_assoc();
-                $id_rol_usuario = $row_rol['id_rol'];
+        // Inserción del nuevo usuario en la base de datos
+        $sql = "INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena, id_rol, estado_usuario) VALUES (?, ?, ?, ?, 'activo')";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssi", $user['nombre_usuario'], $user['correo_electronico'], $user['contrasena'], $user['id_rol_usuario']);
 
-                // Insertar el nuevo usuario
-                $sql = "INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena, id_rol, estado_usuario) VALUES (?, ?, ?, ?, 'activo')";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("sssi", $nombre_usuario, $correo_electronico, $hashed_password, $id_rol_usuario);
+        if ($stmt->execute()) {
+            unset($_SESSION['codigo_verificacion']);
+            unset($_SESSION['registro_temporal']);
 
-                if ($stmt->execute()) {
-                    unset($_SESSION['temp_registro']);
-                    echo json_encode([
-                        'status' => 'success',
-                        'message' => 'Registro exitoso. Puede iniciar sesión ahora.'
-                    ]);
-                } else {
-                    echo json_encode([
-                        'status' => 'error',
-                        'message' => 'Error en el registro: ' . $stmt->error
-                    ]);
-                }
-                $stmt->close();
-            } else {
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'No se encontró el rol "Usuario" en la base de datos.'
-                ]);
-            }
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Tu cuenta ha sido verificada exitosamente.'
+            ]);
+            exit();
         } else {
             echo json_encode([
                 'status' => 'error',
-                'message' => 'Código de verificación incorrecto.'
+                'message' => 'Error en el registro: ' . $stmt->error
             ]);
         }
+
+        $stmt->close();
+        $conn->close();
     } else {
         echo json_encode([
             'status' => 'error',
-            'message' => 'Datos de verificación no disponibles.'
+            'message' => 'El código de verificación es incorrecto.'
         ]);
     }
-} else {
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Método de solicitud inválido.'
-    ]);
 }
-
-$conn->close();
+?>

@@ -1,5 +1,11 @@
 <?php
 include '../includes/conexion.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require '../path/to/PHPMailer/src/Exception.php';
+require '../path/to/PHPMailer/src/PHPMailer.php';
+require '../path/to/PHPMailer/src/SMTP.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre_usuario = mysqli_real_escape_string($conn, $_POST['nombre_usuario']);
@@ -33,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Validación de la contraseña
+    // Validación de la contraseña (mínimo 8 caracteres, al menos una mayúscula)
     if (!preg_match('/^(?=.*[A-Z]).{8,}$/', $contraseña)) {
         echo json_encode([
             'status' => 'error',
@@ -70,24 +76,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $row_rol = $result_rol->fetch_assoc();
         $id_rol_usuario = $row_rol['id_rol'];
 
-        // Inserción del nuevo usuario en la base de datos
-        $sql = "INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena, id_rol, estado_usuario) VALUES (?, ?, ?, ?, 'activo')";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssi", $nombre_usuario, $correo_electronico, $hashed_password, $id_rol_usuario);
+        // Generar un código de verificación de 6 dígitos
+        $codigo_verificacion = mt_rand(100000, 999999);
 
-        if ($stmt->execute()) {
+        // Configurar el correo para enviar el código de verificación
+        $mail = new PHPMailer(true);
+
+        try {
+            // Configuración del servidor SMTP de Gmail
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'palaciosmirandayefersondavid@gmail.com'; // Tu correo
+            $mail->Password = 'cjcyfcjekkozhdfq'; // Tu contraseña de aplicación
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            // Remitente y destinatario
+            $mail->setFrom('palaciosmirandayefersondavid@gmail.com', 'Exterminio');
+            $mail->addAddress($correo_electronico);
+
+            // Contenido del correo
+            $mail->isHTML(true);
+            $mail->Subject = 'Código de verificación';
+            $mail->Body    = "Tu código de verificación es <b>$codigo_verificacion</b>";
+            $mail->AltBody = "Tu código de verificación es $codigo_verificacion";
+
+            $mail->send();
+
+            // Guardar el código de verificación en la sesión
             session_start();
-            $_SESSION['correo_electronico'] = $correo_electronico;
+            $_SESSION['codigo_verificacion'] = $codigo_verificacion;
+            $_SESSION['registro_temporal'] = [
+                'nombre_usuario' => $nombre_usuario,
+                'correo_electronico' => $correo_electronico,
+                'contrasena' => $hashed_password,
+                'id_rol_usuario' => $id_rol_usuario
+            ];
+
             echo json_encode([
-                'status' => 'success',
-                'message' => 'Registro exitoso. Redirigiendo al inicio de sesión...'
+                'status' => 'verification',
+                'message' => 'Se ha enviado un código de verificación a tu correo electrónico.'
             ]);
             exit();
-        } else {
-            error_log("Error en el registro: " . $stmt->error);
+
+        } catch (Exception $e) {
             echo json_encode([
                 'status' => 'error',
-                'message' => 'Error en el registro: ' . $stmt->error
+                'message' => "El mensaje no pudo ser enviado. Error de correo: {$mail->ErrorInfo}"
             ]);
         }
     } else {

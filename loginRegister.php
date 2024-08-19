@@ -101,6 +101,19 @@
         </div>
     </div>
 
+    <div id="verification-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="modal-title">Verificar Correo Electrónico</h2>
+            <p class="modal-subtitle">Ingrese el código de verificación que se ha enviado a su correo electrónico:</p>
+            <input type="text" id="verification-code" placeholder="Código de Verificación">
+            <button type="button" class="modal-button" onclick="verifyCode()">
+                Verificar
+                <span class="spinner" id="verification-spinner" style="display:none;"></span>
+            </button>
+        </div>
+    </div>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const signupLinks = document.querySelectorAll('.login-signup');
@@ -362,6 +375,84 @@
                         });
                     });
             }
+        }
+
+
+        function showVerificationModal() {
+            const verificationModal = document.getElementById('verification-modal');
+            verificationModal.style.display = 'flex';
+
+            const closeModal = verificationModal.querySelector('.close');
+            closeModal.addEventListener('click', function() {
+                verificationModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target == verificationModal) {
+                    verificationModal.style.display = 'none';
+                }
+            });
+        }
+
+
+        function verifyCode() {
+            const verificationCode = document.getElementById('verification-code').value;
+            const spinner = document.getElementById('verification-spinner');
+            const verifyButton = document.querySelector('.modal-button');
+
+            if (!verificationCode) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Por favor, ingrese el código de verificación.',
+                });
+                return;
+            }
+
+            verifyButton.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            fetch('./controller/verify_code.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'codigo_verificacion': verificationCode
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    verifyButton.disabled = false;
+                    spinner.style.display = 'none';
+
+                    if (data.status === 'error') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message,
+                        });
+                    } else if (data.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Verificación Exitosa',
+                            text: 'Tu cuenta ha sido verificada exitosamente. Redirigiendo...',
+                        }).then(() => {
+                            document.getElementById('sign-in').click();
+                        });
+                    }
+                })
+                .catch(error => {
+                    verifyButton.disabled = false;
+                    spinner.style.display = 'none';
+
+                    console.error('Error en la solicitud:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error en el servidor. Por favor, inténtelo de nuevo más tarde.',
+                    });
+                });
         }
     </script>
 </body>
