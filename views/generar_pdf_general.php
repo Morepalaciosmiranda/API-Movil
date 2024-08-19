@@ -13,8 +13,8 @@ $result = $conn->query($sql);
 
 class MYPDF extends TCPDF {
     public function Header() {
-        $image_file = __DIR__ . '/../img/LogoExterminio.png';
-        $this->Image($image_file, 10, 10, 30, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+        // $image_file = __DIR__ . '/../img/LogoExterminio.png';
+        // $this->Image($image_file, 10, 10, 30, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         $this->SetFont('helvetica', 'B', 20);
         $this->Cell(0, 15, 'Reporte General de Ventas', 0, false, 'C', 0, '', 0, false, 'M', 'M');
     }
