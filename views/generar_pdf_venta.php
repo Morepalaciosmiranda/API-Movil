@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../libraries/tcpdf/tcpdf.php';
 include_once "../includes/conexion.php";
 
-// Obtener la venta más reciente
 $sql = "SELECT v.*, u.nombre_usuario, p.nombre_producto, dv.cantidad, dv.valor_unitario
         FROM ventas v
         JOIN usuarios u ON v.id_usuario = u.id_usuario
@@ -20,8 +19,6 @@ $venta = $result->fetch_assoc();
 
 class MYPDF extends TCPDF {
     public function Header() {
-        // $image_file = __DIR__ . '/../img/LogoExterminio.png';
-        // $this->Image($image_file, 10, 10, 30, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         $this->SetFont('helvetica', 'B', 20);
         $this->Cell(0, 15, 'Factura de Venta', 0, false, 'C', 0, '', 0, false, 'M', 'M');
     }
@@ -81,11 +78,11 @@ $html .= '<table border="1" cellpadding="5">
         <th><b>Subtotal</b></th>
     </tr>';
 
-$subtotal = $venta['cantidad'] * $venta['precio_unitario'];
+$subtotal = $venta['cantidad'] * $venta['valor_unitario'];
 $html .= '<tr>
     <td>' . $venta['nombre_producto'] . '</td>
     <td>' . $venta['cantidad'] . '</td>
-    <td>$' . number_format($venta['precio_unitario'], 2) . '</td>
+    <td>$' . number_format($venta['valor_unitario'], 2) . '</td>
     <td>$' . number_format($subtotal, 2) . '</td>
 </tr>';
 

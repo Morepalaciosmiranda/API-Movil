@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../libraries/tcpdf/tcpdf.php';
 include_once "../includes/conexion.php";
 
-// Obtener todas las ventas
 $sql = "SELECT v.id_venta, v.fecha_venta, u.nombre_usuario, p.nombre_producto, dv.cantidad, dv.valor_unitario
         FROM ventas v
         JOIN usuarios u ON v.id_usuario = u.id_usuario
@@ -13,8 +12,6 @@ $result = $conn->query($sql);
 
 class MYPDF extends TCPDF {
     public function Header() {
-        // $image_file = __DIR__ . '/../img/LogoExterminio.png';
-        // $this->Image($image_file, 10, 10, 30, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         $this->SetFont('helvetica', 'B', 20);
         $this->Cell(0, 15, 'Reporte General de Ventas', 0, false, 'C', 0, '', 0, false, 'M', 'M');
     }
@@ -66,7 +63,7 @@ $html .= '<table border="1" cellpadding="5">
 $total_general = 0;
 
 while ($row = $result->fetch_assoc()) {
-    $subtotal = $row['cantidad'] * $row['precio_unitario'];
+    $subtotal = $row['cantidad'] * $row['valor_unitario'];
     $total_general += $subtotal;
     
     $html .= '<tr>
@@ -75,7 +72,7 @@ while ($row = $result->fetch_assoc()) {
         <td>' . $row['nombre_usuario'] . '</td>
         <td>' . $row['nombre_producto'] . '</td>
         <td>' . $row['cantidad'] . '</td>
-        <td>$' . number_format($row['precio_unitario'], 2) . '</td>
+        <td>$' . number_format($row['valor_unitario'], 2) . '</td>
         <td>$' . number_format($subtotal, 2) . '</td>
     </tr>';
 }
