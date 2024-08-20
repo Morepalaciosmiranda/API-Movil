@@ -11,13 +11,16 @@ COPY composer.json composer.lock ./
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Instala las dependencias de PHP usando Composer
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --verbose
 
 # Ahora copia el resto del código fuente de tu aplicación al contenedor.
 COPY . .
 
 # Instala las extensiones necesarias de PHP. (añade más si tu proyecto las requiere)
 RUN docker-php-ext-install mysqli pdo pdo_mysql
+
+RUN chown -R www-data:www-data /var/www/html
+
 
 # Instala dependencias necesarias para las extensiones de SQL Server
 RUN apt-get update && apt-get install -y \
