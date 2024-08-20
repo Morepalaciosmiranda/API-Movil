@@ -1,10 +1,11 @@
 <?php
 header('Content-Type: application/json');
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 0);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(0);
 
 include '../includes/conexion.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -75,6 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mail = new PHPMailer(true);
 
     try {
+        $mail = new PHPMailer(true);
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
@@ -99,7 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } catch (Exception $e) {
         echo json_encode([
             'status' => 'error',
-            'message' => "No se pudo enviar el correo. Por favor, inténtelo de nuevo más tarde."
+            'message' => "Error al enviar el correo: " . $e->getMessage()
         ]);
         error_log("Error al enviar correo: " . $e->getMessage());
     }
@@ -111,4 +113,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $conn->close();
-?>

@@ -271,7 +271,9 @@
                         })
                         .then(response => {
                             if (!response.ok) {
-                                throw new Error('Error en la respuesta del servidor');
+                                return response.text().then(text => {
+                                    throw new Error(text || 'Error en la respuesta del servidor');
+                                });
                             }
                             return response.json();
                         })
@@ -291,7 +293,7 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text: 'Ocurrió un error en el servidor. Por favor, inténtelo de nuevo más tarde.',
+                                text: 'Ocurrió un error en el servidor: ' + error.message,
                             });
                         });
                 }
