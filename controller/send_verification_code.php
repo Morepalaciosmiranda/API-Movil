@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: application/json');
 include '../includes/conexion.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;

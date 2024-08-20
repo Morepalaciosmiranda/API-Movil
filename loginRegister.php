@@ -269,7 +269,12 @@
                                 'contrasena': password
                             })
                         })
-                        .then(response => response.json())
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error en la respuesta del servidor');
+                            }
+                            return response.json();
+                        })
                         .then(data => {
                             if (data.status === 'success') {
                                 showVerificationModal();
@@ -336,7 +341,8 @@
                             title: 'Registro exitoso',
                             text: 'Su cuenta ha sido verificada y creada con éxito.',
                         }).then(() => {
-                            document.getElementById('sign-in').click();
+                            // Redirigir al inicio de sesión o recargar la página
+                            window.location.reload();
                         });
                     }
                 })
