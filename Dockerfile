@@ -7,15 +7,22 @@ WORKDIR /var/www/html
 # Copia el código fuente de tu aplicación al contenedor.
 COPY . .
 
-# Copia un archivo de configuración personalizado para Apache si es necesario.
-# COPY ./config/apache2.conf /etc/apache2/apache2.conf
-
 # Instala las extensiones necesarias de PHP. (añade más si tu proyecto las requiere)
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Instala y habilita el módulo MPM prefork
+# Instala dependencias necesarias para las extensiones de SQL Server
+RUN apt-get update && apt-get install -y \
+    unixodbc-dev \
+    libgssapi-krb5-2 \
+    && pecl install sqlsrv pdo_sqlsrv \
+    && docker-php-ext-enable sqlsrv pdo_sqlsrv
+
+# Instala y habilita el módulo MPM prefork y otras configuraciones de Apache
 RUN a2enmod mpm_prefork
 RUN a2enmod rewrite
+
+# Instala Composer globalmente
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Expone el puerto en el que Apache escuchará.
 EXPOSE 80
