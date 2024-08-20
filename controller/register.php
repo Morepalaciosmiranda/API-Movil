@@ -2,9 +2,31 @@
 include '../includes/conexion.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nombre_usuario = mysqli_real_escape_string($conn, $_POST['nombre_usuario']);
-    $correo_electronico = mysqli_real_escape_string($conn, $_POST['correo_electronico']);
-    $contraseña = mysqli_real_escape_string($conn, $_POST['contrasena']);
+    session_start();
+    $temp_data = $_SESSION['temp_register_data'] ?? null;
+
+    if (!$temp_data) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Datos de registro no encontrados.'
+        ]);
+        exit();
+    }
+
+    $nombre_usuario = $temp_data['nombre_usuario'];
+    $correo_electronico = $temp_data['correo_electronico'];
+    $contraseña = $temp_data['contrasena'];
+    $codigo_verificacion_guardado = $temp_data['codigo_verificacion'];
+
+    $codigo_verificacion_ingresado = $_POST['codigo_verificacion'];
+
+    if ($codigo_verificacion_ingresado != $codigo_verificacion_guardado) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Código de verificación incorrecto.'
+        ]);
+        exit();
+    }
 
     // Validación del nombre de usuario para que no contenga espacios
     if (strpos($nombre_usuario, ' ') !== false) {
@@ -76,8 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("sssi", $nombre_usuario, $correo_electronico, $hashed_password, $id_rol_usuario);
 
         if ($stmt->execute()) {
-            session_start();
-            $_SESSION['correo_electronico'] = $correo_electronico;
+            unset($_SESSION['temp_register_data']);
             echo json_encode([
                 'status' => 'success',
                 'message' => 'Registro exitoso. Redirigiendo al inicio de sesión...'
@@ -99,6 +120,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $stmt->close();
+} else {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Método de solicitud inválido.'
+    ]);
 }
 
 $conn->close();

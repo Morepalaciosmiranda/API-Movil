@@ -80,10 +80,8 @@
             </div>
         </div>
 
-
         <div class="form-col-image">
             <img src="./img/LogoExterminio.png" alt="">
-            <!-- <h1>EXTERMINIO</h1> -->
             <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cupiditate nostrum architecto quas inventore, eligendi dolorem omnis repellendus quaerat aperiam dolorum vero eum officiis atque sequi necessitatibus error beatae at iste?</p>
         </div>
     </section>
@@ -224,7 +222,6 @@
                                     case 'Usuario':
                                         redirectUrl = 'https://api-movil-tj84.onrender.com/index.php';
                                         break;
-                                        // Añade casos para otros roles aquí si es necesario
                                     default:
                                         redirectUrl = 'https://api-movil-tj84.onrender.com/animacion.php';
                                         break;
@@ -261,7 +258,7 @@
                         text: 'Por favor, complete todos los campos del formulario.',
                     });
                 } else {
-                    fetch('./controller/register.php', {
+                    fetch('./controller/send_verification_code.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -274,19 +271,13 @@
                         })
                         .then(response => response.json())
                         .then(data => {
-                            if (data.status === 'error') {
+                            if (data.status === 'success') {
+                                showVerificationModal();
+                            } else {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
                                     text: data.message,
-                                });
-                            } else if (data.status === 'success') {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Registro exitoso',
-                                    text: data.message,
-                                }).then(() => {
-                                    document.getElementById('sign-in').click();
                                 });
                             }
                         })
@@ -299,6 +290,56 @@
                             });
                         });
                 }
+            }
+
+            function showVerificationModal() {
+                Swal.fire({
+                    title: 'Verificación de correo',
+                    input: 'text',
+                    inputLabel: 'Ingrese el código de verificación enviado a su correo',
+                    inputPlaceholder: 'Código de verificación',
+                    showCancelButton: true,
+                    confirmButtonText: 'Verificar',
+                    cancelButtonText: 'Cancelar',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (code) => {
+                        return fetch('./controller/register.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: new URLSearchParams({
+                                    'nombre_usuario': document.getElementById('register-username').value,
+                                    'correo_electronico': document.getElementById('register-email').value,
+                                    'contrasena': document.getElementById('register-password').value,
+                                    'codigo_verificacion': code
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'error') {
+                                    throw new Error(data.message)
+                                }
+                                return data
+                            })
+                            .catch(error => {
+                                Swal.showValidationMessage(
+                                    `Error: ${error.message}`
+                                )
+                            })
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Registro exitoso',
+                            text: 'Su cuenta ha sido verificada y creada con éxito.',
+                        }).then(() => {
+                            document.getElementById('sign-in').click();
+                        });
+                    }
+                })
             }
         });
 

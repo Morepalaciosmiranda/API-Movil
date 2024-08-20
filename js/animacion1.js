@@ -21,7 +21,7 @@ function logout() {
     });
     setTimeout(() => {
         Swal.close(); 
-        window.location.href = '../exterminio1/loginRegister.php';
+        window.location.href = '../loginRegister.php';
     }, 2000);
 }
 
