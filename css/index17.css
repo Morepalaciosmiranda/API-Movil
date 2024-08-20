@@ -1103,6 +1103,7 @@ footer h4{
         display: block;
         width: 100%;
         text-align: center;
+        margin-right: 20px;
     }
 
     /* Ajuste para mostrar las cards una debajo de la otra */
@@ -1252,6 +1253,7 @@ footer h4{
     /* Footer */
     .footer-container {
         height: auto;
+        padding: 15px;
     }
 
     .content-footer {
@@ -1380,6 +1382,23 @@ footer h4{
     #btn_comprar:hover {
         background-color: #0056b3;
     }
+    
+    .inputs-container{
+        width: 100px;
+        padding: 50px;
+        font-size: 18px;
+    }
+    
+    .inputs-column{
+        width: 100%;
+        height: 100%;
+
+    }
+    .input3-container{
+        width: -100%;
+        margin-left: 500px;
+
+    }
 }
 @media screen and (max-width: 414px) {
     /* Ajustes generales */
@@ -1477,6 +1496,7 @@ footer h4{
         height: auto;
         display: flex;
         flex-direction: column;
+        padding: 7px;
     }
 
     .dashboard-card img {
@@ -1577,6 +1597,8 @@ footer h4{
     /* Footer */
     .footer-container {
         height: auto;
+        margin-left: 5px;
+        margin-top: 12px;
     }
 
     .content-footer {
@@ -1803,6 +1825,7 @@ footer h4{
         height: auto;
         display: flex;
         flex-direction: column;
+        padding: -100px;
     }
 
     .dashboard-card img {
@@ -2029,5 +2052,5 @@ footer h4{
 
     #btn_comprar:hover {
         background-color: #0056b3;
-    }
+     }
 }
