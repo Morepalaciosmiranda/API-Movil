@@ -4,7 +4,16 @@ FROM php:8.1-apache
 # Establece el directorio de trabajo en el contenedor.
 WORKDIR /var/www/html
 
-# Copia el código fuente de tu aplicación al contenedor.
+# Copia el archivo composer.json y composer.lock si existe primero para aprovechar la cache de Docker.
+COPY composer.json composer.lock ./
+
+# Instala Composer globalmente
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Instala las dependencias de PHP usando Composer
+RUN composer install --no-dev --optimize-autoloader
+
+# Ahora copia el resto del código fuente de tu aplicación al contenedor.
 COPY . .
 
 # Instala las extensiones necesarias de PHP. (añade más si tu proyecto las requiere)
@@ -20,9 +29,6 @@ RUN apt-get update && apt-get install -y \
 # Instala y habilita el módulo MPM prefork y otras configuraciones de Apache
 RUN a2enmod mpm_prefork
 RUN a2enmod rewrite
-
-# Instala Composer globalmente
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Expone el puerto en el que Apache escuchará.
 EXPOSE 80
