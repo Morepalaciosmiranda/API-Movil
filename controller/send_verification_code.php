@@ -1,11 +1,16 @@
 <?php
 header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type");
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-error_reporting(0);
+error_reporting(E_ALL);
+
+ob_start();
 
 include '../includes/conexion.php';
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -73,8 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ];
 
     // Enviar correo con el código de verificación
-    $mail = new PHPMailer(true);
-
     try {
         $mail = new PHPMailer(true);
         $mail->isSMTP();
@@ -112,4 +115,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ]);
 }
 
+$output = ob_get_clean();
+
+if (empty($output)) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'No se recibió respuesta del servidor'
+    ]);
+} else {
+    if (!isJson($output)) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => $output
+        ]);
+    } else {
+        echo $output;
+    }
+}
+
 $conn->close();
+
+function isJson($string) {
+    json_decode($string);
+    return (json_last_error() == JSON_ERROR_NONE);
+}
+?>

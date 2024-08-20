@@ -258,7 +258,7 @@
                         text: 'Por favor, complete todos los campos del formulario.',
                     });
                 } else {
-                    fetch('./controller/send_verification_code.php', {
+                    fetch('https://api-movil-tj84.onrender.com/controller/send_verification_code.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -275,7 +275,15 @@
                                     throw new Error(text || 'Error en la respuesta del servidor');
                                 });
                             }
-                            return response.json();
+                            return response.text().then(text => {
+                                console.log('Respuesta del servidor:', text);
+                                try {
+                                    return JSON.parse(text);
+                                } catch (e) {
+                                    console.error('Respuesta no válida:', text);
+                                    throw new Error('Respuesta no válida del servidor');
+                                }
+                            });
                         })
                         .then(data => {
                             if (data.status === 'success') {
@@ -310,7 +318,7 @@
                     cancelButtonText: 'Cancelar',
                     showLoaderOnConfirm: true,
                     preConfirm: (code) => {
-                        return fetch('./controller/register.php', {
+                        return fetch('https://api-movil-tj84.onrender.com/controller/register.php', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/x-www-form-urlencoded',
