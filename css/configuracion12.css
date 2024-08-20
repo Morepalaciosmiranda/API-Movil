@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playwrite+TZ:wght@100..400&display=swap" rel="stylesheet');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 * {
     padding: 0;
@@ -8,18 +8,18 @@
 
 body {
     font-family: 'Bebas Neue', cursive;
-    font-size: 18px;
-    line-height: 1.6;
+    font-size: 16px;
+    line-height: 1.5;
     background-color: #000000;
 }
 
 .navbar {
     background-color: #e77122;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
-    height: 3rem;
-    padding: 2.5rem 3rem;
+    height: 50px;
+    padding: 10px;
     color: #ffffff;
     width: 100%;
     position: fixed;
@@ -27,9 +27,8 @@ body {
 }
 
 .logo img {
-    width: 130px;
-    float: left;
-    margin-right: 100%;
+    max-width: 100px;
+    margin-right: 20px;
 }
 
 .nav-links {
@@ -38,12 +37,13 @@ body {
 }
 
 .nav-links li {
-    margin-right: 20px;
+    margin-right: 10px;
 }
 
 .nav-links li a {
     text-decoration: none;
     color: #fff;
+    font-size: 14px;
 }
 
 .nav-links li a:hover {
@@ -51,35 +51,34 @@ body {
 }
 
 .container {
-    width: 1055px;
-    height: 480px;
+    width: 90%;
     background-color: #fff;
     position: absolute;
-    left: 530px;
-    top: 100px;
+    left: 50%;
+    top: 295px;
+    transform: translateX(-50%);
     border: 2px solid black;
-    display: flex;
-    justify-content: space-between;
-    margin: 0 auto;
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
 .inputs-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     width: 100%;
 }
 
 .inputs-column {
-    width: 48%;
-    margin-top: 50px;
+    width: 100%;
+    margin-top: 30px;
 }
 
 .inputs-column input {
     display: block;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     width: 100%;
-    padding: 20px;
-    font-size: 18px;
+    padding: 10px;
+    font-size: 16px;
     border: none;
     border-bottom: 2px solid #ccc;
     outline: none;
@@ -88,34 +87,35 @@ body {
 
 .title {
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 10px;
+    left: 10px;
     background-color: transparent;
 }
 
 .title h2 {
     text-align: center;
     color: rgb(0, 0, 0);
-    font-size: 18px !important;
+    font-size: 16px !important;
 }
 
 .container2 {
-    width: 250px;
-    height: 380px;
+    width: 90%;
     background-color: #fff;
     position: absolute;
-    left: 220px;
+    left: 50%;
     top: 100px;
+    transform: translateX(-50%);
     border: 2px solid black;
-}
-
-.navigation {
     padding: 20px;
 }
 
+.navigation {
+    padding: 10px;
+}
+
 .navigation h3 {
-    margin-bottom: 20px;
-    font-size: 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
     border-bottom: 1px solid #ccc;
     padding-bottom: 5px;
     color: black;
@@ -129,14 +129,14 @@ body {
 
 .input-container {
     position: relative;
-    margin: 20px 20px 50px;
+    margin: 10px 10px 30px;
 }
 
 .input-field {
     display: block;
     width: 100%;
-    padding: 10px;
-    font-size: 16px;
+    padding: 8px;
+    font-size: 14px;
     border: none;
     border-bottom: 2px solid #ccc;
     outline: none;
@@ -147,7 +147,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    font-size: 16px;
+    font-size: 14px;
     color: rgba(204, 204, 204, 0);
     pointer-events: none;
     transition: all 0.3s ease;
@@ -157,7 +157,7 @@ body {
     position: absolute;
     bottom: 0;
     left: 0;
-    top: 60px;
+    top: 40px;
     height: 2px;
     width: 0;
     background-color: #ff7300;
@@ -165,8 +165,8 @@ body {
 }
 
 .input-field:focus + .input-label {
-    top: -10px;
-    font-size: 12px;
+    top: -8px;
+    font-size: 10px;
     color: #ff7300;
 }
 
@@ -177,9 +177,9 @@ body {
 .input-container i {
     position: absolute;
     top: 30%;
-    right: 15px;
+    right: 10px;
     transform: translateY(-50%);
-    font-size: 18px;
+    font-size: 16px;
     color: #ff6600;
     cursor: pointer;
     transition: color 0.3s;
@@ -191,18 +191,18 @@ body {
 
 .button-container {
     position: absolute;
-    bottom: 20px;
-    left: 20px;
+    bottom: 10px;
+    left: 10px;
 }
 
 .update-button {
     background-color: #e74919;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .update-button:hover {
@@ -224,10 +224,10 @@ body {
 .modal-content {
     background-color: #000000;
     margin: 10% auto;
-    padding: 20px;
+    padding: 15px;
     border: 1px solid #888;
     width: 80%;
-    max-width: 500px;
+    max-width: 400px;
     border-radius: 10px;
     position: relative;
     animation: fadeIn 0.5s;
@@ -241,7 +241,7 @@ body {
 .close {
     color: #ff4901;
     float: right;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
 }
 
@@ -254,8 +254,8 @@ body {
 
 .modal-content h2 {
     color: #ff6600;
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 20px;
+    margin-bottom: 15px;
 }
 
 .modal-content form {
@@ -265,20 +265,20 @@ body {
 
 .modal-content input[type="text"],
 .modal-content input[type="password"] {
-    padding: 10px;
-    margin-bottom: 20px;
+    padding: 8px;
+    margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .modal-content button {
     background-color: #ff6600;
     color: #fff;
     border: none;
-    padding: 10px;
+    padding: 8px;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -287,35 +287,29 @@ body {
     background-color: #e65c00;
 }
 
-/* Nuevos estilos para la sección de pedidos */
 .containerPedidos {
     width: 90%;
-    max-width: 1200px;
     background-color: #fff;
     position: absolute;
-    left: 1110px;
-    top: 100px;
+    left: 50%;
+    top: 250px;
     transform: translateX(-50%);
     border: 2px solid black;
     padding: 20px;
     margin-bottom: 20px;
 }
 
-.titlePedido h2 {
-    font-size: 32px;
-    color: #e77122;
-    margin-bottom: 15px;
+.titlePedido, .subtitle {
     text-align: center;
-    font-weight: 700;
-    letter-spacing: 1px;
+    margin-bottom: 15px;
 }
 
-.subtitle h3 {
+.titlePedido {
     font-size: 18px;
-    color: #555;
-    margin-bottom: 40px;
-    text-align: center;
-    font-weight: 400;
+}
+
+.subtitle {
+    font-size: 14px;
 }
 
 .pedidos-lista {
@@ -323,79 +317,47 @@ body {
 }
 
 .pedido-item {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 25px;
-    margin-bottom: 25px;
-    transition: all 0.3s ease;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.pedido-item:hover {
-    box-shadow: 0 5px 15px rgba(231, 113, 34, 0.1);
-    transform: translateY(-3px);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 10px;
+    border-bottom: 1px solid #000000;
+    margin-top: 10px;
 }
 
 .pedido-info {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
 }
 
 .pedido-info span {
-    font-size: 16px;
-    color: #333;
-    padding: 8px 0;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.pedido-info strong {
-    color: #e77122;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 5px;
+    flex-basis: calc(50% - 8px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 20px;
 }
 
 .pedido-actions {
-    flex-basis: 100%;
-    margin-top: 20px;
-    text-align: right;
+    margin-top: 10px;
 }
 
 .cancelar-button {
-    background-color: #e77122;
+    background-color: #ee540d;
     color: #ffffff;
     border: none;
-    padding: 12px 25px;
-    font-size: 16px;
-    border-radius: 30px;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 3px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
+    transition: background-color 0.3s;
 }
 
 .cancelar-button:hover {
-    background-color: #d65f00;
-    box-shadow: 0 4px 8px rgba(231, 113, 34, 0.3);
+    background-color: #d24400;
 }
-
-/* Estilos para el tiempo restante */
-.tiempo-restante {
-    font-weight: bold;
-    color: #e77122;
-    background-color: rgba(231, 113, 34, 0.1);
-    padding: 5px 10px;
-    border-radius: 15px;
-    display: inline-block;
-}
-
 
 .swal2-popup {
     background-color: rgb(0, 0, 0) !important;
@@ -427,162 +389,179 @@ body {
     }
 }
 
-/* Media queries */
-@media only screen and (max-width: 1200px) {
+/* @media only screen and (max-width: 375px) {
     body {
-        padding: 0px;
-    }
-
-    .container {
-        width: 30%;
-        left: 40%;
-        transform: translateX(-50%);
-    }
-    
-    .inputs-container {
-        flex-direction: column;
-    }
-
-    .inputs-column {
-        width: 110%;
-    }
-
-    .container2 {
-        width: 20%;
-        left: 15%;
-        transform: translateX(-50%);
-    }
-}
-
-@media only screen and (max-width: 768px) {
-    .input-label {
-        font-size: 10px;
-    }
-
-    .input-field,
-    .edit-button {
-        font-size: 30px;
-    }
-
-    .modal-content {
-        width: 40%;
-    }
-
-    .containerPedidos {
-        width: 40%;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .titlePedido {
-        font-size: 20px;
-    }
-
-    .pedidos-lista {
-        grid-template-columns: 1fr;
-    }
-
-    .pedido-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .pedido-info span {
-        flex-basis: 100%;
-    }
-
-    .pedido-actions {
-        margin-top: 10px;
-    }
-}
-
-@media only screen and (max-width: 480px) {
-    .navbar {
-        flex-direction: column;
-        padding: 1rem;
-    }
-
-    .nav-links {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .nav-links li {
-        margin-bottom: 10px;
-        margin-right: 0;
-    }
-
-    .logo img {
-        margin-right: 0;
-    }
-
-    .container, .container2, .containerPedidos {
-        width: 100%;
-        left: 0;
-        top: 10px;
-        transform: none;
-    }
-
-    .titlePedido, .subtitle {
-        font-size: 16px;
-    }
-}
-
-/* Ajustes adicionales para pantallas más pequeñas */
-@media only screen and (max-width: 430px) {
-    .input-container {
-        width: 100%;
-        left: 50%;
-        top: 500px;
-        position: relative;
-        transform: translateX(-50%);
-        z-index: 1;   
-    }
-    
-    .inputs-container {
-        width: 100%;
-        left: 100%;
-        top: 65%;
-        transform: translateX(-50%);
-        z-index: 1;
-    }
-
-    .input-field,
-    .edit-button {
-        font-size: 10px;
-    }
-
-    .containerPedidos {
-        width: 100%;
-        left: 50%;
-        top: 65%;
-        transform: translateX(-50%);
-        z-index: 1;
-    }
-
-    .pedido-item {
-        padding: 10px;
-    }
-
-    .pedido-info span {
         font-size: 14px;
     }
 
-    .container2 {
-        width: 50%;
-        top: 800px;
+    .navbar {
+        height: 50px;
     }
 
-    .navigation {
-        width: 100%;
-        top: -50px;
+    .logo img {
+        max-width: 90px;
+        margin-right: 10px;
     }
 
-    .navbar .logo {
-        width: 300px;
-        top: 80%;
-        margin-left: 5px;
-        float: left;
-        margin-bottom: 20px;
+    .nav-links li a {
+        font-size: 12px;
     }
-}
+
+    .container, .container2, .containerPedidos {
+        top: 50px;
+    }
+
+    .title h2 {
+        font-size: 14px !important;
+    }
+    
+
+    .inputs-column input {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .input-label {
+        font-size: 12px;
+    }
+
+    .input-field, .edit-button {
+        font-size: 14px;
+    }
+
+    .input3-container{
+        padding: 15px;
+        font-size: -100px;
+        margin-top: 70px;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
+
+    .modal-content h2 {
+        font-size: 18px;
+    }
+
+    .modal-content input[type="text"],
+    .modal-content input[type="password"],
+    .modal-content button {
+        font-size: 12px;
+    }
+
+    .titlePedido h2 {
+        font-size: 35px;
+        padding: 130px 100px;
+    }
+
+    .titlePedido h3{
+        font-size: 50px;
+        margin-top: 50px;
+    }
+
+    .subtitle {
+        font-size: 12px;
+    }
+
+    .pedido-info span {
+        font-size: 15px;
+    }
+
+    .cancelar-button {
+        font-size: 10px;
+    }
+
+    .pedido-item{
+        font-size: 20px;
+        padding: -200px;
+    } */
+
+    /* @media only screen and (max-width: 414px){
+        body {
+            font-size: 14px;
+        }
+    
+        .navbar {
+            height: 50px;
+        }
+    
+        .logo img {
+            max-width: 90px;
+            margin-right: 10px;
+        }
+    
+        .nav-links li a {
+            font-size: 12px;
+        }
+    
+        .container, .container2, .containerPedidos {
+            top: 50px;
+        }
+    
+        .title h2 {
+            font-size: 14px !important;
+        }
+        
+    
+        .inputs-column input {
+            font-size: 14px;
+            padding: 8px;
+        }
+    
+        .input-label {
+            font-size: 12px;
+        }
+    
+        .input-field, .edit-button {
+            font-size: 14px;
+        }
+    
+        .input3-container{
+            padding: 15px;
+            font-size: -100px;
+            margin-top: 70px;
+        }
+    
+        .modal-content {
+            width: 90%;
+        }
+    
+        .modal-content h2 {
+            font-size: 18px;
+        }
+    
+        .modal-content input[type="text"],
+        .modal-content input[type="password"],
+        .modal-content button {
+            font-size: 12px;
+        }
+    
+        .titlePedido h2 {
+            font-size: 35px;
+            padding: 130px 100px;
+        }
+    
+        .titlePedido h3{
+            font-size: 50px;
+            margin-top: 50px;
+        }
+    
+        .subtitle {
+            font-size: 12px;
+        }
+    
+        .pedido-info span {
+            font-size: 15px;
+        }
+    
+        .cancelar-button {
+            font-size: 10px;
+        }
+    
+        .pedido-item{
+            font-size: 20px;
+            padding: -200px;
+        }
+
+    } */
+
