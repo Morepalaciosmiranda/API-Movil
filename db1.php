@@ -1,5 +1,5 @@
 <?php
-// Incluir el archivo de conexión
+// Incluir el archivo de conexiónn
 require_once './includes/conexion.php';
 
 // Función para ejecutar una consulta y manejar errores
