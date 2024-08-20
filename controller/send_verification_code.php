@@ -1,12 +1,9 @@
 <?php
 header('Content-Type: application/json');
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
 
-function sendJsonResponse($status, $message) {
-    echo json_encode(['status' => $status, 'message' => $message]);
-    exit;
-}
 include '../includes/conexion.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
