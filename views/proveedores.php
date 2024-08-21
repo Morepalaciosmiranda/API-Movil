@@ -55,8 +55,8 @@ $result = mysqli_query($conn, $sql);
                 <div class="title-container">
                     <h1>Proveedores</h1>
                     <div class="search-bar">
-                        <input type="text" placeholder="Buscar..." />
-                        <button type="button"><i class="fa fa-search"></i></button>
+                        <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarProveedor()" />
+                        <button type="button" onclick="buscarProveedor()"><i class="fa fa-search"></i></button>
                     </div>
                 </div>
                 <div class="profile-div">
@@ -281,12 +281,12 @@ $result = mysqli_query($conn, $sql);
                 });
 
                 function confirmarEliminacion(id) {
-               
+
                     fetch(`../controller/proveedores_controller.php?eliminar=${id}`)
                         .then(response => response.json())
                         .then(data => {
                             if (data.error) {
-                            
+
                                 Swal.fire({
                                     title: 'Error',
                                     text: 'Error al intentar eliminar el proveedor.',
@@ -294,7 +294,7 @@ $result = mysqli_query($conn, $sql);
                                     confirmButtonText: 'OK'
                                 });
                             } else if (data.asociado) {
-                         
+
                                 Swal.fire({
                                     title: 'Error',
                                     text: 'No puedes eliminar este proveedor porque está asociado a compras.',
@@ -302,7 +302,7 @@ $result = mysqli_query($conn, $sql);
                                     confirmButtonText: 'OK'
                                 });
                             } else {
-                       
+
                                 Swal.fire({
                                     title: '¿Estás seguro?',
                                     text: '¿Deseas eliminar este proveedor?',
@@ -313,12 +313,12 @@ $result = mysqli_query($conn, $sql);
                                     confirmButtonText: 'Sí, eliminarlo'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
-                            
+
                                         fetch(`../controller/proveedores_controller.php?eliminar=${id}`)
                                             .then(response => response.json())
                                             .then(data => {
                                                 if (data.success) {
-                                             
+
                                                     Swal.fire({
                                                         title: 'Eliminado!',
                                                         text: 'El proveedor ha sido eliminado correctamente.',
@@ -328,7 +328,7 @@ $result = mysqli_query($conn, $sql);
                                                         window.location.href = '../views/proveedores.php';
                                                     });
                                                 } else {
-                                         
+
                                                     Swal.fire({
                                                         title: 'Error',
                                                         text: 'Error al intentar eliminar el proveedor.',
@@ -367,14 +367,18 @@ $result = mysqli_query($conn, $sql);
                     const tableRows = document.querySelectorAll('#proveedoresTableBody tr');
 
                     tableRows.forEach(row => {
-                        const nombreProveedor = row.getElementsByTagName('td')[1].textContent.toLowerCase();
-                        if (nombreProveedor.includes(input)) {
+                        // Concatenar todo el texto de la fila para buscar en todos los campos
+                        const rowText = Array.from(row.getElementsByTagName('td'))
+                            .map(td => td.textContent.toLowerCase())
+                            .join(' ');
+
+                        // Verificar si el texto de búsqueda está en alguna parte de la fila
+                        if (rowText.includes(input)) {
                             row.style.display = '';
                         } else {
                             row.style.display = 'none';
                         }
                     });
-
                 }
             </script>
             <script src="../js/validaciones.js"></script>
