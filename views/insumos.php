@@ -52,8 +52,8 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                 <div class="title-container">
                     <h1>Insumos</h1>
                     <div class="search-bar">
-                        <input type="text" placeholder="Buscar..." />
-                        <button type="button"><i class="fa fa-search"></i></button>
+                        <input type="text" id="searchInsumos" placeholder="Buscar..." />
+                        <button type="button" onclick="buscarInsumos()"><i class="fa fa-search"></i></button>
                     </div>
                 </div>
                 <div class="profile-div">
@@ -345,6 +345,25 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                     }).then(() => {
                         window.location.href = '../controller/insumos_controller.php?eliminar=' + idInsumo;
                     });
+                }
+            });
+        }
+
+        function buscarInsumos() {
+            const input = document.getElementById('searchInsumos').value.toLowerCase();
+            const tableRows = document.querySelectorAll('tbody tr');
+
+            tableRows.forEach(row => {
+                // Concatenar todo el texto de la fila para buscar en todos los campos
+                const rowText = Array.from(row.getElementsByTagName('td'))
+                    .map(td => td.textContent.toLowerCase())
+                    .join(' ');
+
+                // Verificar si el texto de búsqueda está en alguna parte de la fila
+                if (rowText.includes(input)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
                 }
             });
         }
