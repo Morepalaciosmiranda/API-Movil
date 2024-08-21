@@ -554,24 +554,25 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         }
 
     }
+
     function buscarCompra() {
-            const input = document.getElementById('searchCompras').value.toLowerCase();
-            const tableRows = document.querySelectorAll('#comprasTableBody tr');
+        const input = document.getElementById('searchCompras').value.toLowerCase();
+        const tableRows = document.querySelectorAll('#comprasTableBody tr');
 
-            tableRows.forEach(row => {
-                // Concatenar todo el texto de la fila para buscar en todos los campos
-                const rowText = Array.from(row.getElementsByTagName('td'))
-                    .map(td => td.textContent.toLowerCase())
-                    .join(' ');
+        tableRows.forEach(row => {
+            // Concatenar todo el texto de la fila para buscar en todos los campos
+            const rowText = Array.from(row.getElementsByTagName('td'))
+                .map(td => td.textContent.toLowerCase())
+                .join(' ');
 
-                // Verificar si el texto de búsqueda está en alguna parte de la fila
-                if (rowText.includes(input)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
+            // Verificar si el texto de búsqueda está en alguna parte de la fila
+            if (rowText.includes(input)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
