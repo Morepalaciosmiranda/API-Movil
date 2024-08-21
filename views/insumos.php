@@ -52,8 +52,8 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                 <div class="title-container">
                     <h1>Insumos</h1>
                     <div class="search-bar">
-                        <input type="text" id="searchInsumos" placeholder="Buscar..." />
-                        <button type="button" onclick="buscarInsumos()"><i class="fa fa-search"></i></button>
+                        <input type="text" id="searchInsumos" placeholder="Buscar..." onkeyup="buscarInsumo()" />
+                        <button type="button" onclick="buscarInsumo()"><i class="fa fa-search"></i></button>
                     </div>
                 </div>
                 <div class="profile-div">
@@ -349,9 +349,9 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
             });
         }
 
-        function buscarInsumos() {
+        function buscarInsumo() {
             const input = document.getElementById('searchInsumos').value.toLowerCase();
-            const tableRows = document.querySelectorAll('tbody tr');
+            const tableRows = document.querySelectorAll('tbody tr'); // Asegúrate de que 'tbody tr' selecciona las filas correctas
 
             tableRows.forEach(row => {
                 // Concatenar todo el texto de la fila para buscar en todos los campos
