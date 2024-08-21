@@ -553,7 +553,8 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             userOptionsContainer.style.display = "none";
         }
 
-        function buscarCompra() {
+    }
+    function buscarCompra() {
             const input = document.getElementById('searchCompras').value.toLowerCase();
             const tableRows = document.querySelectorAll('#comprasTableBody tr');
 
@@ -571,8 +572,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 }
             });
         }
-
-    }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>

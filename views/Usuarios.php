@@ -68,6 +68,7 @@ $result = $conn->query($sql);
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="./css/usuarios11.css">
@@ -78,6 +79,7 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 </head>
+
 <body>
     <div class="container">
         <?php include 'sidebar.php'; ?>
@@ -86,14 +88,17 @@ $result = $conn->query($sql);
                 <div class="title-container">
                     <h1>Usuarios</h1>
                     <div class="search-bar">
-                        <input type="text" placeholder="Buscar..." />
-                        <button type="button"><i class="fa fa-search"></i></button>
+                        <div class="search-bar">
+                            <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarUsuario()" />
+                            <button type="button" onclick="buscarUsuario()"><i class="fa fa-search"></i></button>
+                        </div>
                     </div>
                 </div>
                 <div class="profile-div">
                     <div class="profile-inner-container">
                         <p class="user1" onclick="toggleUserOptions()">
-                            <i class="fa fa-user"></i> <?php echo isset($_SESSION['correo_electronico']) ? $_SESSION['correo_electronico'] : ''; ?>
+                            <i class="fa fa-user"></i>
+                            <?php echo isset($_SESSION['correo_electronico']) ? $_SESSION['correo_electronico'] : ''; ?>
                         </p>
                     </div>
                     <div id="userOptionsContainer" class="user-options-container">
@@ -189,7 +194,8 @@ $result = $conn->query($sql);
                     }
                     ?>
                 </ul>
-                <button id="confirmPermissionsBtn" class='btn btn-primary'><i class='fa fa-check'></i> Confirmar Permisos</button>
+                <button id="confirmPermissionsBtn" class='btn btn-primary'><i class='fa fa-check'></i> Confirmar
+                    Permisos</button>
             </div>
         </div>
 
@@ -230,147 +236,78 @@ $result = $conn->query($sql);
                         <option value="Inactivo">Inactivo</option>
                     </select>
                     <label for="state_message">Mensaje:</label>
-                    <textarea name="state_message" id="state_message" rows="4" placeholder="Ingrese el mensaje para el usuario..."></textarea>
-                    <button id="confirmStateBtn" type="submit" class='btn btn-primary'><i class='fa fa-check'></i> Confirmar</button>
+                    <textarea name="state_message" id="state_message" rows="4"
+                        placeholder="Ingrese el mensaje para el usuario..."></textarea>
+                    <button id="confirmStateBtn" type="submit" class='btn btn-primary'><i class='fa fa-check'></i>
+                        Confirmar</button>
                 </form>
             </div>
         </div>
 
-        
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script>
-            var modal = document.getElementById('permissionsModal');
-            var rolesModal = document.getElementById('rolesModal');
-            var assignRoleButtons = document.querySelectorAll(".assign-role-button");
-            var permissionButtons = document.querySelectorAll(".permission-button");
-            var spans = document.getElementsByClassName("close");
+        var modal = document.getElementById('permissionsModal');
+        var rolesModal = document.getElementById('rolesModal');
+        var assignRoleButtons = document.querySelectorAll(".assign-role-button");
+        var permissionButtons = document.querySelectorAll(".permission-button");
+        var spans = document.getElementsByClassName("close");
 
-            assignRoleButtons.forEach(function(button) {
-                button.onclick = function(event) {
-                    event.preventDefault();
-                    var userId = button.getAttribute('data-user-id');
-                    rolesModal.setAttribute('data-user-id', userId);
-                    rolesModal.style.display = "block";
-                };
-            });
-
-            permissionButtons.forEach(function(button) {
-                button.onclick = function(event) {
-                    event.preventDefault();
-                    var userId = button.getAttribute('data-user-id');
-                    modal.setAttribute('data-user-id', userId);
-                    modal.style.display = "block";
-                };
-            });
-
-            Array.from(spans).forEach(function(span) {
-                span.onclick = function() {
-                    closePermissionsModal();
-                    closeRolesModal();
-                };
-            });
-
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    closePermissionsModal();
-                }
-                if (event.target == rolesModal) {
-                    closeRolesModal();
-                }
+        assignRoleButtons.forEach(function(button) {
+            button.onclick = function(event) {
+                event.preventDefault();
+                var userId = button.getAttribute('data-user-id');
+                rolesModal.setAttribute('data-user-id', userId);
+                rolesModal.style.display = "block";
             };
+        });
 
-            var confirmRoleBtn = document.getElementById('confirmRoleBtn');
-            confirmRoleBtn.onclick = function() {
-                var userId = rolesModal.getAttribute('data-user-id');
-                var selectedRole = document.querySelector('input[name="rol"]:checked');
-                if (selectedRole) {
-                    Swal.fire({
-                        title: '¿Estás seguro?',
-                        text: '¿Quieres asignar este rol al usuario?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Sí, asignar rol',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            var roleId = selectedRole.value;
-                            var xhr = new XMLHttpRequest();
-                            xhr.onreadystatechange = function() {
-                                if (xhr.readyState == 4) {
-                                    try {
-                                        var response = JSON.parse(xhr.responseText);
-                                        if (response.status === "success") {
-                                            Swal.fire({
-                                                title: 'Éxito',
-                                                text: response.message,
-                                                icon: 'success',
-                                                confirmButtonText: 'OK'
-                                            }).then(() => {
-                                                location.reload();
-                                            });
-                                        } else {
-                                            let errorMessage = response.message;
-                                            if (response.details) {
-                                                errorMessage += "\n\nDetalles: " + JSON.stringify(response.details);
-                                            }
-                                            Swal.fire({
-                                                title: 'Error',
-                                                text: errorMessage,
-                                                icon: 'error',
-                                                confirmButtonText: 'OK'
-                                            });
-                                            console.error("Error details:", response);
-                                        }
-                                    } catch (e) {
-                                        console.error("Error parsing JSON:", xhr.responseText);
-                                        Swal.fire({
-                                            title: 'Error',
-                                            text: 'Ocurrió un error inesperado. Por favor, intenta de nuevo.',
-                                            icon: 'error',
-                                            confirmButtonText: 'OK'
-                                        });
-                                    }
-                                    closeRolesModal();
-                                }
-                            };
-                            xhr.open("POST", "../controller/assign_role.php", true);
-                            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                            xhr.send("user_id=" + userId + "&new_role=" + roleId);
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Advertencia',
-                        text: 'Por favor, selecciona un rol.',
-                        icon: 'warning',
-                        confirmButtonText: 'OK'
-                    });
-                }
+        permissionButtons.forEach(function(button) {
+            button.onclick = function(event) {
+                event.preventDefault();
+                var userId = button.getAttribute('data-user-id');
+                modal.setAttribute('data-user-id', userId);
+                modal.style.display = "block";
             };
+        });
 
-            var confirmPermissionsBtn = document.getElementById('confirmPermissionsBtn');
-            confirmPermissionsBtn.onclick = function() {
-                var userId = modal.getAttribute('data-user-id');
-                var selectedPermissions = document.querySelectorAll('.permission-checkbox:checked');
-                if (selectedPermissions.length > 0) {
-                    var permissions = Array.from(selectedPermissions).map(function(checkbox) {
-                        return checkbox.id.replace('permiso_', '');
-                    });
+        Array.from(spans).forEach(function(span) {
+            span.onclick = function() {
+                closePermissionsModal();
+                closeRolesModal();
+            };
+        });
 
-                    Swal.fire({
-                        title: '¿Estás seguro?',
-                        text: '¿Quieres asignar estos permisos al usuario?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Sí, asignar permisos',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            var xhr = new XMLHttpRequest();
-                            xhr.onreadystatechange = function() {
-                                if (xhr.readyState == 4 && xhr.status == 200) {
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closePermissionsModal();
+            }
+            if (event.target == rolesModal) {
+                closeRolesModal();
+            }
+        };
+
+        var confirmRoleBtn = document.getElementById('confirmRoleBtn');
+        confirmRoleBtn.onclick = function() {
+            var userId = rolesModal.getAttribute('data-user-id');
+            var selectedRole = document.querySelector('input[name="rol"]:checked');
+            if (selectedRole) {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: '¿Quieres asignar este rol al usuario?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, asignar rol',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var roleId = selectedRole.value;
+                        var xhr = new XMLHttpRequest();
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState == 4) {
+                                try {
                                     var response = JSON.parse(xhr.responseText);
-                                    if (response.status == 'success') {
+                                    if (response.status === "success") {
                                         Swal.fire({
                                             title: 'Éxito',
                                             text: response.message,
@@ -380,157 +317,69 @@ $result = $conn->query($sql);
                                             location.reload();
                                         });
                                     } else {
+                                        let errorMessage = response.message;
+                                        if (response.details) {
+                                            errorMessage += "\n\nDetalles: " + JSON.stringify(response
+                                                .details);
+                                        }
                                         Swal.fire({
                                             title: 'Error',
-                                            text: response.message,
+                                            text: errorMessage,
                                             icon: 'error',
                                             confirmButtonText: 'OK'
                                         });
+                                        console.error("Error details:", response);
                                     }
-                                    closePermissionsModal();
-                                }
-                            };
-                            xhr.open("POST", "../controller/assign_permission.php", true);
-                            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                            xhr.send("user_id=" + userId + "&permissions=" + JSON.stringify(permissions));
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Advertencia',
-                        text: 'Por favor, selecciona al menos un permiso.',
-                        icon: 'warning',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            };
-
-            function toggleUserOptions() {
-                var userOptionsContainer = document.getElementById("userOptionsContainer");
-                if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
-                    userOptionsContainer.style.display = "block";
-                } else {
-                    userOptionsContainer.style.display = "none";
-                }
-            }
-
-            function closePermissionsModal() {
-                modal.style.display = "none";
-            }
-
-            function closeRolesModal() {
-                rolesModal.style.display = "none";
-            }
-
-            document.addEventListener('DOMContentLoaded', (event) => {
-                var stateModal = document.getElementById('stateModal');
-                var closeButtons = document.querySelectorAll('.close');
-
-                closeButtons.forEach(function(button) {
-                    button.addEventListener('click', function() {
-                        closeStateModal();
-                    });
-                });
-
-                window.addEventListener('click', function(event) {
-                    if (event.target == stateModal) {
-                        closeStateModal();
-                    }
-                });
-            });
-
-            function closeStateModal() {
-                var stateModal = document.getElementById('stateModal');
-                stateModal.style.display = 'none';
-            }
-
-            function openStateModal(userId, currentState) {
-                document.getElementById('stateUserId').value = userId;
-                document.getElementById('new_state').value = currentState;
-                document.getElementById('state_message').value = ''; // Clear previous message
-                document.getElementById('stateModal').style.display = 'block';
-            }
-
-            function submitStateForm() {
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: '¿Quieres cambiar el estado de este usuario?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, cambiar estado',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var userId = document.getElementById('stateUserId').value;
-                        var newState = document.getElementById('new_state').value;
-                        var stateMessage = document.getElementById('state_message').value;
-
-                        var xhr = new XMLHttpRequest();
-                        xhr.open("POST", "../controller/change_state.php", true);
-                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                        xhr.onreadystatechange = function() {
-                            if (xhr.readyState == 4 && xhr.status == 200) {
-                                var response = JSON.parse(xhr.responseText);
-                                if (response.status === "success") {
-                                    Swal.fire({
-                                        title: 'Éxito',
-                                        text: 'Estado actualizado correctamente. ' + response.message,
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            location.reload();
-                                        }
-                                    });
-                                } else {
+                                } catch (e) {
+                                    console.error("Error parsing JSON:", xhr.responseText);
                                     Swal.fire({
                                         title: 'Error',
-                                        text: response.message,
+                                        text: 'Ocurrió un error inesperado. Por favor, intenta de nuevo.',
                                         icon: 'error',
                                         confirmButtonText: 'OK'
                                     });
                                 }
-                                closeStateModal();
+                                closeRolesModal();
                             }
                         };
-                        xhr.send("user_id=" + userId + "&new_state=" + newState + "&state_message=" + encodeURIComponent(stateMessage));
+                        xhr.open("POST", "../controller/assign_role.php", true);
+                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        xhr.send("user_id=" + userId + "&new_role=" + roleId);
                     }
                 });
-                return false;
+            } else {
+                Swal.fire({
+                    title: 'Advertencia',
+                    text: 'Por favor, selecciona un rol.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
             }
+        };
 
-            var createRoleBtn = document.getElementById('createRoleBtn');
-            var createRoleModal = document.getElementById('createRoleModal');
-
-            createRoleBtn.onclick = function() {
-                createRoleModal.style.display = "block";
-            }
-
-            function closeCreateRoleModal() {
-                createRoleModal.style.display = "none";
-            }
-
-            document.getElementById('createRoleForm').onsubmit = function(e) {
-                e.preventDefault();
-                var roleName = document.getElementById('roleName').value;
-                var permissions = Array.from(document.querySelectorAll('input[name="permissions[]"]:checked')).map(el => el.value);
+        var confirmPermissionsBtn = document.getElementById('confirmPermissionsBtn');
+        confirmPermissionsBtn.onclick = function() {
+            var userId = modal.getAttribute('data-user-id');
+            var selectedPermissions = document.querySelectorAll('.permission-checkbox:checked');
+            if (selectedPermissions.length > 0) {
+                var permissions = Array.from(selectedPermissions).map(function(checkbox) {
+                    return checkbox.id.replace('permiso_', '');
+                });
 
                 Swal.fire({
                     title: '¿Estás seguro?',
-                    text: '¿Quieres crear este nuevo rol con los permisos seleccionados?',
+                    text: '¿Quieres asignar estos permisos al usuario?',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Sí, crear rol',
+                    confirmButtonText: 'Sí, asignar permisos',
                     cancelButtonText: 'Cancelar'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         var xhr = new XMLHttpRequest();
-                        xhr.open("POST", "../controller/create_role.php", true);
-                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                         xhr.onreadystatechange = function() {
                             if (xhr.readyState == 4 && xhr.status == 200) {
                                 var response = JSON.parse(xhr.responseText);
-                                if (response.status === "success") {
+                                if (response.status == 'success') {
                                     Swal.fire({
                                         title: 'Éxito',
                                         text: response.message,
@@ -547,21 +396,205 @@ $result = $conn->query($sql);
                                         confirmButtonText: 'OK'
                                     });
                                 }
-                                closeCreateRoleModal();
+                                closePermissionsModal();
                             }
                         };
-                        xhr.send("roleName=" + encodeURIComponent(roleName) + "&permissions=" + JSON.stringify(permissions));
+                        xhr.open("POST", "../controller/assign_permission.php", true);
+                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        xhr.send("user_id=" + userId + "&permissions=" + JSON.stringify(permissions));
                     }
                 });
+            } else {
+                Swal.fire({
+                    title: 'Advertencia',
+                    text: 'Por favor, selecciona al menos un permiso.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
             }
+        };
 
-            // Cerrar la modal si se hace clic fuera de ella
-            window.onclick = function(event) {
-                if (event.target == createRoleModal) {
-                    closeCreateRoleModal();
-                }
+        function toggleUserOptions() {
+            var userOptionsContainer = document.getElementById("userOptionsContainer");
+            if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
+                userOptionsContainer.style.display = "block";
+            } else {
+                userOptionsContainer.style.display = "none";
             }
+        }
+
+        function closePermissionsModal() {
+            modal.style.display = "none";
+        }
+
+        function closeRolesModal() {
+            rolesModal.style.display = "none";
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var stateModal = document.getElementById('stateModal');
+            var closeButtons = document.querySelectorAll('.close');
+
+            closeButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    closeStateModal();
+                });
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target == stateModal) {
+                    closeStateModal();
+                }
+            });
+        });
+
+        function closeStateModal() {
+            var stateModal = document.getElementById('stateModal');
+            stateModal.style.display = 'none';
+        }
+
+        function openStateModal(userId, currentState) {
+            document.getElementById('stateUserId').value = userId;
+            document.getElementById('new_state').value = currentState;
+            document.getElementById('state_message').value = ''; // Clear previous message
+            document.getElementById('stateModal').style.display = 'block';
+        }
+
+        function submitStateForm() {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: '¿Quieres cambiar el estado de este usuario?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar estado',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var userId = document.getElementById('stateUserId').value;
+                    var newState = document.getElementById('new_state').value;
+                    var stateMessage = document.getElementById('state_message').value;
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "../controller/change_state.php", true);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.status === "success") {
+                                Swal.fire({
+                                    title: 'Éxito',
+                                    text: 'Estado actualizado correctamente. ' + response.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: response.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                            closeStateModal();
+                        }
+                    };
+                    xhr.send("user_id=" + userId + "&new_state=" + newState + "&state_message=" +
+                        encodeURIComponent(stateMessage));
+                }
+            });
+            return false;
+        }
+
+        var createRoleBtn = document.getElementById('createRoleBtn');
+        var createRoleModal = document.getElementById('createRoleModal');
+
+        createRoleBtn.onclick = function() {
+            createRoleModal.style.display = "block";
+        }
+
+        function closeCreateRoleModal() {
+            createRoleModal.style.display = "none";
+        }
+
+        document.getElementById('createRoleForm').onsubmit = function(e) {
+            e.preventDefault();
+            var roleName = document.getElementById('roleName').value;
+            var permissions = Array.from(document.querySelectorAll('input[name="permissions[]"]:checked')).map(el =>
+                el.value);
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: '¿Quieres crear este nuevo rol con los permisos seleccionados?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, crear rol',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "../controller/create_role.php", true);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.status === "success") {
+                                Swal.fire({
+                                    title: 'Éxito',
+                                    text: response.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: response.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                            closeCreateRoleModal();
+                        }
+                    };
+                    xhr.send("roleName=" + encodeURIComponent(roleName) + "&permissions=" + JSON.stringify(
+                        permissions));
+                }
+            });
+        }
+
+        // Cerrar la modal si se hace clic fuera de ella
+        window.onclick = function(event) {
+            if (event.target == createRoleModal) {
+                closeCreateRoleModal();
+            }
+        }
+
+        function buscarUsuario() {
+    const input = document.getElementById('search').value.toLowerCase();
+    const tableRows = document.querySelectorAll('#usuariosTableBody tr');
+    
+    tableRows.forEach(row => {
+        // Concatenar todo el texto de la fila para buscar en todos los campos
+        const rowText = Array.from(row.getElementsByTagName('td'))
+            .map(td => td.textContent.toLowerCase())
+            .join(' ');
+
+        // Verificar si el texto de búsqueda está en alguna parte de la fila
+        if (rowText.includes(input)) {
+            row.style.display = ''; // Mostrar fila
+        } else {
+            row.style.display = 'none'; // Ocultar fila
+        }
+    });
+}
+
         </script>
     </div>
 </body>
+
 </html>
