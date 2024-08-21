@@ -51,31 +51,6 @@ if ($fecha_filtro) {
 $result_total = mysqli_query($conn, $sql_total);
 $total_pedidos = mysqli_fetch_assoc($result_total)['total'];
 $total_paginas = ceil($total_pedidos / $items_por_pagina);
-
-$nombre_filtro = isset($_GET['nombre']) ? $_GET['nombre'] : '';
-$estado_filtro = isset($_GET['estado']) ? $_GET['estado'] : '';
-
-$sql = "SELECT pedidos.id_pedido, usuarios.nombre_usuario, pedidos.fecha_pedido, pedidos.estado_pedido 
-        FROM pedidos
-        JOIN usuarios ON pedidos.id_usuario = usuarios.id_usuario";
-
-$where_clauses = array();
-
-if ($fecha_filtro) {
-    $where_clauses[] = "DATE(pedidos.fecha_pedido) = '$fecha_filtro'";
-}
-if ($nombre_filtro) {
-    $where_clauses[] = "usuarios.nombre_usuario LIKE '%$nombre_filtro%'";
-}
-if ($estado_filtro) {
-    $where_clauses[] = "pedidos.estado_pedido = '$estado_filtro'";
-}
-
-if (!empty($where_clauses)) {
-    $sql .= " WHERE " . implode(" AND ", $where_clauses);
-}
-
-$sql .= " LIMIT $items_por_pagina OFFSET $offset";
 ?>
 <!DOCTYPE html>
 <html>
@@ -107,8 +82,7 @@ $sql .= " LIMIT $items_por_pagina OFFSET $offset";
                 <div class="profile-div">
                     <div class="profile-inner-container">
                         <p class="user1" onclick="toggleUserOptions()">
-                            <i class="fa fa-user"></i>
-                            <?php echo isset($_SESSION['correo_electronico']) ? $_SESSION['correo_electronico'] : ''; ?>
+                            <i class="fa fa-user"></i> <?php echo isset($_SESSION['correo_electronico']) ? $_SESSION['correo_electronico'] : ''; ?>
                         </p>
                     </div>
                     <div id="userOptionsContainer" class="user-options-container">
@@ -124,21 +98,6 @@ $sql .= " LIMIT $items_por_pagina OFFSET $offset";
                     <form method="GET" action="pedidos.php">
                         <label for="fecha">Filtrar por fecha:</label>
                         <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
-
-                        <label for="nombre">Filtrar por nombre:</label>
-                        <input type="text" id="nombre" name="nombre" value="<?php echo $nombre_filtro; ?>">
-
-                        <label for="estado">Filtrar por estado:</label>
-                        <select id="estado" name="estado">
-                            <option value="">Todos</option>
-                            <option value="en proceso" <?php if ($estado_filtro == 'en proceso') echo 'selected'; ?>>En
-                                Proceso</option>
-                            <option value="en camino" <?php if ($estado_filtro == 'en camino') echo 'selected'; ?>>En
-                                Camino</option>
-                            <option value="entregado" <?php if ($estado_filtro == 'entregado') echo 'selected'; ?>>
-                                Entregado</option>
-                        </select>
-
                         <button type="submit">Filtrar</button>
                     </form>
                 </div>
@@ -172,13 +131,12 @@ $sql .= " LIMIT $items_por_pagina OFFSET $offset";
                 </table>
                 <div class="pagination">
                     <?php
-                    $url_base = "pedidos.php?fecha=$fecha_filtro&nombre=$nombre_filtro&estado=$estado_filtro";
                     if ($total_paginas > 0) {
                         for ($i = 1; $i <= $total_paginas; $i++) {
                             if ($i == $pagina_actual) {
-                                echo "<a href='$url_base&pagina=$i' class='active'>$i</a>";
+                                echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
                             } else {
-                                echo "<a href='$url_base&pagina=$i'>$i</a>";
+                                echo "<a href='pedidos.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
                             }
                         }
                     }
@@ -238,8 +196,7 @@ $sql .= " LIMIT $items_por_pagina OFFSET $offset";
                 </div>
                 <div class="form-group">
                     <label for="telefono_cliente">Teléfono:</label>
-                    <input type="text" id="telefono_cliente" name="telefono_cliente" pattern="\d{10}"
-                        title="El número de teléfono debe tener 10 dígitos y solo contener números">
+                    <input type="text" id="telefono_cliente" name="telefono_cliente" pattern="\d{10}" title="El número de teléfono debe tener 10 dígitos y solo contener números">
                 </div>
                 <button type="submit" class="btnGuardar">Guardar</button>
             </form>
@@ -284,19 +241,19 @@ $sql .= " LIMIT $items_por_pagina OFFSET $offset";
     </div>
 
     <script>
-    function verDetallesPedido(idPedido) {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    try {
-                        var response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                            var cliente = response.cliente;
-                            var detallesHtml = '';
+        function verDetallesPedido(idPedido) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                var cliente = response.cliente;
+                                var detallesHtml = '';
 
-                            response.detalles.forEach(function(detalle) {
-                                detallesHtml += `
+                                response.detalles.forEach(function(detalle) {
+                                    detallesHtml += `
                                 <div class="producto-item">
                                     <span class="producto-nombre">${detalle.nombre_producto}</span>
                                     <div class="producto-detalles">
@@ -306,9 +263,9 @@ $sql .= " LIMIT $items_por_pagina OFFSET $offset";
                                     </div>
                                 </div>
                             `;
-                            });
+                                });
 
-                            detallesHtml += `
+                                detallesHtml += `
                             <div class="producto-item total-compra">
                                 <span class="producto-nombre">Total Compra:</span>
                                 <div class="producto-detalles">
@@ -319,159 +276,157 @@ $sql .= " LIMIT $items_por_pagina OFFSET $offset";
                             </div>
                         `;
 
-                            document.getElementById("detalles-pedido").innerHTML = detallesHtml;
-                            document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
-                            document.getElementById("cliente-direccion").innerText = cliente.direccion ||
-                                'No disponible';
-                            document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
-                            document.getElementById("cliente-telefono").innerText = cliente.telefono ||
-                                'No disponible';
+                                document.getElementById("detalles-pedido").innerHTML = detallesHtml;
+                                document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
+                                document.getElementById("cliente-direccion").innerText = cliente.direccion || 'No disponible';
+                                document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
+                                document.getElementById("cliente-telefono").innerText = cliente.telefono || 'No disponible';
 
-                            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                            modalDetallesPedido.style.display = "block";
-                            modalDetallesPedido.classList.add('show');
-                            modalDetallesPedido.querySelector('.modal-content').classList.add('show');
-                        } else {
-                            console.error("Error del servidor:", response.message);
-                            alert("Error al obtener detalles del pedido: " + response.message);
+                                var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+                                modalDetallesPedido.style.display = "block";
+                                modalDetallesPedido.classList.add('show');
+                                modalDetallesPedido.querySelector('.modal-content').classList.add('show');
+                            } else {
+                                console.error("Error del servidor:", response.message);
+                                alert("Error al obtener detalles del pedido: " + response.message);
+                            }
+                        } catch (e) {
+                            console.error("Error al parsear JSON:", xhr.responseText);
+                            alert("Error inesperado al obtener detalles del pedido");
                         }
-                    } catch (e) {
-                        console.error("Error al parsear JSON:", xhr.responseText);
-                        alert("Error inesperado al obtener detalles del pedido");
+                    } else {
+                        console.error("Error HTTP:", xhr.status);
+                        alert("Error de conexión al obtener detalles del pedido");
                     }
-                } else {
-                    console.error("Error HTTP:", xhr.status);
-                    alert("Error de conexión al obtener detalles del pedido");
                 }
-            }
+            };
+            xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
+            xhr.send();
+        }
+
+        function closeDetailsModal() {
+            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+            modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
+            setTimeout(function() {
+                modalDetallesPedido.style.display = "none";
+            }, 300);
+        }
+
+        function abrirModalEstado(idPedido, estadoPedido) {
+            document.getElementById("estadoPedidoId").value = idPedido;
+            document.getElementById("estado_pedido").value = estadoPedido;
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            modalEstadoPedido.style.display = "block";
+            modalEstadoPedido.querySelector('.modal-content').classList.add('show');
+            modalEstadoPedido.classList.add('show');
+        }
+
+        function closeEstadoModal() {
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            modalEstadoPedido.querySelector('.modal-content').classList.remove('show');
+            setTimeout(function() {
+                modalEstadoPedido.style.display = "none";
+            }, 300);
+        }
+
+        document.getElementById("formEstadoPedido").onsubmit = function(event) {
+            event.preventDefault();
+            var idPedido = document.getElementById("estadoPedidoId").value;
+            var estadoPedido = document.getElementById("estado_pedido").value;
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    console.log("Respuesta del servidor:", xhr.responseText); // Agregar este log
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                alertify.success(response.message || "Pedido actualizado correctamente");
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                alertify.error(response.message || "Error al procesar el pedido");
+                            }
+                        } catch (e) {
+                            console.error("Error al analizar la respuesta JSON:", e);
+                            console.error("Respuesta recibida:", xhr.responseText);
+                            alertify.error("Error inesperado en el servidor");
+                        }
+                    } else {
+                        console.error("Error HTTP:", xhr.status);
+                        alertify.error("Error de conexión al actualizar el pedido");
+                    }
+                }
+            };
+
+            xhr.open("POST", "../controller/pedidos_controller.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("pedido_id=" + encodeURIComponent(idPedido) + "&nuevo_estado=" + encodeURIComponent(estadoPedido));
         };
-        xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
-        xhr.send();
-    }
 
-    function closeDetailsModal() {
-        var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-        modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
-        setTimeout(function() {
-            modalDetallesPedido.style.display = "none";
-        }, 300);
-    }
+        function abrirModalNuevoPedido() {
+            var modalNuevoPedido = document.getElementById("modalNuevoPedido");
+            modalNuevoPedido.style.display = "block";
+            modalNuevoPedido.querySelector('.modal-content').classList.add('show');
+            modalNuevoPedido.classList.add('show');
+        }
 
-    function abrirModalEstado(idPedido, estadoPedido) {
-        document.getElementById("estadoPedidoId").value = idPedido;
-        document.getElementById("estado_pedido").value = estadoPedido;
-        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-        modalEstadoPedido.style.display = "block";
-        modalEstadoPedido.querySelector('.modal-content').classList.add('show');
-        modalEstadoPedido.classList.add('show');
-    }
+        function closeNuevoPedidoModal() {
+            var modalNuevoPedido = document.getElementById("modalNuevoPedido");
+            modalNuevoPedido.querySelector('.modal-content').classList.remove('show');
+            setTimeout(function() {
+                modalNuevoPedido.style.display = "none";
+            }, 300);
+        }
 
-    function closeEstadoModal() {
-        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-        modalEstadoPedido.querySelector('.modal-content').classList.remove('show');
-        setTimeout(function() {
-            modalEstadoPedido.style.display = "none";
-        }, 300);
-    }
-
-    document.getElementById("formEstadoPedido").onsubmit = function(event) {
-        event.preventDefault();
-        var idPedido = document.getElementById("estadoPedidoId").value;
-        var estadoPedido = document.getElementById("estado_pedido").value;
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                console.log("Respuesta del servidor:", xhr.responseText); // Agregar este log
-                if (xhr.status == 200) {
+        document.getElementById("formNuevoPedido").onsubmit = function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
                     try {
                         var response = JSON.parse(xhr.responseText);
                         if (response.success) {
-                            alertify.success(response.message || "Pedido actualizado correctamente");
+                            alertify.success(response.message || "Pedido creado correctamente");
                             setTimeout(function() {
                                 location.reload();
                             }, 1000);
                         } else {
-                            alertify.error(response.message || "Error al procesar el pedido");
+                            alertify.error(response.message || "Error al crear el pedido");
                         }
                     } catch (e) {
                         console.error("Error al analizar la respuesta JSON:", e);
                         console.error("Respuesta recibida:", xhr.responseText);
-                        alertify.error("Error inesperado en el servidor");
+                        alertify.error("Error inesperado en el servidor: " + xhr.responseText);
                     }
-                } else {
-                    console.error("Error HTTP:", xhr.status);
-                    alertify.error("Error de conexión al actualizar el pedido");
                 }
-            }
+            };
+
+            xhr.open("POST", "../controller/pedidos_controller.php", true);
+            xhr.send(formData);
         };
 
-        xhr.open("POST", "../controller/pedidos_controller.php", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send("pedido_id=" + encodeURIComponent(idPedido) + "&nuevo_estado=" + encodeURIComponent(estadoPedido));
-    };
-
-    function abrirModalNuevoPedido() {
-        var modalNuevoPedido = document.getElementById("modalNuevoPedido");
-        modalNuevoPedido.style.display = "block";
-        modalNuevoPedido.querySelector('.modal-content').classList.add('show');
-        modalNuevoPedido.classList.add('show');
-    }
-
-    function closeNuevoPedidoModal() {
-        var modalNuevoPedido = document.getElementById("modalNuevoPedido");
-        modalNuevoPedido.querySelector('.modal-content').classList.remove('show');
-        setTimeout(function() {
-            modalNuevoPedido.style.display = "none";
-        }, 300);
-    }
-
-    document.getElementById("formNuevoPedido").onsubmit = function(event) {
-        event.preventDefault();
-        var formData = new FormData(this);
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                try {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        alertify.success(response.message || "Pedido creado correctamente");
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        alertify.error(response.message || "Error al crear el pedido");
-                    }
-                } catch (e) {
-                    console.error("Error al analizar la respuesta JSON:", e);
-                    console.error("Respuesta recibida:", xhr.responseText);
-                    alertify.error("Error inesperado en el servidor: " + xhr.responseText);
-                }
+        function toggleUserOptions() {
+            var userOptionsContainer = document.getElementById("userOptionsContainer");
+            if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
+                userOptionsContainer.style.display = "block";
+            } else {
+                userOptionsContainer.style.display = "none";
             }
-        };
-
-        xhr.open("POST", "../controller/pedidos_controller.php", true);
-        xhr.send(formData);
-    };
-
-    function toggleUserOptions() {
-        var userOptionsContainer = document.getElementById("userOptionsContainer");
-        if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
-            userOptionsContainer.style.display = "block";
-        } else {
-            userOptionsContainer.style.display = "none";
         }
-    }
 
-    window.onclick = function(event) {
-        var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-        if (event.target == modalDetallesPedido) {
-            closeDetailsModal();
+        window.onclick = function(event) {
+            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+            if (event.target == modalDetallesPedido) {
+                closeDetailsModal();
+            }
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            if (event.target == modalEstadoPedido) {
+                closeEstadoModal();
+            }
         }
-        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-        if (event.target == modalEstadoPedido) {
-            closeEstadoModal();
-        }
-    }
     </script>
 </body>
 
