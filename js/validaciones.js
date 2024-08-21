@@ -28,10 +28,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function validarNombre(input) {
     const nombre = input.value;
-    const regex = /^[a-zA-Z\s]{10,50}$/;
+    const regex = /^[a-zA-Z\s]{3,30}$/;
 
     if (!regex.test(nombre) && nombre.length > 0) {
-        mostrarAlerta('El nombre debe tener entre 10 y 50 caracteres y solo puede contener letras y espacios.');
+        mostrarAlerta('El nombre debe tener entre 3 y 30 caracteres y solo puede contener letras y espacios.');
     }
 }
 
@@ -73,10 +73,10 @@ function validarCelular(input) {
 
 function validarContacto(input) {
     const contacto = input.value;
-    const regex = /^[a-zA-Z0-9\s]{1,50}$/;
+    const regex = /^[a-zA-Z0-9\s]{1,25}$/;
 
     if (!regex.test(contacto) && contacto.length > 0) {
-        mostrarAlerta('El contacto debe tener hasta 50 caracteres y no puede contener caracteres especiales.');
+        mostrarAlerta('El contacto debe tener hasta 25 caracteres y no puede contener caracteres especiales.');
     }
 }
 
@@ -133,11 +133,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function validarNombreProducto(input) {
     const nombre = input.value;
-    const regex = /^[a-zA-Z0-9\s]{4,50}$/;
+    const regex = /^[a-zA-Z0-9\s]{4,40}$/;
 
     if (nombre.length === 0) {
         mostrarAlerta('El campo de nombre del producto no puede estar vacío.');
-    } else if (nombre.length > 50) {
+    } else if (nombre.length > 40) {
         mostrarAlerta('El nombre del producto no puede tener más de 50 caracteres.');
     } else if (nombre.length <= 3) {
         mostrarAlerta('El nombre del producto debe tener más de 3 caracteres.');
@@ -168,7 +168,7 @@ function validarDescripcionProducto(input) {
 
     if (descripcion.length === 0) {
         mostrarAlerta('El campo de descripción del producto no puede estar vacío.');
-    } else if (descripcion.length < 10 || descripcion.length > 300) {
+    } else if (descripcion.length < 5 || descripcion.length > 300) {
         mostrarAlerta('La descripción debe tener entre 10 y 300 caracteres.');
     } else if (!regexEspeciales.test(descripcion) && descripcion.length > 0) {
         mostrarAlerta('La descripción no puede contener caracteres especiales.');
@@ -266,11 +266,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function validarNombreInsumo(input) {
     const nombre = input.value;
-    const regex = /^[a-zA-Z0-9\s]{5,50}$/;
+    const regex = /^[a-zA-Z0-9\s]{3,30}$/;
 
-    if (nombre.length < 5) {
+    if (nombre.length < 3) {
         mostrarAlerta('El nombre del insumo debe tener al menos 5 caracteres.');
-    } else if (nombre.length > 50) {
+    } else if (nombre.length > 30) {
         mostrarAlerta('El nombre del insumo no puede exceder los 50 caracteres.');
     } else if (/[^a-zA-Z0-9\s]/.test(nombre)) {
         mostrarAlerta('El nombre del insumo solo puede contener caracteres alfanuméricos.');
@@ -317,13 +317,13 @@ function validarFechaVencimiento(input) {
 
 function validarMarca(input) {
     const marca = input.value;
-    const regex = /^[a-zA-Z0-9,\.\s]{10,50}$/;
+    const regex = /^[a-zA-Z0-9,\.\s]{3,25}$/;
 
     if (marca.trim() === '') {
         mostrarAlerta('El campo de marca no puede estar vacío.');
-    } else if (marca.length < 10) {
+    } else if (marca.length < 3) {
         mostrarAlerta('La marca debe tener al menos 10 caracteres.');
-    } else if (marca.length > 50) {
+    } else if (marca.length > 25) {
         mostrarAlerta('La marca no puede exceder los 50 caracteres.');
     } else if (/^[\W]+$/.test(marca)) {
         mostrarAlerta('La marca no puede contener solo caracteres especiales.');
@@ -340,8 +340,8 @@ function validarCantidad(input) {
         mostrarAlerta('El campo de cantidad no puede estar vacío.');
     } else if (parseInt(cantidad) <= 0) {
         mostrarAlerta('La cantidad debe ser un número positivo mayor a 0.');
-    } else if (parseInt(cantidad) > 15) {
-        mostrarAlerta('La cantidad no puede ser mayor a 15.');
+    } else if (parseInt(cantidad) > 99) {
+        mostrarAlerta('La cantidad no puede ser mayor a 99.');
     } else if (!regexCantidad.test(cantidad)) {
         mostrarAlerta('La cantidad debe ser un número entero.');
     }
