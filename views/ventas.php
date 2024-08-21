@@ -60,6 +60,7 @@ $total_paginas = ceil($total_ventas / $items_por_pagina);
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -71,6 +72,7 @@ $total_paginas = ceil($total_ventas / $items_por_pagina);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="./css/ventas11.css">
 </head>
+
 <body>
     <div class="container">
         <?php include 'sidebar.php'; ?>
@@ -79,14 +81,16 @@ $total_paginas = ceil($total_ventas / $items_por_pagina);
                 <div class="title-container">
                     <h1>Ventas</h1>
                     <div class="search-bar">
-                        <input type="text" placeholder="Buscar..." />
-                        <button type="button"><i class="fa fa-search"></i></button>
+                        <input type="text" id="searchVentas" placeholder="Buscar..." onkeyup="buscarVenta()" />
+                        <button type="button" onclick="buscarVenta()"><i class="fa fa-search"></i></button>
                     </div>
+
                 </div>
                 <div class="profile-div">
                     <div class="profile-inner-container">
                         <p class="user1" onclick="toggleUserOptions()">
-                            <i class="fa fa-user"></i> <?php echo isset($_SESSION['correo_electronico']) ? $_SESSION['correo_electronico'] : ''; ?>
+                            <i class="fa fa-user"></i>
+                            <?php echo isset($_SESSION['correo_electronico']) ? $_SESSION['correo_electronico'] : ''; ?>
                         </p>
                     </div>
                     <div id="userOptionsContainer" class="user-options-container">
@@ -175,59 +179,85 @@ $total_paginas = ceil($total_ventas / $items_por_pagina);
     </div>
 
     <script>
-        function verDetallesVenta(idVenta) {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        var detallesHtml = '<h2>Datos del Cliente</h2>';
-                        detallesHtml += '<div><strong>Nombre Usuario:</strong> ' + response.usuario.nombre_usuario + '<br>';
-                        detallesHtml += '<strong>Correo Electrónico:</strong> ' + response.usuario.correo_electronico + '<br><br></div>';
+    function verDetallesVenta(idVenta) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.success) {
+                    var detallesHtml = '<h2>Datos del Cliente</h2>';
+                    detallesHtml += '<div><strong>Nombre Usuario:</strong> ' + response.usuario.nombre_usuario +
+                        '<br>';
+                    detallesHtml += '<strong>Correo Electrónico:</strong> ' + response.usuario.correo_electronico +
+                        '<br><br></div>';
 
-                        detallesHtml += '<h2>Detalles de la Venta</h2>';
-                        response.detalles.forEach(function(detalle) {
-                            detallesHtml += '<div class="detail-item">';
-                            detallesHtml += '<strong>ID Detalle Venta:</strong> ' + detalle.id_detalle_venta + '<br>';
-                            detallesHtml += '<strong>Nombre Producto:</strong> ' + detalle.nombre_producto + '<br>';
-                            detallesHtml += '<strong>Cantidad:</strong> ' + detalle.cantidad + '<br>';
-                            detallesHtml += '<strong>Valor Unitario:</strong> ' + detalle.valor_unitario + '<br>';
-                            detallesHtml += '<strong>Total Venta:</strong> ' + detalle.total_venta + '<br>';
-                            detallesHtml += '</div>';
-                        });
-                        document.getElementById("detalles-venta").innerHTML = detallesHtml;
-                        var modalDetallesVenta = document.getElementById("modalDetallesVenta");
-                        modalDetallesVenta.style.display = "block";
-                        modalDetallesVenta.classList.add('show');
-                        modalDetallesVenta.querySelector('.modal-content').classList.add('show');
-                    } else {
-                        document.getElementById("detalles-venta").innerText = response.message;
-                    }
+                    detallesHtml += '<h2>Detalles de la Venta</h2>';
+                    response.detalles.forEach(function(detalle) {
+                        detallesHtml += '<div class="detail-item">';
+                        detallesHtml += '<strong>ID Detalle Venta:</strong> ' + detalle.id_detalle_venta +
+                            '<br>';
+                        detallesHtml += '<strong>Nombre Producto:</strong> ' + detalle.nombre_producto +
+                            '<br>';
+                        detallesHtml += '<strong>Cantidad:</strong> ' + detalle.cantidad + '<br>';
+                        detallesHtml += '<strong>Valor Unitario:</strong> ' + detalle.valor_unitario +
+                            '<br>';
+                        detallesHtml += '<strong>Total Venta:</strong> ' + detalle.total_venta + '<br>';
+                        detallesHtml += '</div>';
+                    });
+                    document.getElementById("detalles-venta").innerHTML = detallesHtml;
+                    var modalDetallesVenta = document.getElementById("modalDetallesVenta");
+                    modalDetallesVenta.style.display = "block";
+                    modalDetallesVenta.classList.add('show');
+                    modalDetallesVenta.querySelector('.modal-content').classList.add('show');
+                } else {
+                    document.getElementById("detalles-venta").innerText = response.message;
                 }
-            };
-            xhr.open("GET", "../controller/obtener_detalles_venta.php?id_venta=" + idVenta, true);
-            xhr.send();
-        }
-
-        function cerrarModalDetallesVenta() {
-            var modalDetallesVenta = document.getElementById("modalDetallesVenta");
-            modalDetallesVenta.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            var modalDetallesVenta = document.getElementById("modalDetallesVenta");
-            if (event.target == modalDetallesVenta) {
-                cerrarModalDetallesVenta();
             }
-        }
+        };
+        xhr.open("GET", "../controller/obtener_detalles_venta.php?id_venta=" + idVenta, true);
+        xhr.send();
+    }
 
-        function generarPDFIndividual(idVenta) {
-            window.open('generar_pdf_venta.php?id_venta=' + idVenta, '_blank');
-        }
+    function cerrarModalDetallesVenta() {
+        var modalDetallesVenta = document.getElementById("modalDetallesVenta");
+        modalDetallesVenta.style.display = "none";
+    }
 
-        function generarPDFGeneral() {
-            window.open('generar_pdf_general.php', '_blank');
+    window.onclick = function(event) {
+        var modalDetallesVenta = document.getElementById("modalDetallesVenta");
+        if (event.target == modalDetallesVenta) {
+            cerrarModalDetallesVenta();
         }
+    }
+
+    function generarPDFIndividual(idVenta) {
+        window.open('generar_pdf_venta.php?id_venta=' + idVenta, '_blank');
+    }
+
+    function generarPDFGeneral() {
+        window.open('generar_pdf_general.php', '_blank');
+    }
+
+    function buscarVenta() {
+  const input = document.getElementById('searchVentas').value.toLowerCase();
+  const tableRows = document.querySelectorAll('#ventasTableBody tr');
+  
+  tableRows.forEach(row => {
+    // Concatenar todo el texto de la fila para buscar en todos los campos
+    const rowText = Array.from(row.getElementsByTagName('td'))
+      .map(td => td.textContent.toLowerCase())
+      .join(' ');
+    
+    // Verificar si el texto de búsqueda está en alguna parte de la fila
+    if (rowText.includes(input)) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+
     </script>
 </body>
+
 </html>
