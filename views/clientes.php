@@ -37,88 +37,107 @@ $total_paginas = ceil($total_clientes / $items_por_pagina);
 </head>
 
 <body>
-<div class="container">
-    <?php include 'sidebar.php'; ?>
-    <div class="main">
-        <div class="head-section">
-            <div class="title-container">
-                <h1>Clientes</h1>
-                <div class="search-bar">
-                    <input type="text" placeholder="Buscar..." />
-                    <button type="button"><i class="fa fa-search"></i></button>
+    <div class="container">
+        <?php include 'sidebar.php'; ?>
+        <div class="main">
+            <div class="head-section">
+                <div class="title-container">
+                    <h1>Clientes</h1>
+                    <div class="search-bar">
+                        <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarCliente()" />
+                        <button type="button" onclick="buscarCliente()"><i class="fa fa-search"></i></button>
+                    </div>
                 </div>
-            </div>
-            <div class="profile-div">
-                <div class="profile-inner-container">
-                    <p class="user1" onclick="toggleUserOptions()">
-                        <i class="fa fa-user"></i> <?php echo isset($_SESSION['correo_electronico']) ? $_SESSION['correo_electronico'] : ''; ?>
-                    </p>
+                <div class="profile-div">
+                    <div class="profile-inner-container">
+                        <p class="user1" onclick="toggleUserOptions()">
+                            <i class="fa fa-user"></i> <?php echo isset($_SESSION['correo_electronico']) ? $_SESSION['correo_electronico'] : ''; ?>
+                        </p>
+                    </div>
+                    <div id="userOptionsContainer" class="user-options-container">
+                        <p><i class="fa fa-cog"></i> Configuración</p>
+                        <a href="../loginRegister.php">
+                            <p><i class="fa fa-power-off"></i> Cerrar sesión</p>
+                        </a>
+                    </div>
                 </div>
-                <div id="userOptionsContainer" class="user-options-container">
-                    <p><i class="fa fa-cog"></i> Configuración</p>
-                    <a href="../loginRegister.php">
-                        <p><i class="fa fa-power-off"></i> Cerrar sesión</p>
-                    </a>
-                </div>
-            </div>
-            <br><br>
-            <div class="content">
                 <br><br>
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Correo Electrónico</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            if (isset($clientes) && is_array($clientes)) {
-                                foreach ($clientes as $cliente) {
-                                    echo "<tr>";
-                                    echo "<td>" . htmlspecialchars($cliente['nombre_cliente']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($cliente['correo_electronico']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($cliente['estado_cliente']) . "</td>";
-                                    echo "</tr>";
+                <div class="content">
+                    <br><br>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Correo Electrónico</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if (isset($clientes) && is_array($clientes)) {
+                                    foreach ($clientes as $cliente) {
+                                        echo "<tr>";
+                                        echo "<td>" . htmlspecialchars($cliente['nombre_cliente']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($cliente['correo_electronico']) . "</td>";
+                                        echo "<td>" . htmlspecialchars($cliente['estado_cliente']) . "</td>";
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='3'>No hay clientes disponibles.</td></tr>";
                                 }
-                            } else {
-                                echo "<tr><td colspan='3'>No hay clientes disponibles.</td></tr>";
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                </div>
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
 
-                <div class="pagination">
-                    <?php
-                    if ($total_paginas > 0) {
-                        for ($i = 1; $i <= $total_paginas; $i++) {
-                            if ($i == $pagina_actual) {
-                                echo "<a href='clientes.php?pagina=$i' class='active'>$i</a>";
-                            } else {
-                                echo "<a href='clientes.php?pagina=$i'>$i</a>";
+                    <div class="pagination">
+                        <?php
+                        if ($total_paginas > 0) {
+                            for ($i = 1; $i <= $total_paginas; $i++) {
+                                if ($i == $pagina_actual) {
+                                    echo "<a href='clientes.php?pagina=$i' class='active'>$i</a>";
+                                } else {
+                                    echo "<a href='clientes.php?pagina=$i'>$i</a>";
+                                }
                             }
                         }
-                    }
-                    ?>
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    function toggleUserOptions() {
-        var userOptionsContainer = document.getElementById("userOptionsContainer");
-        if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
-            userOptionsContainer.style.display = "block";
-        } else {
-            userOptionsContainer.style.display = "none";
+    <script>
+        function toggleUserOptions() {
+            var userOptionsContainer = document.getElementById("userOptionsContainer");
+            if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
+                userOptionsContainer.style.display = "block";
+            } else {
+                userOptionsContainer.style.display = "none";
+            }
         }
-    }
-</script>
+
+        function buscarCliente() {
+            const input = document.getElementById('search').value.toLowerCase();
+            const tableRows = document.querySelectorAll('tbody tr');
+
+            tableRows.forEach(row => {
+                // Concatenar todo el texto de la fila para buscar en todos los campos
+                const rowText = Array.from(row.getElementsByTagName('td'))
+                    .map(td => td.textContent.toLowerCase())
+                    .join(' ');
+
+                // Verificar si el texto de búsqueda está en alguna parte de la fila
+                if (rowText.includes(input)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
 
 </body>
 
