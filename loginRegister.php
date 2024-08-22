@@ -375,7 +375,7 @@
                 sendButton.innerHTML = '<span class="spinner" id="loading-spinner"></span>';
                 spinner.style.display = 'inline-block';
 
-                fetch('../exterminio1/controller/forgot_password.php', {
+                fetch('https://api-movil-tj84.onrender.com/controller/forgot_password.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',

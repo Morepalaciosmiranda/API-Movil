@@ -7,6 +7,9 @@ include '../includes/conexion.php';
 
 
 header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 
 $response = array();
 
@@ -44,7 +47,7 @@ try {
                     $mail->isHTML(true);
                     $mail->Subject = 'Restablecer Contraseña';
        
-                    $reset_link = "http://localhost/exterminio1/reset_password.php?token=" . $token;
+                    $reset_link = "https://api-movil-tj84.onrender.com/reset_password.php?token=" . $token;
                     
                     $mail->Body = "Haz clic en el siguiente enlace para restablecer tu contraseña: <a href='$reset_link'>$reset_link</a>";
 
