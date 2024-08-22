@@ -8,7 +8,8 @@ WORKDIR /var/www/html
 RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
-    git
+    git \
+    curl
 
 # Instala las extensiones necesarias de PHP
 RUN docker-php-ext-install mysqli pdo pdo_mysql zip
@@ -19,8 +20,14 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copia el código fuente de tu aplicación al contenedor.
 COPY . .
 
+# Instala TCPDF manualmente
+RUN mkdir -p vendor/tecnickcom/tcpdf && \
+    curl -L https://github.com/tecnickcom/TCPDF/archive/6.4.1.tar.gz | tar xz -C vendor/tecnickcom/tcpdf --strip-components=1
+
 # Instala las dependencias de Composer
-RUN composer install --no-dev --optimize-autoloader
+RUN composer clear-cache && \
+    rm -rf vendor && \
+    composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
 # Instala y habilita el módulo MPM prefork y rewrite
 RUN a2enmod mpm_prefork rewrite
