@@ -185,48 +185,48 @@ $insumos = obtenerInsumos();
         </div>
 
         <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var modalAgregar = document.getElementById("modalAgregarProducto");
-            var modalEditar = document.getElementById("modalEditarProducto");
-            var insumoCount = 1;
+            document.addEventListener('DOMContentLoaded', function() {
+                var modalAgregar = document.getElementById("modalAgregarProducto");
+                var modalEditar = document.getElementById("modalEditarProducto");
+                var insumoCount = 1;
 
-            window.abrirModalAgregar = function() {
-                modalAgregar.style.display = "block";
-            }
-
-            window.cerrarModalAgregar = function() {
-                modalAgregar.style.display = "none";
-            }
-
-            window.abrirModalEditar = function(id, nombre, descripcion, precio) {
-                document.getElementById("edit-id").value = id;
-                document.getElementById("edit-nombre").value = nombre;
-                document.getElementById("edit-descripcion").value = descripcion;
-                document.getElementById("edit-precio").value = precio;
-                document.getElementById("edit-imagen").value = "";
-                modalEditar.style.display = "block";
-            }
-
-            window.cerrarModalEditar = function() {
-                modalEditar.style.display = "none";
-            }
-
-            window.onclick = function(event) {
-                if (event.target == modalAgregar) {
-                    cerrarModalAgregar();
+                window.abrirModalAgregar = function() {
+                    modalAgregar.style.display = "block";
                 }
-                if (event.target == modalEditar) {
-                    cerrarModalEditar();
+
+                window.cerrarModalAgregar = function() {
+                    modalAgregar.style.display = "none";
                 }
-            }
 
-            window.agregarInsumo = function() {
-                insumoCount++;
-                var newInsumoDiv = document.createElement("div");
-                newInsumoDiv.id = "insumo-" + insumoCount;
-                newInsumoDiv.className = "insumo-item";
+                window.abrirModalEditar = function(id, nombre, descripcion, precio) {
+                    document.getElementById("edit-id").value = id;
+                    document.getElementById("edit-nombre").value = nombre;
+                    document.getElementById("edit-descripcion").value = descripcion;
+                    document.getElementById("edit-precio").value = precio;
+                    document.getElementById("edit-imagen").value = "";
+                    modalEditar.style.display = "block";
+                }
 
-                newInsumoDiv.innerHTML = `
+                window.cerrarModalEditar = function() {
+                    modalEditar.style.display = "none";
+                }
+
+                window.onclick = function(event) {
+                    if (event.target == modalAgregar) {
+                        cerrarModalAgregar();
+                    }
+                    if (event.target == modalEditar) {
+                        cerrarModalEditar();
+                    }
+                }
+
+                window.agregarInsumo = function() {
+                    insumoCount++;
+                    var newInsumoDiv = document.createElement("div");
+                    newInsumoDiv.id = "insumo-" + insumoCount;
+                    newInsumoDiv.className = "insumo-item";
+
+                    newInsumoDiv.innerHTML = `
                     <label for="insumo">Insumo:</label>
                     <select id="insumo_${insumoCount}" name="insumo_id[]" required>
                         <?php foreach ($insumos as $insumo) { ?>
@@ -240,191 +240,195 @@ $insumos = obtenerInsumos();
                     <button type="button" onclick="eliminarInsumo('insumo-${insumoCount}')">Eliminar</button>
                 `;
 
-                document.getElementById("insumos-container").appendChild(newInsumoDiv);
-            }
-
-            window.eliminarInsumo = function(idInsumo) {
-                var insumoDiv = document.getElementById(idInsumo);
-                if (insumoDiv) {
-                    insumoDiv.parentNode.removeChild(insumoDiv);
+                    document.getElementById("insumos-container").appendChild(newInsumoDiv);
                 }
-            }
 
-            window.confirmarEliminacion = function(id) {
-                Swal.fire({
-                    title: '¿Estás seguro de eliminar este producto?',
-                    text: "No podrás revertir esto!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminarlo!',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        fetch(`../controller/productos_controller.php?eliminar=${id}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.exito) {
-                                    Swal.fire({
-                                        title: 'Eliminado!',
-                                        text: data.mensaje,
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    }).then(() => {
-                                        window.location.reload();
-                                    });
-                                } else {
+                window.eliminarInsumo = function(idInsumo) {
+                    var insumoDiv = document.getElementById(idInsumo);
+                    if (insumoDiv) {
+                        insumoDiv.parentNode.removeChild(insumoDiv);
+                    }
+                }
+
+                window.confirmarEliminacion = function(id) {
+                    Swal.fire({
+                        title: '¿Estás seguro de eliminar este producto?',
+                        text: "No podrás revertir esto!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, eliminarlo!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`../controller/productos_controller.php?eliminar=${id}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.exito) {
+                                        Swal.fire({
+                                            title: 'Eliminado!',
+                                            text: data.mensaje,
+                                            icon: 'success',
+                                            confirmButtonText: 'OK'
+                                        }).then(() => {
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: data.mensaje,
+                                            icon: 'error',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
                                     Swal.fire({
                                         title: 'Error',
-                                        text: data.mensaje,
+                                        text: 'Hubo un error al procesar la solicitud.',
                                         icon: 'error',
                                         confirmButtonText: 'OK'
                                     });
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Hubo un error al procesar la solicitud.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
                                 });
-                            });
-                    }
-                });
-            }
-
-            document.getElementById('formAgregarProducto').addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                Swal.fire({
-                    title: '¿Estás seguro de agregar este producto?',
-                    text: "Una vez agregado, no podrás revertir esta acción.",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, agregar producto',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var formData = new FormData(event.target);
-                        formData.append('accion', 'agregar');
-
-                        fetch('../controller/productos_controller.php', {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.exito) {
-                                    Swal.fire({
-                                        title: 'Éxito',
-                                        text: data.mensaje,
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    }).then(() => {
-                                        window.location.reload();
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: 'Error',
-                                        text: data.mensaje,
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Hubo un error al procesar la solicitud.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
-                            });
-                    }
-                });
-            });
-
-            document.getElementById('formEditarProducto').addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                Swal.fire({
-                    title: '¿Confirmar edición?',
-                    text: "¿Estás seguro de que deseas guardar los cambios?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, guardar cambios',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var formData = new FormData(event.target);
-                        formData.append('accion', 'editar');
-
-                        fetch('../controller/productos_controller.php', {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.exito) {
-                                    Swal.fire({
-                                        title: 'Éxito',
-                                        text: data.mensaje,
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    }).then(() => {
-                                        window.location.reload();
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: 'Error',
-                                        text: data.mensaje,
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Hubo un error al procesar la solicitud.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
-                            });
-                    }
-                });
-            });
-
-            window.buscarProducto = function() {
-                var input, filter, table, tr, td, i, txtValue;
-                input = document.getElementById("search");
-                filter = input.value.toUpperCase();
-                table = document.getElementById("productosTableBody");
-                tr = table.getElementsByTagName("tr");
-
-                for (i = 0; i < tr.length; i++) {
-                    td = tr[i].getElementsByTagName("td")[1];
-                    if (td) {
-                        txtValue = td.textContent || td.innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            tr[i].style.display = "";
-                        } else {
-                            tr[i].style.display = "none";
                         }
+                    });
+                }
+
+                document.getElementById('formAgregarProducto').addEventListener('submit', function(event) {
+                    event.preventDefault();
+
+                    Swal.fire({
+                        title: '¿Estás seguro de agregar este producto?',
+                        text: "Una vez agregado, no podrás revertir esta acción.",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, agregar producto',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            var formData = new FormData(event.target);
+                            formData.append('accion', 'agregar');
+
+                            fetch('../controller/productos_controller.php', {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.exito) {
+                                        Swal.fire({
+                                            title: 'Éxito',
+                                            text: data.mensaje,
+                                            icon: 'success',
+                                            confirmButtonText: 'OK'
+                                        }).then(() => {
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: data.mensaje,
+                                            icon: 'error',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: 'Hubo un error al procesar la solicitud.',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                });
+                        }
+                    });
+                });
+
+                document.getElementById('formEditarProducto').addEventListener('submit', function(event) {
+                    event.preventDefault();
+
+                    Swal.fire({
+                        title: '¿Confirmar edición?',
+                        text: "¿Estás seguro de que deseas guardar los cambios?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, guardar cambios',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            var formData = new FormData(event.target);
+                            formData.append('accion', 'editar');
+
+                            fetch('../controller/productos_controller.php', {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.exito) {
+                                        Swal.fire({
+                                            title: 'Éxito',
+                                            text: data.mensaje,
+                                            icon: 'success',
+                                            confirmButtonText: 'OK'
+                                        }).then(() => {
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: data.mensaje,
+                                            icon: 'error',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: 'Hubo un error al procesar la solicitud.',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                });
+                        }
+                    });
+                });
+
+                window.buscarProducto = function() {
+                    var input, filter, table, tr, i, j, td, txtValue;
+                    input = document.getElementById("search");
+                    filter = input.value.toUpperCase();
+                    table = document.getElementById("productosTableBody");
+                    tr = table.getElementsByTagName("tr");
+
+                    for (i = 0; i < tr.length; i++) {
+                        var match = false;
+                        td = tr[i].getElementsByTagName("td");
+                        for (j = 0; j < td.length; j++) {
+                            if (td[j]) {
+                                txtValue = td[j].textContent || td[j].innerText;
+                                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                    match = true;
+                                    break;
+                                }
+                            }
+                        }
+                        tr[i].style.display = match ? "" : "none";
                     }
                 }
-            }
-        });
+            });
         </script>
     </div>
 </body>
+
 </html>
