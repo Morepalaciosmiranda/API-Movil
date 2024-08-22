@@ -84,11 +84,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
         $mail->Username   = 'palaciosmirandayefersondavid@gmail.com';
-        $mail->Password   = 'lnjreeskidkcfqpc';
+        $mail->Password   = 'cjcy fcje kkoz hdfq';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
-        $mail->setFrom('palaciosmirandayefersondavid@gmail.com', 'ExterminioFull');
+        $mail->setFrom('palaciosmirandayefersondavid@gmail.com', 'Exterminio');
         $mail->addAddress($correo_electronico);
 
         $mail->isHTML(true);
