@@ -370,55 +370,69 @@
                     title: 'Error',
                     text: 'Por favor, ingrese su correo electrónico.',
                 });
-            } else {
-                sendButton.disabled = true;
-                sendButton.innerHTML = '<span class="spinner" id="loading-spinner"></span>';
-                spinner.style.display = 'inline-block';
+                return;
+            }
 
-                fetch('https://api-movil-tj84.onrender.com/controller/forgot_password.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams({
-                            'correo_electronico': email
-                        })
+            sendButton.disabled = true;
+            sendButton.innerHTML = '<span class="spinner" id="loading-spinner"></span>';
+            spinner.style.display = 'inline-block';
+
+            fetch('https://api-movil-tj84.onrender.com/controller/forgot_password.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'correo_electronico': email
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        sendButton.disabled = false;
-                        sendButton.innerHTML = 'Enviar';
-                        spinner.style.display = 'none';
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Error parsing JSON:', text);
+                        throw new Error('La respuesta del servidor no es JSON válido');
+                    }
 
-                        if (data.status === 'error') {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message,
-                            });
-                        } else if (data.status === 'success') {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Enlace Enviado',
-                                text: data.message,
-                            }).then(() => {
-                                document.getElementById('forgot-password-modal').style.display = 'none';
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        sendButton.disabled = false;
-                        sendButton.innerHTML = 'Enviar';
-                        spinner.style.display = 'none';
+                    sendButton.disabled = false;
+                    sendButton.innerHTML = 'Enviar';
+                    spinner.style.display = 'none';
 
-                        console.error('Error en la solicitud:', error);
+                    if (data.status === 'error') {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'Ocurrió un error en el servidor. Por favor, inténtelo de nuevo más tarde.',
+                            text: data.message,
                         });
+                    } else if (data.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Enlace Enviado',
+                            text: data.message,
+                        }).then(() => {
+                            document.getElementById('forgot-password-modal').style.display = 'none';
+                        });
+                    }
+                })
+                .catch(error => {
+                    sendButton.disabled = false;
+                    sendButton.innerHTML = 'Enviar';
+                    spinner.style.display = 'none';
+
+                    console.error('Error en la solicitud:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error en el servidor. Por favor, inténtelo de nuevo más tarde.',
                     });
-            }
+                });
         }
     </script>
 </body>

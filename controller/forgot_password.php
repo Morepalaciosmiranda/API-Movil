@@ -5,11 +5,17 @@ use PHPMailer\PHPMailer\Exception;
 require '../vendor/autoload.php';
 include '../includes/conexion.php';
 
-
-header('Content-Type: application/json');
+// Configurar encabezados CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
+header('Content-Type: application/json');
+
+// Activar reporte de errores
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+$response = array('status' => 'error', 'message' => 'Ocurrió un error desconocido');
 
 $response = array();
 
