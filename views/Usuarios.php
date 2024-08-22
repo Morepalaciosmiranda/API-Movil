@@ -118,7 +118,7 @@ $result = $conn->query($sql);
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="userTableBody">
                             <?php
                             $sql = "SELECT * FROM usuarios";
                             $result = $conn->query($sql);
@@ -574,7 +574,7 @@ $result = $conn->query($sql);
 
             function buscarUsuario() {
                 const input = document.getElementById('search').value.toLowerCase();
-                const tableRows = document.querySelectorAll('#usuariosTableBody tr');
+                const tableRows = document.querySelectorAll('#userTableBody tr');
 
                 tableRows.forEach(row => {
                     // Concatenar todo el texto de la fila para buscar en todos los campos
