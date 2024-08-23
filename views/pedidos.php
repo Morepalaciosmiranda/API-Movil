@@ -134,7 +134,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                         echo "<tr><td colspan='5'>No hay pedidos disponibles.</td></tr>";
                     }
                     ?>
-                    </tbody>
+                </tbody>
                 </table>
                 <div class="pagination">
                     <?php
