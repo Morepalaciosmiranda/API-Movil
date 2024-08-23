@@ -438,7 +438,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         }
     }
 
-    function buscarPedido() {
+    function buscarPedid0() {
         const input = document.getElementById('search').value.toLowerCase();
         const tableRows = document.querySelectorAll(
         '#pedidoTableBody tr'); // Asegúrate de que el ID del cuerpo de la tabla sea correcto
