@@ -207,9 +207,8 @@ $total_paginas = ceil($total_ventas / $items_por_pagina);
 
                                             document.getElementById("detalles-venta").innerHTML = detallesHtml;
                                             var modalDetallesVenta = document.getElementById("modalDetallesVenta");
-                                            modalDetallesVenta.style.display = "block";
+                                            modalDetallesVenta.style.display = "flex"; // Cambiado a "flex"
                                             modalDetallesVenta.classList.add('show');
-                                            modalDetallesVenta.querySelector('.modal-content').classList.add('show');
                                         } else {
                                             console.error("Error del servidor:", response.message);
                                             alert("Error al obtener detalles de la venta: " + response.message);

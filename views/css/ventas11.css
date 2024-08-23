@@ -404,13 +404,12 @@ body {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 #modalDetallesVenta.show {
     display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #modalDetallesVenta .modal-content {
@@ -424,6 +423,7 @@ body {
     color: #ffffff;
     overflow-y: auto;
     position: relative;
+    margin: auto; /* Esto ayudará a centrar el contenido */
 }
 
 #modalDetallesVenta h2 {
