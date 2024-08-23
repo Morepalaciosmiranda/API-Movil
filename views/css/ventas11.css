@@ -432,7 +432,23 @@ body {
     margin-bottom: 20px;
 }
 
-#modalDetallesVenta .modal-body {
+#modalDetallesVenta h3 {
+    color: #ff5a0e;
+    margin-top: 20px;
+}
+
+.cliente-info {
+    background-color: #1a1a1a;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.cliente-info p {
+    margin: 10px 0;
+}
+
+.productos-lista {
     background-color: #1a1a1a;
     padding: 15px;
     border-radius: 5px;
@@ -440,7 +456,7 @@ body {
     overflow-y: auto;
 }
 
-#modalDetallesVenta .detail-item {
+.producto-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -448,11 +464,28 @@ body {
     border-bottom: 1px solid #333;
 }
 
-#modalDetallesVenta .detail-item:last-child {
+.producto-item:last-child {
     border-bottom: none;
 }
 
-#modalDetallesVenta .close-btn {
+.producto-nombre {
+    font-weight: bold;
+    flex: 2;
+}
+
+.producto-detalles {
+    display: flex;
+    flex: 3;
+    justify-content: space-between;
+}
+
+.producto-detalles span {
+    flex: 1;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+
+.close-btn {
     color: #aaa;
     float: right;
     font-size: 28px;
@@ -460,8 +493,9 @@ body {
     cursor: pointer;
 }
 
-#modalDetallesVenta .close-btn:hover,
-#modalDetallesVenta .close-btn:focus {
+.close-btn:hover,
+.close-btn:focus {
     color: #ff5a0e;
+    text-decoration: none;
 }
 
