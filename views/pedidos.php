@@ -75,8 +75,11 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 <div class="title-container">
                     <h1>Pedidos</h1>
                     <div class="search-bar">
-                    <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarPedido()" />
-                    <button type="button" onclick="buscarPedido()">
+                        <div class="search-bar">
+                            <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarPedido()" />
+                            <button type="button" onclick="buscarPedido()"><i class="fa fa-search"></i></button>
+                        </div>
+
                     </div>
 
                 </div>
@@ -112,6 +115,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
+                <tbody id="#pedidoTableBody tr">
                     <?php
                     if (count($pedidos) > 0) {
                         foreach ($pedidos as $row) {
@@ -130,6 +134,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                         echo "<tr><td colspan='5'>No hay pedidos disponibles.</td></tr>";
                     }
                     ?>
+                    </tbody>
                 </table>
                 <div class="pagination">
                     <?php
@@ -244,9 +249,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
     </div>
 
     <script>
-   
-
-
     function verDetallesPedido(idPedido) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
@@ -435,25 +437,26 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             closeEstadoModal();
         }
     }
+
     function buscarPedido() {
-  const input = document.getElementById('search').value.toLowerCase();
-  const tableRows = document.querySelectorAll('#pedidosTableBody tr');
-  
-  tableRows.forEach(row => {
-    // Concatenar todo el texto de la fila para buscar en todos los campos
-    const rowText = Array.from(row.getElementsByTagName('td'))
-      .map(td => td.textContent.toLowerCase())
-      .join(' ');
+        const input = document.getElementById('search').value.toLowerCase();
+        const tableRows = document.querySelectorAll(
+        '#pedidoTableBody tr'); // Asegúrate de que el ID del cuerpo de la tabla sea correcto
 
-    // Verificar si el texto de búsqueda está en alguna parte de la fila
-    if (rowText.includes(input)) {
-      row.style.display = '';
-    } else {
-      row.style.display = 'none';
+        tableRows.forEach(row => {
+            // Concatenar todo el texto de la fila para buscar en todos los campos
+            const rowText = Array.from(row.getElementsByTagName('td'))
+                .map(td => td.textContent.toLowerCase())
+                .join(' ');
+
+            // Verificar si el texto de búsqueda está en alguna parte de la fila
+            if (srowText.includes(input)) {
+                row.style.display = ''; // Mostrar fila
+            } else {
+                row.style.display = 'none'; // Ocultar fila
+            }
+        });
     }
-  });
-}
-
     </script>
 </body>
 
