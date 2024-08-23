@@ -75,8 +75,8 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 <div class="title-container">
                     <h1>Pedidos</h1>
                     <div class="search-bar">
-                        <input type="text" id="search" placeholder="Buscar..." onkeyup="debouncedBuscarProveedor()" />
-                        <button type="button" onclick="buscarProveedor()"><i class="fa fa-search"></i></button>
+                    <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarPedido()" />
+                    <button type="button" onclick="buscarPedido()">
                     </div>
 
                 </div>
@@ -244,31 +244,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
     </div>
 
     <script>
-    let debounceTimer;
-
-    function debouncedBuscarProveedor() {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(buscarProveedor, 300); // Espera 300 ms antes de ejecutar la búsqueda
-    }
-
-    function buscarProveedor() {
-        const input = document.getElementById('search').value.toLowerCase();
-        const tableRows = document.querySelectorAll('#proveedoresTableBody tr');
-
-        tableRows.forEach(row => {
-            // Concatenar todo el texto de la fila para buscar en todos los campos
-            const rowText = Array.from(row.getElementsByTagName('td'))
-                .map(td => td.textContent.toLowerCase())
-                .join(' ');
-
-            // Verificar si el texto de búsqueda está en alguna parte de la fila
-            if (rowText.includes(input)) {
-                row.style.display = ''; // Mostrar la fila
-            } else {
-                row.style.display = 'none'; // Ocultar la fila
-            }
-        });
-    }
+   
 
 
     function verDetallesPedido(idPedido) {
@@ -459,6 +435,25 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             closeEstadoModal();
         }
     }
+    function buscarPedido() {
+  const input = document.getElementById('search').value.toLowerCase();
+  const tableRows = document.querySelectorAll('#pedidosTableBody tr');
+  
+  tableRows.forEach(row => {
+    // Concatenar todo el texto de la fila para buscar en todos los campos
+    const rowText = Array.from(row.getElementsByTagName('td'))
+      .map(td => td.textContent.toLowerCase())
+      .join(' ');
+
+    // Verificar si el texto de búsqueda está en alguna parte de la fila
+    if (rowText.includes(input)) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+
     </script>
 </body>
 
