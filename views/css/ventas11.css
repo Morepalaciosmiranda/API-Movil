@@ -395,7 +395,7 @@ body {
 /* MODAL DETALLE */
 
 #modalDetallesVenta {
-    display: none; /* Ocultar modal por defecto */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -403,24 +403,53 @@ body {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4); /* Fondo oscuro semitransparente */
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#modalDetallesVenta.show {
+    display: flex;
 }
 
 #modalDetallesVenta .modal-content {
     background-color: #000000;
-    margin: 8% auto;
     padding: 20px;
     border: 1px solid #ff5a0e;
-    width: 80%;
+    width: 90%;
     max-width: 600px;
+    max-height: 80vh;
     border-radius: 8px;
-    margin-right: 600px;
-    margin-top: 350px;
+    color: #ffffff;
+    overflow-y: auto;
+    position: relative;
 }
 
 #modalDetallesVenta h2 {
     text-align: center;
+    color: #ff5a0e;
     margin-bottom: 20px;
+}
+
+#modalDetallesVenta .modal-body {
+    background-color: #1a1a1a;
+    padding: 15px;
+    border-radius: 5px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+#modalDetallesVenta .detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #333;
+}
+
+#modalDetallesVenta .detail-item:last-child {
+    border-bottom: none;
 }
 
 #modalDetallesVenta .close-btn {
@@ -435,6 +464,5 @@ body {
 #modalDetallesVenta .close-btn:focus {
     color: #ff5a0e;
     text-decoration: none;
-    cursor: pointer;
 }
 
