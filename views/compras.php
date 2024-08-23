@@ -69,8 +69,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                         <button type="button" onclick="buscarCompra()">
                             <i class="fa fa-search"></i>
                         </button>
-                    </div>
-
                 </div>
                 <div class="profile-div">
                     <div class="profile-inner-container">
@@ -556,23 +554,27 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
     }
 
     function buscarCompra() {
-        const input = document.getElementById('searchCompras').value.toLowerCase();
-        const tableRows = document.querySelectorAll('#comprasTableBody tr');
-
-        tableRows.forEach(row => {
-            // Concatenar todo el texto de la fila para buscar en todos los campos
-            const rowText = Array.from(row.getElementsByTagName('td'))
-                .map(td => td.textContent.toLowerCase())
-                .join(' ');
-
-            // Verificar si el texto de búsqueda está en alguna parte de la fila
-            if (rowText.includes(input)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
+            const input = document.getElementById('searchCompras');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('comprasTable');
+            const trs = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < trs.length; i++) {
+                const tds = trs[i].getElementsByTagName('td');
+                let showRow = false;
+                
+                for (let j = 0; j < tds.length - 1; j++) {
+                    if (tds[j]) {
+                        if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                            showRow = true;
+                            break;
+                        }
+                    }
+                }
+                
+                trs[i].style.display = showRow ? '' : 'none';
             }
-        });
-    }
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
