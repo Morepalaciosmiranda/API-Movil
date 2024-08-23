@@ -76,8 +76,8 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <h1>Pedidos</h1>
                     <div class="search-bar">
                         <div class="search-bar">
-                            <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarPedido()" />
-                            <button type="button" onclick="buscarPedido()"><i class="fa fa-search"></i></button>
+                        <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarPedido()" value="<?php echo htmlspecialchars($search_query); ?>" />
+                        <button type="button" onclick="buscarPedido()"><i class="fa fa-search"></i></button>
                         </div>
 
                     </div>
@@ -115,7 +115,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
-                <tbody id="#pedidoTableBody tr">
+                <tbody id="pedidoTableBody">
                     <?php
                     if (count($pedidos) > 0) {
                         foreach ($pedidos as $row) {
@@ -438,22 +438,17 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         }
     }
 
-    function buscarPedid0() {
-        const input = document.getElementById('search').value.toLowerCase();
-        const tableRows = document.querySelectorAll(
-        '#pedidoTableBody tr'); // Asegúrate de que el ID del cuerpo de la tabla sea correcto
-
-        tableRows.forEach(row => {
-            // Concatenar todo el texto de la fila para buscar en todos los campos
-            const rowText = Array.from(row.getElementsByTagName('td'))
+    function buscarPedido() {
+        var searchInput = document.getElementById('search').value.toLowerCase();
+        var rows = document.querySelectorAll('#pedidoTableBody tr');
+        rows.forEach(row => {
+            var rowText = Array.from(row.getElementsByTagName('td'))
                 .map(td => td.textContent.toLowerCase())
                 .join(' ');
-
-            // Verificar si el texto de búsqueda está en alguna parte de la fila
-            if (srowText.includes(input)) {
-                row.style.display = ''; // Mostrar fila
+            if (rowText.includes(searchInput)) {
+                row.style.display = '';
             } else {
-                row.style.display = 'none'; // Ocultar fila
+                row.style.display = 'none';
             }
         });
     }
