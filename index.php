@@ -308,14 +308,6 @@ if ($_SESSION['rol'] !== 'Usuario') {
                             var productos = JSON.parse(localStorage.getItem('shoppingCart')) || [];
 
                             if (productos.length > 0) {
-                                // Asegúrate de que la cantidad se incluya correctamente para cada producto
-                                productos = productos.map(producto => ({
-                                    id: producto.id,
-                                    nombre: producto.nombre,
-                                    precio: producto.precio,
-                                    cantidad: producto.cantidad // Asegúrate de que esto exista en tu objeto de producto
-                                }));
-
                                 document.getElementById('productos').value = JSON.stringify(productos);
 
                                 var form = document.getElementById('pedidoFormulario');
@@ -340,23 +332,12 @@ if ($_SESSION['rol'] !== 'Usuario') {
                                                 })
                                                 .then(response => response.text())
                                                 .then(data => {
-                                                    console.log("Respuesta del servidor:", data); // Para depuración
-                                                    try {
-                                                        const jsonResponse = JSON.parse(data);
-                                                        if (jsonResponse.success) {
-                                                            Swal.fire('Éxito', 'Pedido realizado correctamente.', 'success');
-                                                            document.getElementById('modalContainer').style.display = 'none';
-                                                            localStorage.removeItem('shoppingCart'); // Limpiar el carrito después de la compra
-                                                            updateCartBadge(); // Actualizar la insignia del carrito si es necesario
-                                                        } else {
-                                                            throw new Error(jsonResponse.message || 'Error al procesar el pedido');
-                                                        }
-                                                    } catch (error) {
-                                                        throw new Error('Error al procesar la respuesta del servidor');
-                                                    }
+                                                    Swal.fire('Éxito', 'Pedido realizado correctamente.', 'success');
+                                                    document.getElementById('modalContainer').style.display = 'none';
+                                                    localStorage.removeItem('shoppingCart'); // Limpiar el carrito después de la compra
+                                                    updateCartBadge(); // Actualizar la insignia del carrito si es necesario
                                                 })
                                                 .catch(error => {
-                                                    console.error("Error:", error);
                                                     Swal.fire('Error', 'Error: ' + error.message, 'error');
                                                 })
                                                 .finally(() => {
