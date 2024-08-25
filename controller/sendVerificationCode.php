@@ -1,4 +1,5 @@
 <?php
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -9,9 +10,10 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 // Función para enviar el correo de recuperación de contraseña
-function enviarCorreoRecuperacion($correo_electronico, $token) {
+function enviarCorreoRecuperacion($correo_electronico, $token)
+{
     $mail = new PHPMailer(true);
-    
+
     try {
         $mail->isSMTP();
         $mail->Host       = $_ENV['SMTP_HOST'];
@@ -25,46 +27,47 @@ function enviarCorreoRecuperacion($correo_electronico, $token) {
         $mail->addAddress($correo_electronico);
 
         $mail->isHTML(true);
-        $mail->Subject = 'Recuperación de contraseña - Exterminio';
+        $mail->Subject = '=?UTF-8?B?' . base64_encode('Recuperación de contraseña - Exterminio') . '?=';
 
         // URL de recuperación (ajusta según tu configuración)
         $url_recuperacion = $_ENV['APP_URL'] . "/reset-password.php?token=" . $token;
 
         $mail->Body = "
-        <html>
-        <head>
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Playwrite+TZ:wght@100..400&display=swap');
-                body { font-family: 'Playwrite TZ', Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
-                .header { background-color: #000000; color: white; padding: 10px; text-align: center; }
-                .content { padding: 20px; background-color: white; }
-                .button { display: inline-block; padding: 10px 20px; background-color: #ec6e19; color: white; text-decoration: none; border-radius: 5px; }
-                .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #777; }
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <div class='header'>
-                    <h1>Exterminio</h1>
-                    <img src='https://exterminio-ap2w.onrender.com/img/LogoExterminio.png' alt='Logo de Exterminio' style='max-width: 200px;'>
-                </div>
-                <div class='content'>
-                    <p>Hola,</p>
-                    <p>Has solicitado restablecer tu contraseña. Haz clic en el siguiente botón para crear una nueva contraseña:</p>
-                    <p style='text-align: center;'>
-                        <a href='$url_recuperacion' class='button'>Restablecer Contraseña</a>
-                    </p>
-                    <p>Si no has solicitado este cambio, por favor ignora este correo.</p>
-                    <p>Este enlace expirará en 1 hora por razones de seguridad.</p>
-                </div>
-                <div class='footer'>
-                    <p>Este es un correo automático, por favor no responda a este mensaje.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        ";
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playwrite+TZ:wght@100..400&display=swap');
+        body { font-family: 'Playwrite TZ', Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
+        .header { background-color: #000000; color: white; padding: 10px; text-align: center; }
+        .content { padding: 20px; background-color: white; }
+        .button { display: inline-block; padding: 10px 20px; background-color: #ec6e19; color: white; text-decoration: none; border-radius: 5px; }
+        .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #777; }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <img src='https://exterminio-ap2w.onrender.com/img/LogoExterminio.png' alt='Logo de Exterminio' style='max-width: 200px;'>
+        </div>
+        <div class='content'>
+            <h2>Recuperación de contraseña</h2>
+            <p>Hola,</p>
+            <p>Has solicitado restablecer tu contraseña. Haz clic en el siguiente botón para crear una nueva contraseña:</p>
+            <p style='text-align: center;'>
+                <a href='$url_recuperacion' class='button'>Restablecer Contraseña</a>
+            </p>
+            <p>Si no has solicitado este cambio, por favor ignora este correo.</p>
+            <p>Este enlace expirará en 1 hora por razones de seguridad.</p>
+        </div>
+        <div class='footer'>
+            <p>Este es un correo automático, por favor no responda a este mensaje.</p>
+        </div>
+    </div>
+</body>
+</html>
+";
 
         $mail->AltBody = "Para restablecer tu contraseña, visita el siguiente enlace: $url_recuperacion";
 
@@ -89,4 +92,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['success' => false, 'message' => 'Error al enviar el correo de recuperación.']);
     }
 }
-?>

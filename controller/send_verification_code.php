@@ -93,12 +93,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->addAddress($correo_electronico);
 
         $mail->isHTML(true);
-        $mail->Subject = 'Código de verificación para registro';
+        $mail->Subject = '=?UTF-8?B?' . base64_encode('Código de verificación para registro') . '?=';
 
-        // HTML mejorado para el cuerpo del correo
         $mail->Body = "
 <html>
 <head>
+    <meta charset='UTF-8'>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playwrite+TZ:wght@100..400&display=swap');
         body { font-family: 'Playwrite TZ', Arial, sans-serif; line-height: 1.6; color: #333; }
@@ -112,10 +112,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class='container'>
         <div class='header'>
-            <h1>Exterminio</h1>
             <img src='https://exterminio-ap2w.onrender.com/img/LogoExterminio.png' alt='Logo de Exterminio' style='max-width: 200px;'>
         </div>
         <div class='content'>
+            <h2>Código de verificación para registro</h2>
             <p>Hola,</p>
             <p>Gracias por registrarte en Exterminio. Para completar tu registro, por favor utiliza el siguiente código de verificación:</p>
             <div class='code'>$codigo_verificacion</div>
