@@ -99,11 +99,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <html>
         <head>
             <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                body { font-family: Bebas Neue, cursive; line-height: 1.6; color: #333; }
                 .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
-                .header { background-color: #4CAF50; color: white; padding: 10px; text-align: center; }
+                .header { background-color: #00000; color: white; padding: 10px; text-align: center; }
                 .content { padding: 20px; background-color: white; }
-                .code { font-size: 24px; font-weight: bold; color: #4CAF50; text-align: center; padding: 10px; }
+                .code { font-size: 24px; font-weight: bold; color: #ec6e19; text-align: center; padding: 10px; }
                 .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #777; }
             </style>
         </head>
