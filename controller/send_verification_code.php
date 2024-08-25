@@ -93,7 +93,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $mail->isHTML(true);
         $mail->Subject = 'Código de verificación para registro';
-        $mail->Body    = "Tu código de verificación es: <b>$codigo_verificacion</b>";
+
+        // HTML mejorado para el cuerpo del correo
+        $mail->Body = "
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
+                .header { background-color: #4CAF50; color: white; padding: 10px; text-align: center; }
+                .content { padding: 20px; background-color: white; }
+                .code { font-size: 24px; font-weight: bold; color: #4CAF50; text-align: center; padding: 10px; }
+                .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #777; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1>Exterminio</h1>
+                    <img src='https://exterminio-ap2w.onrender.com/img/LogoExterminio.png' alt='Logo de Exterminio' style='max-width: 200px;'>
+                </div>
+                <div class='content'>
+                    <p>Hola,</p>
+                    <p>Gracias por registrarte en Exterminio. Para completar tu registro, por favor utiliza el siguiente código de verificación:</p>
+                    <div class='code'>$codigo_verificacion</div>
+                    <p>Si no has solicitado este código, por favor ignora este correo.</p>
+                </div>
+                <div class='footer'>
+                    <p>Este es un correo automático, por favor no responda a este mensaje.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+
+        // Versión de texto plano como alternativa
+        $mail->AltBody = "Tu código de verificación para Exterminio es: $codigo_verificacion";
 
         $mail->send();
 
