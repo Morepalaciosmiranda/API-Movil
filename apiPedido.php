@@ -73,7 +73,7 @@ switch ($method) {
                         'barrio' => $row['barrio'],
                         'telefono' => $row['telefono'],
                         'total_pedido' => $row['total_pedido'],
-                        'productos' => $productos
+                        'productos' => $productos  
                     ];
                 }
                 file_put_contents('debug.log', 'Pedidos: ' . print_r($pedidos, true) . "\n", FILE_APPEND);
