@@ -11,6 +11,7 @@ error_reporting(E_ALL);
 ob_start();
 
 include '../includes/conexion.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -96,36 +97,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // HTML mejorado para el cuerpo del correo
         $mail->Body = "
-        <html>
-        <head>
-            <style>
-                body { font-family: Bebas Neue, cursive; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #00000000; }
-                .header { background-color: #00000000; color: white; padding: 10px; text-align: center; }
-                .content { padding: 20px; background-color: white; }
-                .code { font-size: 24px; font-weight: bold; color: #ec6e19; text-align: center; padding: 10px; }
-                .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #777; }
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <div class='header'>
-                    <h1>Exterminio</h1>
-                    <img src='https://exterminio-ap2w.onrender.com/img/LogoExterminio.png' alt='Logo de Exterminio' style='max-width: 200px;'>
-                </div>
-                <div class='content'>
-                    <p>Hola,</p>
-                    <p>Gracias por registrarte en Exterminio. Para completar tu registro, por favor utiliza el siguiente código de verificación:</p>
-                    <div class='code'>$codigo_verificacion</div>
-                    <p>Si no has solicitado este código, por favor ignora este correo.</p>
-                </div>
-                <div class='footer'>
-                    <p>Este es un correo automático, por favor no responda a este mensaje.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        ";
+<html>
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playwrite+TZ:wght@100..400&display=swap');
+        body { font-family: 'Playwrite TZ', Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
+        .header { background-color: #000000; color: white; padding: 10px; text-align: center; }
+        .content { padding: 20px; background-color: white; }
+        .code { font-size: 24px; font-weight: bold; color: #ec6e19; text-align: center; padding: 10px; }
+        .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #777; }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>Exterminio</h1>
+            <img src='https://tu-dominio.com/ruta-a-tu-logo.png' alt='Logo de Exterminio' style='max-width: 200px;'>
+        </div>
+        <div class='content'>
+            <p>Hola,</p>
+            <p>Gracias por registrarte en Exterminio. Para completar tu registro, por favor utiliza el siguiente código de verificación:</p>
+            <div class='code'>$codigo_verificacion</div>
+            <p>Si no has solicitado este código, por favor ignora este correo.</p>
+        </div>
+        <div class='footer'>
+            <p>Este es un correo automático, por favor no responda a este mensaje.</p>
+        </div>
+    </div>
+</body>
+</html>
+";
 
         // Versión de texto plano como alternativa
         $mail->AltBody = "Tu código de verificación para Exterminio es: $codigo_verificacion";
@@ -170,8 +172,8 @@ if (empty($output)) {
 
 $conn->close();
 
-function isJson($string) {
+function isJson($string)
+{
     json_decode($string);
     return (json_last_error() == JSON_ERROR_NONE);
 }
-?>
