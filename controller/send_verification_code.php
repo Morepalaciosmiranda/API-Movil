@@ -113,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class='container'>
         <div class='header'>
             <h1>Exterminio</h1>
-            <img src='https://tu-dominio.com/ruta-a-tu-logo.png' alt='Logo de Exterminio' style='max-width: 200px;'>
+            <img src='https://exterminio-ap2w.onrender.com/img/LogoExterminio.png' alt='Logo de Exterminio' style='max-width: 200px;'>
         </div>
         <div class='content'>
             <p>Hola,</p>
