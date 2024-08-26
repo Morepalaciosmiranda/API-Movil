@@ -63,12 +63,12 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 <div class="title-container">
                     <h1>Compras</h1>
                     <form method="GET" action="compras.php">
-                        <div class="search-bar">
-                            <input type="text" id="searchCompras" placeholder="Buscar..." onkeyup="buscarCompra()" />
-                            <button type="button" onclick="buscarCompra()">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </div>
+                    <div class="search-bar">
+                        <input type="text" id="searchCompras" placeholder="Buscar..." onkeyup="buscarCompra()" />
+                        <button type="button" onclick="buscarCompra()">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
                     </form>
                     <div class="profile-div">
                         <div class="profile-inner-container">
@@ -88,15 +88,11 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 <br><br>
                 <div class="content">
                     <div class="form-container">
-                        <div class="form-container">
-                            <form method="GET" action="compras.php">
-                                <label for="fecha">Filtrar por fecha:</label>
-                                <input type="date" id="fecha" name="fecha"
-                                    value="<?php echo isset($_GET['fecha']) ? $_GET['fecha'] : ''; ?>">
-                                <button type="submit">Filtrar</button>
-                            </form>
-                        </div>
-
+                        <form method="GET" action="compras.php">
+                            <label for="fecha">Filtrar por fecha:</label>
+                            <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
+                            <button type="submit">Filtrar</button>
+                        </form>
                     </div>
                     <div class="content">
                         <button id="btnAgregarCompra" class="btn btn-success">Agregar Compra</button>
