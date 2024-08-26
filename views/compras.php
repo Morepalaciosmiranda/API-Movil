@@ -65,11 +65,12 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 <div class="title-container">
                     <h1>Compras</h1>
                     <form method="GET" action="compras.php">
-                        <input type="text" id="searchCompras" name="search" placeholder="Buscar..."
-                            onkeyup="buscarCompra()" />
-                        <button type="submit">
+                    <div class="search-bar">
+                        <input type="text" id="searchCompras" placeholder="Buscar..." onkeyup="buscarCompra()" />
+                        <button type="button" onclick="buscarCompra()">
                             <i class="fa fa-search"></i>
                         </button>
+                    </div>
                     </form>
                     <div class="profile-div">
                         <div class="profile-inner-container">
