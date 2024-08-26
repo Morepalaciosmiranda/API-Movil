@@ -14,32 +14,30 @@ if ($_SESSION['rol'] === 'Usuario') {
 
 include_once('../includes/conexion.php');
 
+// Parámetros de paginación
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
-$offset = ($pagina_actual - 1) * $items_por_pagina;     
+$offset = ($pagina_actual - 1) * $items_por_pagina; 
 
+// Parámetro de filtrado por fecha
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
 
+// Consulta SQL para obtener las compras con filtro por fecha
 $sql = "SELECT * FROM compras";
-
 if ($fecha_filtro) {
     $sql .= " WHERE DATE(fecha_compra) = '$fecha_filtro'";
 }
-
 $sql .= " LIMIT $items_por_pagina OFFSET $offset";
-
 $result = $conn->query($sql);
 
+// Consulta SQL para obtener el número total de compras (con o sin filtro)
 $sql_total = "SELECT COUNT(*) as total FROM compras";
-
 if ($fecha_filtro) {
     $sql_total .= " WHERE DATE(fecha_compra) = '$fecha_filtro'";
 }
-
 $result_total = $conn->query($sql_total);
 $total_compras = $result_total->fetch_assoc()['total'];
 $total_paginas = ceil($total_compras / $items_por_pagina);
-
 ?>
 
 <!DOCTYPE html>
@@ -65,12 +63,12 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 <div class="title-container">
                     <h1>Compras</h1>
                     <form method="GET" action="compras.php">
-                    <div class="search-bar">
-                        <input type="text" id="searchCompras" placeholder="Buscar..." onkeyup="buscarCompra()" />
-                        <button type="button" onclick="buscarCompra()">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </div>
+                        <div class="search-bar">
+                            <input type="text" id="searchCompras" placeholder="Buscar..." onkeyup="buscarCompra()" />
+                            <button type="button" onclick="buscarCompra()">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
                     </form>
                     <div class="profile-div">
                         <div class="profile-inner-container">
@@ -90,11 +88,15 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 <br><br>
                 <div class="content">
                     <div class="form-container">
-                        <form method="GET" action="compras.php">
-                            <label for="fecha">Filtrar por fecha:</label>
-                            <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
-                            <button type="submit">Filtrar</button>
-                        </form>
+                        <div class="form-container">
+                            <form method="GET" action="compras.php">
+                                <label for="fecha">Filtrar por fecha:</label>
+                                <input type="date" id="fecha" name="fecha"
+                                    value="<?php echo isset($_GET['fecha']) ? $_GET['fecha'] : ''; ?>">
+                                <button type="submit">Filtrar</button>
+                            </form>
+                        </div>
+
                     </div>
                     <div class="content">
                         <button id="btnAgregarCompra" class="btn btn-success">Agregar Compra</button>
