@@ -16,7 +16,7 @@ include_once('../includes/conexion.php');
 
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
-$offset = ($pagina_actual - 1) * $items_por_pagina;
+$offset = ($pagina_actual - 1) * $items_por_pagina;     
 
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
 
@@ -64,125 +64,128 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             <div class="head-section">
                 <div class="title-container">
                     <h1>Compras</h1>
-                    <div class="search-bar">
-                        <input type="text" id="searchCompras" placeholder="Buscar..." onkeyup="buscarCompra()" />
-                        <button type="button" onclick="buscarCompra()">
+                    <form method="GET" action="compras.php">
+                        <input type="text" id="searchCompras" name="search" placeholder="Buscar..."
+                            onkeyup="buscarCompra()" />
+                        <button type="submit">
                             <i class="fa fa-search"></i>
                         </button>
-                </div>
-                <div class="profile-div">
-                    <div class="profile-inner-container">
-                        <p class="user1" onclick="toggleUserOptions()">
-                            <i class="fa fa-user"></i>
-                            <?php echo isset($_SESSION['correo_electronico']) ? $_SESSION['correo_electronico'] : ''; ?>
-                        </p>
-                    </div>
-                    <div id="userOptionsContainer" class="user-options-container">
-                        <p><i class="fa fa-cog"></i> Configuración</p>
-                        <a href="../loginRegister.php">
-                            <p><i class="fa fa-power-off"></i> Cerrar sesión</p>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <br><br>
-            <div class="content">
-                <div class="form-container">
-                    <form method="GET" action="compras.php">
-                        <label for="fecha">Filtrar por fecha:</label>
-                        <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
-                        <button type="submit">Filtrar</button>
                     </form>
+                    <div class="profile-div">
+                        <div class="profile-inner-container">
+                            <p class="user1" onclick="toggleUserOptions()">
+                                <i class="fa fa-user"></i>
+                                <?php echo isset($_SESSION['correo_electronico']) ? $_SESSION['correo_electronico'] : ''; ?>
+                            </p>
+                        </div>
+                        <div id="userOptionsContainer" class="user-options-container">
+                            <p><i class="fa fa-cog"></i> Configuración</p>
+                            <a href="../loginRegister.php">
+                                <p><i class="fa fa-power-off"></i> Cerrar sesión</p>
+                            </a>
+                        </div>
+                    </div>
                 </div>
+                <br><br>
                 <div class="content">
-                    <button id="btnAgregarCompra" class="btn btn-success">Agregar Compra</button>
-                    <br><br>
-
-                    <div id="modalAgregarCompra" class="modal">
-                        <div class="modal-content">
-                            <span class="close">&times;</span>
-                            <h2>Agregar Nueva Compra</h2>
-                            <form id="formAgregarCompra" action="../controller/compras_controller.php" method="post">
-                                <label for="id_usuario">Usuario:</label>
-                                <select id="id_usuario" name="id_usuario" required></select><br><br>
-
-                                <label for="id_proveedor">Proveedor:</label>
-                                <select id="id_proveedor" name="id_proveedor" required></select><br><br>
-
-                                <label for="fecha_compra">Fecha de Compra:</label>
-                                <input type="date" id="fecha_compra" name="fecha_compra" required><br><br>
-
-                                <label for="subtotal">Subtotal:</label>
-                                <input type="number" id="subtotal" name="subtotal" step="0.01" required><br><br>
-
-                                <label for="total_compra">Total de Compra:</label>
-                                <input type="number" id="total_compra" name="total_compra" step="0.01" required><br><br>
-
-                                <!-- Nuevos campos -->
-                                <label for="cantidad">Cantidad:</label>
-                                <input type="number" id="cantidad" name="cantidad" required><br><br>
-
-                                <label for="valor_unitario">Valor Unitario:</label>
-                                <input type="number" id="valor_unitario" name="valor_unitario" step="0.01"
-                                    required><br><br>
-
-                                <input type="submit" value="Agregar Compra">
-                            </form>
-                        </div>
+                    <div class="form-container">
+                        <form method="GET" action="compras.php">
+                            <label for="fecha">Filtrar por fecha:</label>
+                            <input type="date" id="fecha" name="fecha" value="<?php echo $fecha_filtro; ?>">
+                            <button type="submit">Filtrar</button>
+                        </form>
                     </div>
-                    <div id="modalEditarCompra" class="modal">
-                        <div class="modal-content">
-                            <span class="close">&times;</span>
-                            <h2>Editar Compra</h2>
-                            <form id="formEditarCompra" action="../controller/compras_controller.php" method="post">
-                                <label for="edit_id_compra">ID de Compra:</label>
-                                <input type="text" id="edit_id_compra" name="edit_id_compra" readonly><br><br>
+                    <div class="content">
+                        <button id="btnAgregarCompra" class="btn btn-success">Agregar Compra</button>
+                        <br><br>
 
-                                <label for="edit_id_usuario">Usuario:</label>
-                                <select id="edit_id_usuario" name="edit_id_usuario" required></select><br><br>
+                        <div id="modalAgregarCompra" class="modal">
+                            <div class="modal-content">
+                                <span class="close">&times;</span>
+                                <h2>Agregar Nueva Compra</h2>
+                                <form id="formAgregarCompra" action="../controller/compras_controller.php"
+                                    method="post">
+                                    <label for="id_usuario">Usuario:</label>
+                                    <select id="id_usuario" name="id_usuario" required></select><br><br>
 
-                                <label for="edit_id_proveedor">Proveedor:</label>
-                                <select id="edit_id_proveedor" name="edit_id_proveedor" required></select><br><br>
+                                    <label for="id_proveedor">Proveedor:</label>
+                                    <select id="id_proveedor" name="id_proveedor" required></select><br><br>
 
-                                <label for="edit_fecha_compra">Fecha de Compra:</label>
-                                <input type="date" id="edit_fecha_compra" name="edit_fecha_compra" required><br><br>
+                                    <label for="fecha_compra">Fecha de Compra:</label>
+                                    <input type="date" id="fecha_compra" name="fecha_compra" required><br><br>
 
-                                <label for="edit_subtotal">Subtotal:</label>
-                                <input type="number" id="edit_subtotal" name="edit_subtotal" step="0.01"
-                                    required><br><br>
+                                    <label for="subtotal">Subtotal:</label>
+                                    <input type="number" id="subtotal" name="subtotal" step="0.01" required><br><br>
 
-                                <label for="edit_total_compra">Total de Compra:</label>
-                                <input type="number" id="edit_total_compra" name="edit_total_compra" step="0.01"
-                                    required><br><br>
+                                    <label for="total_compra">Total de Compra:</label>
+                                    <input type="number" id="total_compra" name="total_compra" step="0.01"
+                                        required><br><br>
 
-                                <input type="submit" value="Guardar Cambios">
-                            </form>
+                                    <!-- Nuevos campos -->
+                                    <label for="cantidad">Cantidad:</label>
+                                    <input type="number" id="cantidad" name="cantidad" required><br><br>
 
+                                    <label for="valor_unitario">Valor Unitario:</label>
+                                    <input type="number" id="valor_unitario" name="valor_unitario" step="0.01"
+                                        required><br><br>
+
+                                    <input type="submit" value="Agregar Compra">
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                        <div id="modalEditarCompra" class="modal">
+                            <div class="modal-content">
+                                <span class="close">&times;</span>
+                                <h2>Editar Compra</h2>
+                                <form id="formEditarCompra" action="../controller/compras_controller.php" method="post">
+                                    <label for="edit_id_compra">ID de Compra:</label>
+                                    <input type="text" id="edit_id_compra" name="edit_id_compra" readonly><br><br>
 
-                    <div id="detalleCompraModal" class="modal">
-                        <div class="modal-content">
-                            <span class="close-btn" onclick="cerrarModalDetalle()">&times;</span>
-                            <h2>Detalles de la Compra</h2>
-                            <div id="modalContent"></div>
+                                    <label for="edit_id_usuario">Usuario:</label>
+                                    <select id="edit_id_usuario" name="edit_id_usuario" required></select><br><br>
+
+                                    <label for="edit_id_proveedor">Proveedor:</label>
+                                    <select id="edit_id_proveedor" name="edit_id_proveedor" required></select><br><br>
+
+                                    <label for="edit_fecha_compra">Fecha de Compra:</label>
+                                    <input type="date" id="edit_fecha_compra" name="edit_fecha_compra" required><br><br>
+
+                                    <label for="edit_subtotal">Subtotal:</label>
+                                    <input type="number" id="edit_subtotal" name="edit_subtotal" step="0.01"
+                                        required><br><br>
+
+                                    <label for="edit_total_compra">Total de Compra:</label>
+                                    <input type="number" id="edit_total_compra" name="edit_total_compra" step="0.01"
+                                        required><br><br>
+
+                                    <input type="submit" value="Guardar Cambios">
+                                </form>
+
+                            </div>
                         </div>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <!-- <th>ID Compra</th> -->
-                                    <th>Usuario</th>
-                                    <th>Proveedor</th>
-                                    <th>Fecha Compra</th>
-                                    <th>Subtotal</th>
-                                    <th>Total Compra</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
+
+                        <div id="detalleCompraModal" class="modal">
+                            <div class="modal-content">
+                                <span class="close-btn" onclick="cerrarModalDetalle()">&times;</span>
+                                <h2>Detalles de la Compra</h2>
+                                <div id="modalContent"></div>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <!-- <th>ID Compra</th> -->
+                                        <th>Usuario</th>
+                                        <th>Proveedor</th>
+                                        <th>Fecha Compra</th>
+                                        <th>Subtotal</th>
+                                        <th>Total Compra</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
                                 include '../includes/conexion.php';
 
                                 $sql = "SELECT c.id_compra, u.nombre_usuario, p.nombre_proveedor, c.fecha_compra, c.subtotal, c.total_compra
@@ -212,13 +215,13 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                     echo "<tr><td colspan='7'>No hay compras disponibles.</td></tr>";
                                 }
                                 ?>
-                            </tbody>
+                                </tbody>
 
-                        </table>
-                    </div>
+                            </table>
+                        </div>
 
-                    <div class="pagination">
-                        <?php
+                        <div class="pagination">
+                            <?php
                         if ($total_paginas > 0) {
                             for ($i = 1; $i <= $total_paginas; $i++) {
                                 if ($i == $pagina_actual) {
@@ -229,33 +232,33 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                             }
                         }
                         ?>
+                        </div>
+
                     </div>
 
-                </div>
-
-                <!-- Script para eliminar compra -->
-                <script>
-                function eliminarCompra(id_compra) {
-                    if (confirm('¿Estás seguro de que quieres eliminar esta compra?')) {
-                        fetch(`compras_controller.php?eliminar=${id_compra}`, {
-                                method: 'GET'
-                            })
-                            .then(response => response.text())
-                            .then(data => {
-                                if (data.includes('Error')) {
-                                    alert(data);
-                                } else {
-                                    document.getElementById(`compra-${id_compra}`).remove();
-                                    alert('Compra eliminada exitosamente.');
-                                }
-                            })
-                            .catch(error => console.error('Error al eliminar la compra:', error));
+                    <!-- Script para eliminar compra -->
+                    <script>
+                    function eliminarCompra(id_compra) {
+                        if (confirm('¿Estás seguro de que quieres eliminar esta compra?')) {
+                            fetch(`compras_controller.php?eliminar=${id_compra}`, {
+                                    method: 'GET'
+                                })
+                                .then(response => response.text())
+                                .then(data => {
+                                    if (data.includes('Error')) {
+                                        alert(data);
+                                    } else {
+                                        document.getElementById(`compra-${id_compra}`).remove();
+                                        alert('Compra eliminada exitosamente.');
+                                    }
+                                })
+                                .catch(error => console.error('Error al eliminar la compra:', error));
+                        }
                     }
-                }
-                </script>
+                    </script>
+                </div>
             </div>
         </div>
-    </div>
     </div>
     </div>
 
@@ -554,27 +557,19 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
     }
 
     function buscarCompra() {
-            const input = document.getElementById('searchCompras');
-            const filter = input.value.toLowerCase();
-            const table = document.getElementById('comprasTable');
-            const trs = table.getElementsByTagName('tr');
-            
-            for (let i = 1; i < trs.length; i++) {
-                const tds = trs[i].getElementsByTagName('td');
-                let showRow = false;
-                
-                for (let j = 0; j < tds.length - 1; j++) {
-                    if (tds[j]) {
-                        if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
-                            showRow = true;
-                            break;
-                        }
-                    }
+        let input = document.getElementById('searchCompras').value.toLowerCase();
+        let rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            let showRow = false;
+            row.querySelectorAll('td').forEach(cell => {
+                if (cell.textContent.toLowerCase().includes(input)) {
+                    showRow = true;
                 }
-                
-                trs[i].style.display = showRow ? '' : 'none';
-            }
-        }
+            });
+            row.style.display = showRow ? '' : 'none';
+        });
+    }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
