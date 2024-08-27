@@ -32,6 +32,7 @@ if ($fecha_filtro) {
     $sql .= " WHERE DATE(compras.fecha_compra) = '$fecha_filtro'";
 }
 
+
 // Agregar una cláusula ORDER BY antes del LIMIT para evitar el error
 $sql .= " ORDER BY compras.fecha_compra DESC LIMIT $items_por_pagina OFFSET $offset";
 
@@ -240,6 +241,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                     echo "<a href='compras.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
                                 } else {
                                     echo "<a href='compras.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
+
                                 }
                             }
                         }
