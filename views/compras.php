@@ -32,8 +32,8 @@ if ($fecha_filtro) {
     $sql .= " WHERE DATE(compras.fecha_compra) = '$fecha_filtro'";
 }
 
-// Limitar la cantidad de resultados por página y establecer el desplazamiento (esto depende de tu lógica de paginación)
-$sql .= " LIMIT $items_por_pagina OFFSET $offset";
+// Agregar una cláusula ORDER BY antes del LIMIT para evitar el error
+$sql .= " ORDER BY compras.fecha_compra DESC LIMIT $items_por_pagina OFFSET $offset";
 
 // Ejecutar la consulta
 $result = mysqli_query($conn, $sql);
@@ -42,8 +42,6 @@ $result = mysqli_query($conn, $sql);
 if (!$result) {
     die("Error en la consulta: " . mysqli_error($conn));
 }
-$sql .= " LIMIT $items_por_pagina OFFSET $offset";
-$result = $conn->query($sql);
 
 // Consulta SQL para obtener el número total de compras (con o sin filtro)
 $sql_total = "SELECT COUNT(*) as total FROM compras";
