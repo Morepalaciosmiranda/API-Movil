@@ -76,7 +76,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <h1>Pedidos</h1>
                     <div class="search-bar">
                         <div class="search-bar">
-                        <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarPedido()" value="<?php echo htmlspecialchars($search_query); ?>" />
+                        <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarPedido()"  />
                         <button type="button" onclick="buscarPedido()"><i class="fa fa-search"></i></button>
                         </div>
 
