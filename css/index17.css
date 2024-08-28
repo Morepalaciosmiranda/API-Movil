@@ -866,6 +866,1653 @@ footer h4{
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
 }
 
+@media screen and (max-width: 1204px) {
+    /* Ajustes generales */
+    body {
+        font-size: 14px;
+    }
+
+    /* Header y Navegación */
+    header {
+        height: auto;
+        padding: -9rem;
+        position: static;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header img {
+        width: 80px;
+        margin: 3px auto;
+        margin-left: -25px;
+        margin-top: -10px;
+        
+    }
+
+    .header .search {
+        width: 90%;
+        margin: 3px auto;
+    }
+
+    .header .search input {
+        width: 100%;
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+
+    .header .nav-links {
+        margin: 3px 0;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-left: 80px;
+        margin-right: 290px;
+        margin-top: -10px;
+    }
+
+    .header .nav-links li {
+        padding: 6px;
+        margin-top: -50px;
+
+    }
+
+    .header .nav-links a {
+        font-size: 12px;
+        
+    }
+
+    
+    .header .logout {
+        margin: 3px ;
+        padding: 5px 8px;
+        font-size: 18px;
+        margin-left: 250px;
+        margin-top: -40px;
+    }
+    .header .car-shop{
+        margin: 3px ;
+        padding: 5px 8px;
+        font-size: 18px;
+        margin-left: 160px;
+        margin-top: -50px;
+    }
+
+    /* Dashboard Menu */
+    .dashboard-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0.3rem;
+    }
+
+    .dashboard-menu a {
+        width: auto;
+        padding: 0.3rem;
+        margin: 2px;
+        font-size: 11px;
+    }
+
+    /* Tarjetas de productos */
+    .dashboard-card {
+        width:100%;
+        margin: 10px 0;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        padding: 7px;
+    }
+
+    .dashboard-card img {
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .card-detail {
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-detail h4 {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .card-detail p {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .btn-add {
+        margin-top: 8px;
+    }
+
+    .btn-add a,
+    .addToCartButton {
+        font-size: 12px;
+        padding: 6px 10px;
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Ajuste para mostrar las cards una debajo de la otra */
+    .dashboard-content,
+    .tarjetas-contenedor {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Sidebar (Carrito) */
+    .sidebar.active {
+        width: 100%;
+    }
+
+    .order-wrapper .order-card {
+        flex-direction: row;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .order-card img {
+        width: 40px;
+        height: 40px;
+        margin-right: 8px;
+    }
+
+    .order-card .order-details .order-name {
+        font-size: 12px;
+    }
+
+    .order-card .order-details .order-price {
+        font-size: 11px;
+    }
+
+    /* Formulario de pago */
+    .container {
+        width: 90%;
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    .container input[type="text"] {
+        width: 100%;
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .exp-cvc {
+        flex-direction: column;
+    }
+
+    .expiration,
+    .security {
+        width: 100%;
+        margin: 4px 0;
+    }
+
+    .btn button {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    /* Footer */
+    .footer-container {
+        height: auto;
+        margin-left: 5px;
+        margin-top: 12px;
+    }
+
+    .content-footer {
+        flex-direction: column;
+    }
+
+    .contact,
+    .group {
+        width: 100%;
+        padding: 8px;
+    }
+
+    footer h1 {
+        font-size: 1.2rem;
+    }
+
+    footer h4 {
+        font-size: 0.9rem;
+    }
+
+    /* Búsqueda */
+    #searchInput {
+        width: 90%;
+        font-size: 12px;
+    }
+
+    /* Alerta */
+    .alert {
+        width: 80%;
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    /* Ajustes adicionales */
+    .prod-title h2 {
+        font-size: 1.1rem;
+    }
+
+    .dashboard-content {
+        padding: 0 5px;
+    }
+
+    #total-container {
+        width: 100%;
+        padding: 0.5rem;
+        margin-left: 0;
+        font-size: 12px;
+    }
+
+    /* Modal y Formulario */
+    #modalContainer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .principal {
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 15px;
+        position: relative;
+    }
+
+    #salir {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .encabezado h1 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    #pedidoFormulario {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #pedidoFormulario label {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    #pedidoFormulario input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    #barrios {
+        width: 100%;
+    }
+
+    .btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    #btn_comprar {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #btn_comprar:hover {
+        background-color: #0056b3;
+    }
+}
+
+
+@media screen and (max-width: 1164px) {
+    /* Ajustes generales */
+    body {
+        font-size: 14px;
+    }
+
+    /* Header y Navegación */
+    header {
+        height: auto;
+        padding: -9rem;
+        position: static;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header img {
+        width: 80px;
+        margin: 3px auto;
+        margin-left: -25px;
+        margin-top: -10px;
+        
+    }
+
+    .header .search {
+        width: 90%;
+        margin: 3px auto;
+    }
+
+    .header .search input {
+        width: 100%;
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+
+    .header .nav-links {
+        margin: 3px 0;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-left: 80px;
+        margin-right: 290px;
+        margin-top: -10px;
+    }
+
+    .header .nav-links li {
+        padding: 6px;
+        margin-top: -50px;
+
+    }
+
+    .header .nav-links a {
+        font-size: 12px;
+        
+    }
+
+    
+    .header .logout {
+        margin: 3px ;
+        padding: 5px 8px;
+        font-size: 18px;
+        margin-left: 250px;
+        margin-top: -40px;
+    }
+    .header .car-shop{
+        margin: 3px ;
+        padding: 5px 8px;
+        font-size: 18px;
+        margin-left: 160px;
+        margin-top: -50px;
+    }
+
+    /* Dashboard Menu */
+    .dashboard-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0.3rem;
+    }
+
+    .dashboard-menu a {
+        width: auto;
+        padding: 0.3rem;
+        margin: 2px;
+        font-size: 11px;
+    }
+
+    /* Tarjetas de productos */
+    .dashboard-card {
+        width:100%;
+        margin: 10px 0;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        padding: 7px;
+    }
+
+    .dashboard-card img {
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .card-detail {
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-detail h4 {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .card-detail p {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .btn-add {
+        margin-top: 8px;
+    }
+
+    .btn-add a,
+    .addToCartButton {
+        font-size: 12px;
+        padding: 6px 10px;
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Ajuste para mostrar las cards una debajo de la otra */
+    .dashboard-content,
+    .tarjetas-contenedor {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Sidebar (Carrito) */
+    .sidebar.active {
+        width: 100%;
+    }
+
+    .order-wrapper .order-card {
+        flex-direction: row;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .order-card img {
+        width: 40px;
+        height: 40px;
+        margin-right: 8px;
+    }
+
+    .order-card .order-details .order-name {
+        font-size: 12px;
+    }
+
+    .order-card .order-details .order-price {
+        font-size: 11px;
+    }
+
+    /* Formulario de pago */
+    .container {
+        width: 90%;
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    .container input[type="text"] {
+        width: 100%;
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .exp-cvc {
+        flex-direction: column;
+    }
+
+    .expiration,
+    .security {
+        width: 100%;
+        margin: 4px 0;
+    }
+
+    .btn button {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    /* Footer */
+    .footer-container {
+        height: auto;
+        margin-left: 5px;
+        margin-top: 12px;
+    }
+
+    .content-footer {
+        flex-direction: column;
+    }
+
+    .contact,
+    .group {
+        width: 100%;
+        padding: 8px;
+    }
+
+    footer h1 {
+        font-size: 1.2rem;
+    }
+
+    footer h4 {
+        font-size: 0.9rem;
+    }
+
+    /* Búsqueda */
+    #searchInput {
+        width: 90%;
+        font-size: 12px;
+    }
+
+    /* Alerta */
+    .alert {
+        width: 80%;
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    /* Ajustes adicionales */
+    .prod-title h2 {
+        font-size: 1.1rem;
+    }
+
+    .dashboard-content {
+        padding: 0 5px;
+    }
+
+    #total-container {
+        width: 100%;
+        padding: 0.5rem;
+        margin-left: 0;
+        font-size: 12px;
+    }
+
+    /* Modal y Formulario */
+    #modalContainer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .principal {
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 15px;
+        position: relative;
+    }
+
+    #salir {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .encabezado h1 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    #pedidoFormulario {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #pedidoFormulario label {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    #pedidoFormulario input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    #barrios {
+        width: 100%;
+    }
+
+    .btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    #btn_comprar {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #btn_comprar:hover {
+        background-color: #0056b3;
+    }
+}
+
+@media screen and (max-width: 724px) {
+    /* Ajustes generales */
+    body {
+        font-size: 14px;
+    }
+
+    /* Header y Navegación */
+    header {
+        height: auto;
+        padding: -9rem;
+        position: static;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header img {
+        width: 80px;
+        margin: 3px auto;
+        margin-left: -25px;
+        margin-top: -10px;
+        
+    }
+
+    .header .search {
+        width: 90%;
+        margin: 3px auto;
+    }
+
+    .header .search input {
+        width: 100%;
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+
+    .header .nav-links {
+        margin: 3px 0;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-left: 80px;
+        margin-right: 290px;
+        margin-top: -10px;
+    }
+
+    .header .nav-links li {
+        padding: 6px;
+        margin-top: -50px;
+
+    }
+
+    .header .nav-links a {
+        font-size: 12px;
+        
+    }
+
+    
+    .header .logout {
+        margin: 3px ;
+        padding: 5px 8px;
+        font-size: 18px;
+        margin-left: 250px;
+        margin-top: -40px;
+    }
+    .header .car-shop{
+        margin: 3px ;
+        padding: 5px 8px;
+        font-size: 18px;
+        margin-left: 160px;
+        margin-top: -50px;
+    }
+
+    /* Dashboard Menu */
+    .dashboard-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0.3rem;
+    }
+
+    .dashboard-menu a {
+        width: auto;
+        padding: 0.3rem;
+        margin: 2px;
+        font-size: 11px;
+    }
+
+    /* Tarjetas de productos */
+    .dashboard-card {
+        width:100%;
+        margin: 10px 0;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        padding: 7px;
+    }
+
+    .dashboard-card img {
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .card-detail {
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-detail h4 {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .card-detail p {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .btn-add {
+        margin-top: 8px;
+    }
+
+    .btn-add a,
+    .addToCartButton {
+        font-size: 12px;
+        padding: 6px 10px;
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Ajuste para mostrar las cards una debajo de la otra */
+    .dashboard-content,
+    .tarjetas-contenedor {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Sidebar (Carrito) */
+    .sidebar.active {
+        width: 100%;
+    }
+
+    .order-wrapper .order-card {
+        flex-direction: row;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .order-card img {
+        width: 40px;
+        height: 40px;
+        margin-right: 8px;
+    }
+
+    .order-card .order-details .order-name {
+        font-size: 12px;
+    }
+
+    .order-card .order-details .order-price {
+        font-size: 11px;
+    }
+
+    /* Formulario de pago */
+    .container {
+        width: 90%;
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    .container input[type="text"] {
+        width: 100%;
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .exp-cvc {
+        flex-direction: column;
+    }
+
+    .expiration,
+    .security {
+        width: 100%;
+        margin: 4px 0;
+    }
+
+    .btn button {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    /* Footer */
+    .footer-container {
+        height: auto;
+        margin-left: 5px;
+        margin-top: 12px;
+    }
+
+    .content-footer {
+        flex-direction: column;
+    }
+
+    .contact,
+    .group {
+        width: 100%;
+        padding: 8px;
+    }
+
+    footer h1 {
+        font-size: 1.2rem;
+    }
+
+    footer h4 {
+        font-size: 0.9rem;
+    }
+
+    /* Búsqueda */
+    #searchInput {
+        width: 90%;
+        font-size: 12px;
+    }
+
+    /* Alerta */
+    .alert {
+        width: 80%;
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    /* Ajustes adicionales */
+    .prod-title h2 {
+        font-size: 1.1rem;
+    }
+
+    .dashboard-content {
+        padding: 0 5px;
+    }
+
+    #total-container {
+        width: 100%;
+        padding: 0.5rem;
+        margin-left: 0;
+        font-size: 12px;
+    }
+
+    /* Modal y Formulario */
+    #modalContainer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .principal {
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 15px;
+        position: relative;
+    }
+
+    #salir {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .encabezado h1 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    #pedidoFormulario {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #pedidoFormulario label {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    #pedidoFormulario input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    #barrios {
+        width: 100%;
+    }
+
+    .btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    #btn_comprar {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #btn_comprar:hover {
+        background-color: #0056b3;
+    }
+}
+
+@media screen and (max-width: 736px) {
+    /* Ajustes generales */
+    body {
+        font-size: 14px;
+    }
+
+    /* Header y Navegación */
+    header {
+        height: auto;
+        padding: -9rem;
+        position: static;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header img {
+        width: 80px;
+        margin: 3px auto;
+        margin-left: -25px;
+        margin-top: -10px;
+        
+    }
+
+    .header .search {
+        width: 90%;
+        margin: 3px auto;
+    }
+
+    .header .search input {
+        width: 100%;
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+
+    .header .nav-links {
+        margin: 3px 0;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-left: 80px;
+        margin-right: 290px;
+        margin-top: -10px;
+    }
+
+    .header .nav-links li {
+        padding: 6px;
+        margin-top: -50px;
+
+    }
+
+    .header .nav-links a {
+        font-size: 12px;
+        
+    }
+
+    
+    .header .logout {
+        margin: 3px ;
+        padding: 5px 8px;
+        font-size: 18px;
+        margin-left: 250px;
+        margin-top: -40px;
+    }
+    .header .car-shop{
+        margin: 3px ;
+        padding: 5px 8px;
+        font-size: 18px;
+        margin-left: 160px;
+        margin-top: -50px;
+    }
+
+    /* Dashboard Menu */
+    .dashboard-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0.3rem;
+    }
+
+    .dashboard-menu a {
+        width: auto;
+        padding: 0.3rem;
+        margin: 2px;
+        font-size: 11px;
+    }
+
+    /* Tarjetas de productos */
+    .dashboard-card {
+        width:100%;
+        margin: 10px 0;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        padding: 7px;
+    }
+
+    .dashboard-card img {
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .card-detail {
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-detail h4 {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .card-detail p {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .btn-add {
+        margin-top: 8px;
+    }
+
+    .btn-add a,
+    .addToCartButton {
+        font-size: 12px;
+        padding: 6px 10px;
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Ajuste para mostrar las cards una debajo de la otra */
+    .dashboard-content,
+    .tarjetas-contenedor {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Sidebar (Carrito) */
+    .sidebar.active {
+        width: 100%;
+    }
+
+    .order-wrapper .order-card {
+        flex-direction: row;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .order-card img {
+        width: 40px;
+        height: 40px;
+        margin-right: 8px;
+    }
+
+    .order-card .order-details .order-name {
+        font-size: 12px;
+    }
+
+    .order-card .order-details .order-price {
+        font-size: 11px;
+    }
+
+    /* Formulario de pago */
+    .container {
+        width: 90%;
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    .container input[type="text"] {
+        width: 100%;
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .exp-cvc {
+        flex-direction: column;
+    }
+
+    .expiration,
+    .security {
+        width: 100%;
+        margin: 4px 0;
+    }
+
+    .btn button {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    /* Footer */
+    .footer-container {
+        height: auto;
+        margin-left: 5px;
+        margin-top: 12px;
+    }
+
+    .content-footer {
+        flex-direction: column;
+    }
+
+    .contact,
+    .group {
+        width: 100%;
+        padding: 8px;
+    }
+
+    footer h1 {
+        font-size: 1.2rem;
+    }
+
+    footer h4 {
+        font-size: 0.9rem;
+    }
+
+    /* Búsqueda */
+    #searchInput {
+        width: 90%;
+        font-size: 12px;
+    }
+
+    /* Alerta */
+    .alert {
+        width: 80%;
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    /* Ajustes adicionales */
+    .prod-title h2 {
+        font-size: 1.1rem;
+    }
+
+    .dashboard-content {
+        padding: 0 5px;
+    }
+
+    #total-container {
+        width: 100%;
+        padding: 0.5rem;
+        margin-left: 0;
+        font-size: 12px;
+    }
+
+    /* Modal y Formulario */
+    #modalContainer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .principal {
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 15px;
+        position: relative;
+    }
+
+    #salir {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .encabezado h1 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    #pedidoFormulario {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #pedidoFormulario label {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    #pedidoFormulario input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    #barrios {
+        width: 100%;
+    }
+
+    .btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    #btn_comprar {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #btn_comprar:hover {
+        background-color: #0056b3;
+    }
+}
+
+@media screen and (max-width: 724px) {
+    /* Ajustes generales */
+    body {
+        font-size: 14px;
+    }
+
+    /* Header y Navegación */
+    header {
+        height: auto;
+        padding: -9rem;
+        position: static;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header img {
+        width: 80px;
+        margin: 3px auto;
+        margin-left: -25px;
+        margin-top: -10px;
+        
+    }
+
+    .header .search {
+        width: 90%;
+        margin: 3px auto;
+    }
+
+    .header .search input {
+        width: 100%;
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+
+    .header .nav-links {
+        margin: 3px 0;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-left: 80px;
+        margin-right: 290px;
+        margin-top: -10px;
+    }
+
+    .header .nav-links li {
+        padding: 6px;
+        margin-top: -50px;
+
+    }
+
+    .header .nav-links a {
+        font-size: 12px;
+        
+    }
+
+    
+    .header .logout {
+        margin: 3px ;
+        padding: 5px 8px;
+        font-size: 18px;
+        margin-left: 250px;
+        margin-top: -40px;
+    }
+    .header .car-shop{
+        margin: 3px ;
+        padding: 5px 8px;
+        font-size: 18px;
+        margin-left: 160px;
+        margin-top: -50px;
+    }
+
+    /* Dashboard Menu */
+    .dashboard-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0.3rem;
+    }
+
+    .dashboard-menu a {
+        width: auto;
+        padding: 0.3rem;
+        margin: 2px;
+        font-size: 11px;
+    }
+
+    /* Tarjetas de productos */
+    .dashboard-card {
+        width:100%;
+        margin: 10px 0;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        padding: 7px;
+    }
+
+    .dashboard-card img {
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .card-detail {
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-detail h4 {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .card-detail p {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .btn-add {
+        margin-top: 8px;
+    }
+
+    .btn-add a,
+    .addToCartButton {
+        font-size: 12px;
+        padding: 6px 10px;
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Ajuste para mostrar las cards una debajo de la otra */
+    .dashboard-content,
+    .tarjetas-contenedor {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Sidebar (Carrito) */
+    .sidebar.active {
+        width: 100%;
+    }
+
+    .order-wrapper .order-card {
+        flex-direction: row;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .order-card img {
+        width: 40px;
+        height: 40px;
+        margin-right: 8px;
+    }
+
+    .order-card .order-details .order-name {
+        font-size: 12px;
+    }
+
+    .order-card .order-details .order-price {
+        font-size: 11px;
+    }
+
+    /* Formulario de pago */
+    .container {
+        width: 90%;
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    .container input[type="text"] {
+        width: 100%;
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .exp-cvc {
+        flex-direction: column;
+    }
+
+    .expiration,
+    .security {
+        width: 100%;
+        margin: 4px 0;
+    }
+
+    .btn button {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    /* Footer */
+    .footer-container {
+        height: auto;
+        margin-left: 5px;
+        margin-top: 12px;
+    }
+
+    .content-footer {
+        flex-direction: column;
+    }
+
+    .contact,
+    .group {
+        width: 100%;
+        padding: 8px;
+    }
+
+    footer h1 {
+        font-size: 1.2rem;
+    }
+
+    footer h4 {
+        font-size: 0.9rem;
+    }
+
+    /* Búsqueda */
+    #searchInput {
+        width: 90%;
+        font-size: 12px;
+    }
+
+    /* Alerta */
+    .alert {
+        width: 80%;
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    /* Ajustes adicionales */
+    .prod-title h2 {
+        font-size: 1.1rem;
+    }
+
+    .dashboard-content {
+        padding: 0 5px;
+    }
+
+    #total-container {
+        width: 100%;
+        padding: 0.5rem;
+        margin-left: 0;
+        font-size: 12px;
+    }
+
+    /* Modal y Formulario */
+    #modalContainer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .principal {
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 15px;
+        position: relative;
+    }
+
+    #salir {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .encabezado h1 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    #pedidoFormulario {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #pedidoFormulario label {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    #pedidoFormulario input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    #barrios {
+        width: 100%;
+    }
+
+    .btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    #btn_comprar {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #btn_comprar:hover {
+        background-color: #0056b3;
+    }
+}
+
+
 @keyframes bounceIn {
     0% {
         transform: scale(0.1);
