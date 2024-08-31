@@ -90,32 +90,72 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function updateUserData(field, value) {
         console.log('Se está enviando la solicitud de actualización de datos');
-        fetch('../controller/update_user.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ field: field, value: value })
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    alert('Datos actualizados correctamente');
-                    location.reload();
-                } else if (data.message) {
-                    alert(data.message);  // Mostrar mensaje de error al usuario
-                } else {
-                    alert('Error al actualizar datos');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
-});
+        
+        // Primero, mostrar la alerta de confirmación
+        Swal.fire({
+            title: '¿Está seguro?',
+            text: "¿Desea realizar estos cambios?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, actualizar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, proceder con la actualización
+                fetch('../controller/update_user.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ field: field, value: value })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('La respuesta de la red no fue satisfactoria');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Mostrar mensaje de éxito
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Datos actualizados exitosamente',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else if (data.message) {
+                        // Mostrar mensaje de error del servidor
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message
+                        });
+                    } else {
+                        // Mostrar mensaje de error genérico
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al actualizar datos'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Hubo un problema al actualizar tus datos. Por favor, intenta de nuevo.'
+                    });
+                });
+            }
+        });
+    };
+})
 
 function confirmCancel(idPedido, segundosDesdePedido) {
     if (segundosDesdePedido >= 600) {
@@ -257,3 +297,4 @@ document.addEventListener('DOMContentLoaded', () => {
         mostrarMensaje('error', error);
     }
 });
+
