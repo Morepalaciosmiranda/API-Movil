@@ -959,6 +959,25 @@ button[type="submit"]:hover {
     color: #ffffff;
 }
 
+#add-pedido-btn {
+    background-color: #f28123; /* Verde */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px -15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#add-pedido-btn:hover {
+    background-color: #000000; /* Verde más oscuro */
+    transform: scale(1.05); /* Agrandar ligeramente */
+}
+
 /* Responsive design */
 @media (max-width: 600px) {
     #modalNuevoPedido .modal-content {
