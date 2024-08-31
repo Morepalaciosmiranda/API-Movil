@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function updateUserData(field, value) {
         console.log('Se está enviando la solicitud de actualización de datos');
-        fetch('/exterminio1/controller/update_user.php', {
+        fetch('../controller/update_user.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
