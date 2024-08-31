@@ -91,7 +91,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function updateUserData(field, value) {
         console.log('Se está enviando la solicitud de actualización de datos');
         
-        // Primero, mostrar la alerta de confirmación
         Swal.fire({
             title: '¿Está seguro?',
             text: "¿Desea realizar estos cambios?",
@@ -103,7 +102,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Si el usuario confirma, proceder con la actualización
                 fetch('../controller/update_user.php', {
                     method: 'POST',
                     headers: {
@@ -119,7 +117,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 })
                 .then(data => {
                     if (data.success) {
-                        // Mostrar mensaje de éxito
                         Swal.fire({
                             icon: 'success',
                             title: 'Datos actualizados exitosamente',
@@ -129,14 +126,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
                             location.reload();
                         });
                     } else if (data.message) {
-                        // Mostrar mensaje de error del servidor
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
                             text: data.message
                         });
                     } else {
-                        // Mostrar mensaje de error genérico
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -155,10 +150,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         });
     };
-})
+});
 
 function confirmCancel(idPedido, segundosDesdePedido) {
-    if (segundosDesdePedido >= 600) {
+    if (segundosDesdePedido > 600) {
         Swal.fire({
             title: 'No se puede cancelar',
             text: "Han pasado más de 10 minutos desde que se realizó el pedido.",
@@ -185,67 +180,46 @@ function confirmCancel(idPedido, segundosDesdePedido) {
     });
 }
 
-// Función para actualizar el estado de los botones de cancelar
 function actualizarBotonesCancelar() {
-    const pedidoItems = document.querySelectorAll('.pedido-item');
-    pedidoItems.forEach(item => {
-        const estadoPedido = item.querySelector('.pedido-info span:nth-child(5)').textContent.split(': ')[1];
-        const minutosDesdePedidoSpan = item.querySelector('.pedido-info span:nth-child(7)');
-        let minutosDesdePedido = 0;
-        if (minutosDesdePedidoSpan) {
-            minutosDesdePedido = parseInt(minutosDesdePedidoSpan.textContent.split(': ')[1]);
-        }
-        const cancelarButton = item.querySelector('.cancelar-button');
-        const noCancelarMensaje = item.querySelector('.pedido-actions p');
-
-        if (cancelarButton && noCancelarMensaje) {
-            if (estadoPedido === 'Entregado' || estadoPedido === 'Cancelado' || minutosDesdePedido > 10) {
-                cancelarButton.style.display = 'none';
-                noCancelarMensaje.style.display = 'block';
-            } else {
-                cancelarButton.style.display = 'inline-block';
-                noCancelarMensaje.style.display = 'none';
-            }
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', actualizarBotonesCancelar);
-setInterval(actualizarBotonesCancelar, 60000); // Actualizar cada minuto
-
-
-function actualizarTiempoRestante() {
     const pedidoItems = document.querySelectorAll('.pedido-item');
     const ahora = new Date();
 
     pedidoItems.forEach(item => {
-        const fechaPedido = new Date(item.dataset.timestamp + 'Z');  // 'Z' asegura que la fecha se interprete como UTC
-        const tiempoTranscurridoSpan = item.querySelector('.tiempo-transcurrido');
-        const tiempoRestanteSpan = item.querySelector('.tiempo-restante');
+        const fechaPedido = new Date(item.dataset.timestamp + 'Z');
+        const segundosTranscurridos = Math.floor((ahora - fechaPedido) / 1000);
+        const estadoPedido = item.querySelector('.pedido-info span:nth-child(5)').textContent.split(': ')[1];
         const cancelarButton = item.querySelector('.cancelar-button');
         const noCancelarMensaje = item.querySelector('.pedido-actions p');
 
-        const segundosTranscurridos = Math.floor((ahora - fechaPedido) / 1000);
-        const tiempoRestante = Math.max(0, 600 - segundosTranscurridos);
-        const minutosRestantes = Math.floor(tiempoRestante / 60);
-        const segundosRestantes = tiempoRestante % 60;
+        const puedeSerCancelado = estadoPedido !== 'Entregado' && 
+                                  estadoPedido !== 'Cancelado' && 
+                                  segundosTranscurridos <= 600;
 
-        tiempoTranscurridoSpan.textContent = `${Math.floor(segundosTranscurridos / 60)} minutos y ${segundosTranscurridos % 60} segundos`;
-        tiempoRestanteSpan.textContent = `${minutosRestantes} minutos y ${segundosRestantes} segundos`;
+        if (cancelarButton && noCancelarMensaje) {
+            if (puedeSerCancelado) {
+                cancelarButton.style.display = 'inline-block';
+                noCancelarMensaje.style.display = 'none';
+            } else {
+                cancelarButton.style.display = 'none';
+                noCancelarMensaje.style.display = 'block';
+            }
+        }
 
-        if (segundosTranscurridos >= 600) {
-            if (cancelarButton) cancelarButton.style.display = 'none';
-            if (noCancelarMensaje) noCancelarMensaje.style.display = 'block';
-        } else {
-            if (cancelarButton) cancelarButton.style.display = 'inline-block';
-            if (noCancelarMensaje) noCancelarMensaje.style.display = 'none';
+        const tiempoTranscurridoSpan = item.querySelector('.tiempo-transcurrido');
+        const tiempoRestanteSpan = item.querySelector('.tiempo-restante');
+        
+        if (tiempoTranscurridoSpan && tiempoRestanteSpan) {
+            const tiempoRestante = Math.max(0, 600 - segundosTranscurridos);
+            const minutosRestantes = Math.floor(tiempoRestante / 60);
+            const segundosRestantes = tiempoRestante % 60;
+
+            tiempoTranscurridoSpan.textContent = `${Math.floor(segundosTranscurridos / 60)} minutos y ${segundosTranscurridos % 60} segundos`;
+            tiempoRestanteSpan.textContent = `${minutosRestantes} minutos y ${segundosRestantes} segundos`;
         }
     });
 }
 
-// Actualizar el tiempo cada segundo
-setInterval(actualizarTiempoRestante, 1000);
-
+setInterval(actualizarBotonesCancelar, 1000);
 
 function mostrarDetallesPedido(idPedido) {
     fetch(`obtener_detalles_pedido.php?idPedido=${idPedido}`)
@@ -274,7 +248,6 @@ function mostrarDetallesPedido(idPedido) {
         .catch(error => console.error('Error:', error));
 }
 
-// Función para mostrar mensajes de éxito o error
 function mostrarMensaje(tipo, mensaje) {
     Swal.fire({
         icon: tipo,
@@ -285,7 +258,6 @@ function mostrarMensaje(tipo, mensaje) {
     });
 }
 
-// Verificar si hay mensajes de éxito o error en la URL
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const mensaje = urlParams.get('mensaje');
@@ -297,4 +269,3 @@ document.addEventListener('DOMContentLoaded', () => {
         mostrarMensaje('error', error);
     }
 });
-
