@@ -46,10 +46,11 @@ function procesarProducto()
             throw new Exception("Error al cargar la imagen: " . $imagen_error);
         }
 
-        $upload_dir = __DIR__ . '/../public/uploads/';
+        // Cambiar la ruta de upload_dir para usar una ruta relativa
+        $upload_dir = '../public/uploads/';
 
         // Verificar y crear el directorio si no existe
-        if (!is_dir($upload_dir)) {
+        if (!file_exists($upload_dir)) {
             if (!mkdir($upload_dir, 0755, true)) {
                 throw new Exception("No se pudo crear el directorio de uploads.");
             }
@@ -73,6 +74,7 @@ function procesarProducto()
             throw new Exception("Error al preparar la consulta de inserción: " . $conn->error);
         }
 
+        // Cambiar la ruta de la imagen para que sea relativa al documento raíz
         $imagen_ruta = '/uploads/' . $imagen_nombre;
         if (!$insert_stmt->bind_param("sssd", $nombre, $imagen_ruta, $descripcion, $precio)) {
             throw new Exception("Error al enlazar parámetros: " . $insert_stmt->error);
