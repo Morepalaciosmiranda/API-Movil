@@ -82,7 +82,6 @@ $insumos = obtenerInsumos();
                                     <th>Nombre</th>
                                     <th>Descripción</th>
                                     <th>Precio</th>
-                                    <th>Imagen</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -94,8 +93,7 @@ $insumos = obtenerInsumos();
                                         echo "<td>" . htmlspecialchars($producto['id_producto']) . "</td>";
                                         echo "<td>" . htmlspecialchars($producto['nombre_producto']) . "</td>";
                                         echo "<td>" . htmlspecialchars($producto['descripcion_producto']) . "</td>";
-                                        echo "<td>$" . number_format(htmlspecialchars($producto['valor_unitario']), 2) . "</td>";
-                                        echo "<td><img src='" . htmlspecialchars($producto['foto']) . "' alt='Imagen del producto' style='width: 50px; height: 50px; object-fit: cover;'></td>";
+                                        echo "<td>" . htmlspecialchars($producto['valor_unitario']) . "</td>";
                                         echo '<td class="actions">';
                                         echo '<button class="edit-btn" onclick="abrirModalEditar(\'' . htmlspecialchars($producto['id_producto']) . '\', \'' . htmlspecialchars($producto['nombre_producto']) . '\', \'' . htmlspecialchars($producto['descripcion_producto']) . '\', \'' . htmlspecialchars($producto['valor_unitario']) . '\')"><i class="fa fa-edit"></i></button>';
                                         echo '<button class="delete-btn" onclick="confirmarEliminacion(' . htmlspecialchars($producto['id_producto']) . ')"><i class="fa fa-trash"></i></button>';
@@ -103,7 +101,7 @@ $insumos = obtenerInsumos();
                                         echo "</tr>";
                                     }
                                 } else {
-                                    echo "<tr><td colspan='6'>No se encontraron productos</td></tr>";
+                                    echo "<tr><td colspan='5'>No se encontraron productos</td></tr>";
                                 }
                                 ?>
                             </tbody>

@@ -46,11 +46,10 @@ function procesarProducto()
             throw new Exception("Error al cargar la imagen: " . $imagen_error);
         }
 
-        // Cambiar la ruta de upload_dir para usar una ruta relativa
-        $upload_dir = '../public/uploads/';
+        $upload_dir = '/tmp/uploads/';
 
         // Verificar y crear el directorio si no existe
-        if (!file_exists($upload_dir)) {
+        if (!is_dir($upload_dir)) {
             if (!mkdir($upload_dir, 0755, true)) {
                 throw new Exception("No se pudo crear el directorio de uploads.");
             }
@@ -74,9 +73,7 @@ function procesarProducto()
             throw new Exception("Error al preparar la consulta de inserción: " . $conn->error);
         }
 
-        // Cambiar la ruta de la imagen para que sea relativa al documento raíz
-        $imagen_ruta = '/uploads/' . $imagen_nombre;
-        if (!$insert_stmt->bind_param("sssd", $nombre, $imagen_ruta, $descripcion, $precio)) {
+        if (!$insert_stmt->bind_param("sssd", $nombre, $imagen_nombre, $descripcion, $precio)) {
             throw new Exception("Error al enlazar parámetros: " . $insert_stmt->error);
         }
 
@@ -86,6 +83,7 @@ function procesarProducto()
 
         $producto_id = $conn->insert_id;
 
+        // Insertar en la tabla productos_insumos en lugar de actualizar insumos
         foreach ($insumo_ids as $index => $insumo_id) {
             $cantidad_insumo = $cantidades_insumo[$index];
 
@@ -131,9 +129,10 @@ function editarProducto()
             $imagen = $_FILES['imagen_edit'];
             $imagen_tmp_name = $imagen['tmp_name'];
             $imagen_nombre = uniqid('producto_') . '_' . basename($imagen['name']);
-            $upload_dir = __DIR__ . '/../public/uploads/';
+            $upload_dir = '/tmp/uploads/';
             $imagen_destino = $upload_dir . $imagen_nombre;
 
+            // Verificar y crear el directorio si no existe
             if (!is_dir($upload_dir)) {
                 if (!mkdir($upload_dir, 0755, true)) {
                     throw new Exception("No se pudo crear el directorio de uploads.");
@@ -147,14 +146,13 @@ function editarProducto()
                 throw new Exception("Error al mover la imagen al directorio de destino.");
             }
 
-            $imagen_ruta = '/uploads/' . $imagen_nombre;
             $actualizar_sql = "UPDATE productos SET nombre_producto = ?, descripcion_producto = ?, valor_unitario = ?, foto = ? WHERE id_producto = ?";
             $actualizar_stmt = $conn->prepare($actualizar_sql);
             if (!$actualizar_stmt) {
                 throw new Exception("Error al preparar la consulta de actualización: " . $conn->error);
             }
 
-            if (!$actualizar_stmt->bind_param("ssdsi", $nombre_editar, $descripcion_editar, $precio_editar, $imagen_ruta, $id_editar)) {
+            if (!$actualizar_stmt->bind_param("ssdsi", $nombre_editar, $descripcion_editar, $precio_editar, $imagen_nombre, $id_editar)) {
                 throw new Exception("Error al enlazar parámetros: " . $actualizar_stmt->error);
             }
         } else {
