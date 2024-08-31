@@ -107,7 +107,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     </form>
                 </div>
                 <table class="content">
-                    <button class="add-pedido-btn" onclick="abrirModalNuevoPedido()">Agregar Pedido</button>
+                <button id="agregarPedido" class="add-pedido-btn" onclick="abrirModalNuevoPedido()">Agregar Pedido</button>
                     <tr>
                         <th>ID Pedido</th>
                         <th>Nombre Usuario</th>

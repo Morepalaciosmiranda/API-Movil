@@ -959,7 +959,7 @@ button[type="submit"]:hover {
     color: #ffffff;
 }
 
-#add-pedido-btn {
+#agregarPedido {
     background-color: #f28123; /* Verde */
     border: none;
     color: white;
@@ -973,7 +973,7 @@ button[type="submit"]:hover {
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-#add-pedido-btn:hover {
+#agregarPedido:hover {
     background-color: #000000; /* Verde más oscuro */
     transform: scale(1.05); /* Agrandar ligeramente */
 }
