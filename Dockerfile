@@ -32,6 +32,11 @@ RUN composer clear-cache && \
 # Instala y habilita el módulo MPM prefork y rewrite
 RUN a2enmod mpm_prefork rewrite
 
+# Crea el directorio de uploads y establece los permisos correctos
+RUN mkdir -p /var/www/html/public/uploads && \
+    chown -R www-data:www-data /var/www/html/public/uploads && \
+    chmod -R 755 /var/www/html/public/uploads
+
 # Expone el puerto en el que Apache escuchará.
 EXPOSE 80
 
