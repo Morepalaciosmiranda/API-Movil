@@ -39,8 +39,8 @@ switch ($method) {
         // Obtener pedidos
         if (isset($_GET['action']) && $_GET['action'] == 'obtener_pedidos') {
             $sql = "SELECT p.id_pedido, p.fecha_pedido, p.estado_pedido, p.precio_domicilio, 
-            dp.nombre, dp.direccion, dp.barrio, dp.telefono, 
-            dp.subtotal as total_pedido,
+            MAX(dp.nombre) as nombre, MAX(dp.direccion) as direccion, MAX(dp.barrio) as barrio, MAX(dp.telefono) as telefono, 
+            SUM(dp.subtotal) as total_pedido,
             GROUP_CONCAT(CONCAT(dp.id_producto, ':', dp.cantidad, ':', dp.valor_unitario) SEPARATOR '|') as productos
      FROM pedidos p
      JOIN detalle_pedido dp ON p.id_pedido = dp.id_pedido
