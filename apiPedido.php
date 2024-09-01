@@ -1,6 +1,8 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+ini_set('memory_limit', '256M');
+ini_set('max_execution_time', 300);
 
 file_put_contents('debug.log', 'API called: ' . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
 file_put_contents('debug.log', 'GET: ' . print_r($_GET, true) . "\n", FILE_APPEND);
@@ -8,7 +10,7 @@ file_put_contents('debug.log', 'POST: ' . print_r($_POST, true) . "\n", FILE_APP
 file_put_contents('debug.log', 'Raw input: ' . file_get_contents('php://input') . "\n", FILE_APPEND);
 
 header("Content-Type: application/json");
-require_once('./includes/conexion.php'); // Asegúrate de que esta ruta sea correcta
+require_once('./includes/conexion.php');
 
 if ($conn->connect_error) {
     file_put_contents('debug.log', 'Connection failed: ' . $conn->connect_error . "\n", FILE_APPEND);
@@ -25,7 +27,7 @@ function send_json_response($success, $message = '', $data = null)
     if ($data !== null) {
         $response['data'] = $data;
     }
-    echo json_encode($response);
+    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
     file_put_contents('debug.log', 'Response: ' . json_encode($response) . "\n", FILE_APPEND);
     exit;
 }
@@ -39,13 +41,13 @@ switch ($method) {
         // Obtener pedidos
         if (isset($_GET['action']) && $_GET['action'] == 'obtener_pedidos') {
             $sql = "SELECT p.id_pedido, p.fecha_pedido, p.estado_pedido, p.precio_domicilio, 
-            MAX(dp.nombre) as nombre, MAX(dp.direccion) as direccion, MAX(dp.barrio) as barrio, MAX(dp.telefono) as telefono, 
-            SUM(dp.subtotal) as total_pedido,
-            GROUP_CONCAT(CONCAT(dp.id_producto, ':', dp.cantidad, ':', dp.valor_unitario) SEPARATOR '|') as productos
-     FROM pedidos p
-     JOIN detalle_pedido dp ON p.id_pedido = dp.id_pedido
-     GROUP BY p.id_pedido
-     ORDER BY p.fecha_pedido DESC";
+                    MAX(dp.nombre) as nombre, MAX(dp.direccion) as direccion, MAX(dp.barrio) as barrio, MAX(dp.telefono) as telefono, 
+                    SUM(dp.subtotal) as total_pedido,
+                    GROUP_CONCAT(CONCAT(dp.id_producto, ':', dp.cantidad, ':', dp.valor_unitario) SEPARATOR '|') as productos
+             FROM pedidos p
+             JOIN detalle_pedido dp ON p.id_pedido = dp.id_pedido
+             GROUP BY p.id_pedido
+             ORDER BY p.fecha_pedido DESC";
             file_put_contents('debug.log', 'SQL query: ' . $sql . "\n", FILE_APPEND);
 
             $result = $conn->query($sql);
@@ -54,14 +56,18 @@ switch ($method) {
                 $pedidos = [];
                 while ($row = $result->fetch_assoc()) {
                     $productos = [];
-                    $productosRaw = explode('|', $row['productos']);
-                    foreach ($productosRaw as $productoRaw) {
-                        list($id, $cantidad, $precio) = explode(':', $productoRaw);
-                        $productos[] = [
-                            'id' => $id,
-                            'cantidad' => $cantidad,
-                            'precio' => $precio
-                        ];
+                    if (!is_null($row['productos'])) {
+                        $productosRaw = explode('|', $row['productos']);
+                        foreach ($productosRaw as $productoRaw) {
+                            $productoData = explode(':', $productoRaw);
+                            if (count($productoData) >= 3) {
+                                $productos[] = [
+                                    'id' => $productoData[0],
+                                    'cantidad' => $productoData[1],
+                                    'precio' => $productoData[2]
+                                ];
+                            }
+                        }
                     }
                     $pedidos[] = [
                         'id' => $row['id_pedido'],
@@ -73,7 +79,7 @@ switch ($method) {
                         'barrio' => $row['barrio'],
                         'telefono' => $row['telefono'],
                         'total_pedido' => $row['total_pedido'],
-                        'productos' => $productos  // Añade esta línea
+                        'productos' => $productos
                     ];
                 }
                 file_put_contents('debug.log', 'Pedidos: ' . print_r($pedidos, true) . "\n", FILE_APPEND);
