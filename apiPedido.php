@@ -39,13 +39,13 @@ switch ($method) {
         // Obtener pedidos
         if (isset($_GET['action']) && $_GET['action'] == 'obtener_pedidos') {
             $sql = "SELECT p.id_pedido, p.fecha_pedido, p.estado_pedido, p.precio_domicilio, 
-                    dp.nombre, dp.direccion, dp.barrio, dp.telefono, 
-                    dp.subtotal as total_pedido,
-                    GROUP_CONCAT(CONCAT(dp.id_producto, ':', dp.cantidad, ':', dp.valor_unitario) SEPARATOR '|') as productos
-             FROM pedidos p
-             JOIN detalle_pedido dp ON p.id_pedido = dp.id_pedido
-             GROUP BY p.id_pedido
-             ORDER BY p.fecha_pedido DESC";
+            dp.nombre, dp.direccion, dp.barrio, dp.telefono, 
+            dp.subtotal as total_pedido,
+            GROUP_CONCAT(CONCAT(dp.id_producto, ':', dp.cantidad, ':', dp.valor_unitario) SEPARATOR '|') as productos
+     FROM pedidos p
+     JOIN detalle_pedido dp ON p.id_pedido = dp.id_pedido
+     GROUP BY p.id_pedido
+     ORDER BY p.fecha_pedido DESC";
             file_put_contents('debug.log', 'SQL query: ' . $sql . "\n", FILE_APPEND);
 
             $result = $conn->query($sql);
@@ -73,7 +73,7 @@ switch ($method) {
                         'barrio' => $row['barrio'],
                         'telefono' => $row['telefono'],
                         'total_pedido' => $row['total_pedido'],
-                        'productos' => $productos  
+                        'productos' => $productos  // Añade esta línea
                     ];
                 }
                 file_put_contents('debug.log', 'Pedidos: ' . print_r($pedidos, true) . "\n", FILE_APPEND);
