@@ -41,13 +41,14 @@ switch ($method) {
         // Obtener pedidos
         if (isset($_GET['action']) && $_GET['action'] == 'obtener_pedidos') {
             $sql = "SELECT p.id_pedido, p.fecha_pedido, p.estado_pedido, p.precio_domicilio, 
-                    MAX(dp.nombre) as nombre, MAX(dp.direccion) as direccion, MAX(dp.barrio) as barrio, MAX(dp.telefono) as telefono, 
-                    SUM(dp.subtotal) as total_pedido,
-                    GROUP_CONCAT(CONCAT(dp.id_producto, ':', dp.cantidad, ':', dp.valor_unitario) SEPARATOR '|') as productos
-             FROM pedidos p
-             JOIN detalle_pedido dp ON p.id_pedido = dp.id_pedido
-             GROUP BY p.id_pedido
-             ORDER BY p.fecha_pedido DESC";
+        MAX(dp.nombre) as nombre, MAX(dp.direccion) as direccion, MAX(dp.barrio) as barrio, MAX(dp.telefono) as telefono, 
+        SUM(dp.subtotal) as total_pedido,
+        GROUP_CONCAT(CONCAT(dp.id_producto, ':', dp.cantidad, ':', dp.valor_unitario, ':', pr.nombre_producto) SEPARATOR '|') as productos
+ FROM pedidos p
+ JOIN detalle_pedido dp ON p.id_pedido = dp.id_pedido
+ JOIN productos pr ON dp.id_producto = pr.id_producto
+ GROUP BY p.id_pedido
+ ORDER BY p.fecha_pedido DESC";
             file_put_contents('debug.log', 'SQL query: ' . $sql . "\n", FILE_APPEND);
 
             $result = $conn->query($sql);
@@ -60,11 +61,12 @@ switch ($method) {
                         $productosRaw = explode('|', $row['productos']);
                         foreach ($productosRaw as $productoRaw) {
                             $productoData = explode(':', $productoRaw);
-                            if (count($productoData) >= 3) {
+                            if (count($productoData) >= 4) {
                                 $productos[] = [
                                     'id' => $productoData[0],
                                     'cantidad' => $productoData[1],
-                                    'precio' => $productoData[2]
+                                    'precio' => $productoData[2],
+                                    'nombre_producto' => $productoData[3]
                                 ];
                             }
                         }
