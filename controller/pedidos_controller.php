@@ -167,10 +167,12 @@ try {
 
             foreach ($productos as $producto) {
                 $id_producto = $producto['id'];
+                $cantidad = $producto['quantity']; // Asegúrate de que esto esté correcto
                 $precio_producto = $producto['price'];
+                $subtotal = $precio_producto * $cantidad;
 
-                $stmt_detalle->bind_param("iissssdd", $pedido_id, $id_producto, $nombre, $direccion, $barrio, $telefono, $precio_producto, $precio_producto);
-
+                $stmt_detalle->bind_param("iissssidd", $pedido_id, $id_producto, $nombre, $direccion, $barrio, $telefono, $cantidad, $precio_producto, $subtotal);
+            
                 if (!$stmt_detalle->execute()) {
                     send_json_response(false, 'Error al insertar detalle del pedido para el producto con ID ' . $id_producto . ': ' . $stmt_detalle->error);
                 }

@@ -163,14 +163,11 @@ document.getElementById('exit').addEventListener('click', function () {
 
 function pagarAhora() {
     const carrito = cart.map(producto => ({
-        id_producto: producto.id,
-        nombre_producto: producto.name,
-        precio_producto: Number(producto.price).toLocaleString('es-CO', { minimumFractionDigits: 0 }), // Asegúrate de que el precio no tenga decimales
-        cantidad_producto: producto.quantity,
-        nombre: document.getElementById('nombre').value,
-        direccion: document.getElementById('direccion').value,
-        barrio: document.getElementById('barrio').value,
-        telefono: document.getElementById('telefono').value
+        id: producto.id,
+        name: producto.name,
+        price: producto.price,
+        quantity: producto.quantity,
+        image: producto.imageSrc
     }));
 
     document.getElementById('productos').value = JSON.stringify(carrito);
@@ -203,6 +200,19 @@ function pagarAhora() {
             console.error("Error al realizar el pedido:", error);
         }
     });
+}
+
+function submitForm() {
+    const productos = obtenerCarrito();
+    document.getElementById('productos').value = JSON.stringify(productos);
+    
+    // Validar el formulario
+    const form = document.getElementById('pedidoFormulario');
+    if (form.checkValidity()) {
+        pagarAhora();
+    } else {
+        form.reportValidity();
+    }
 }
 
 function obtenerCarrito() {
