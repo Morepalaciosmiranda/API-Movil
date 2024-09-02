@@ -7,7 +7,7 @@ if (isset($_GET['id'])) {
     $id_producto = $_GET['id'];
 
 
- 
+
 
     $sql = "SELECT * FROM productos WHERE id_producto = $id_producto";
 
@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
             $nombre_producto = $row['nombre_producto'];
             $descripcion_producto = $row['descripcion_producto'];
             $precio_producto = $row['valor_unitario'];
-            $ruta_imagen = "uploads/" . $row['foto'];
+            $ruta_imagen = "/" . $row['foto'];
         } else {
             echo "Producto no encontrado.";
             exit();
