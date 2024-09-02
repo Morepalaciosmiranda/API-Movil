@@ -9,11 +9,6 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-if ($imagen_error !== UPLOAD_ERR_OK) {
-    error_log("Error al cargar la imagen: " . $imagen_error);
-    throw new Exception("Error al cargar la imagen: " . $imagen_error);
-}
-
 function obtenerProductos()
 {
     global $conn;
@@ -43,37 +38,42 @@ function procesarProducto()
         $insumo_ids = $_POST['insumo_id'];
         $cantidades_insumo = $_POST['cantidad_insumo'];
 
-        $imagen = $_FILES['imagen'];
-        $imagen_tmp_name = $imagen['tmp_name'];
-        $imagen_error = $imagen['error'];
+        $imagen_nombre = '';
 
-        if ($imagen_error !== UPLOAD_ERR_OK) {
-            throw new Exception("Error al cargar la imagen: " . $imagen_error);
-        }
+        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] !== UPLOAD_ERR_NO_FILE) {
+            $imagen = $_FILES['imagen'];
+            $imagen_tmp_name = $imagen['tmp_name'];
+            $imagen_error = $imagen['error'];
 
-        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
-
-        // Verificar y crear el directorio si no existe
-        if (!is_dir($upload_dir)) {
-            if (!mkdir($upload_dir, 0755, true)) {
-                throw new Exception("No se pudo crear el directorio de uploads.");
+            if ($imagen_error !== UPLOAD_ERR_OK) {
+                throw new Exception("Error al cargar la imagen: " . $imagen_error);
             }
-        }
-        if (!is_writable($upload_dir)) {
-            throw new Exception("El directorio de uploads no tiene permisos de escritura");
-        }
 
-        $imagen_nombre = uniqid('producto_') . '_' . basename($imagen['name']);
-        $imagen_destino = $upload_dir . $imagen_nombre;
+            $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
 
-        if (!move_uploaded_file($imagen_tmp_name, $imagen_destino)) {
-            throw new Exception("Error al mover la imagen al directorio de destino.");
+            // Verificar y crear el directorio si no existe
+            if (!is_dir($upload_dir)) {
+                if (!mkdir($upload_dir, 0755, true)) {
+                    throw new Exception("No se pudo crear el directorio de uploads.");
+                }
+            }
+            if (!is_writable($upload_dir)) {
+                throw new Exception("El directorio de uploads no tiene permisos de escritura");
+            }
+
+            $imagen_nombre = uniqid('producto_') . '_' . basename($imagen['name']);
+            $imagen_destino = $upload_dir . $imagen_nombre;
+
+            if (!move_uploaded_file($imagen_tmp_name, $imagen_destino)) {
+                throw new Exception("Error al mover la imagen al directorio de destino.");
+            }
+
+            $imagen_nombre = 'uploads/' . $imagen_nombre;
         }
 
         $conn->begin_transaction();
 
         $insert_sql = "INSERT INTO productos (nombre_producto, foto, descripcion_producto, valor_unitario) VALUES (?, ?, ?, ?)";
-        $imagen_nombre = 'uploads/' . $imagen_nombre;
         $insert_stmt = $conn->prepare($insert_sql);
         if (!$insert_stmt) {
             throw new Exception("Error al preparar la consulta de inserción: " . $conn->error);
@@ -89,7 +89,6 @@ function procesarProducto()
 
         $producto_id = $conn->insert_id;
 
-        // Insertar en la tabla productos_insumos en lugar de actualizar insumos
         foreach ($insumo_ids as $index => $insumo_id) {
             $cantidad_insumo = $cantidades_insumo[$index];
 
@@ -135,7 +134,7 @@ function editarProducto()
             $imagen = $_FILES['imagen_edit'];
             $imagen_tmp_name = $imagen['tmp_name'];
             $imagen_nombre = uniqid('producto_') . '_' . basename($imagen['name']);
-            $upload_dir = '/tmp/uploads/';
+            $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
             $imagen_destino = $upload_dir . $imagen_nombre;
 
             // Verificar y crear el directorio si no existe
@@ -151,6 +150,8 @@ function editarProducto()
             if (!move_uploaded_file($imagen_tmp_name, $imagen_destino)) {
                 throw new Exception("Error al mover la imagen al directorio de destino.");
             }
+
+            $imagen_nombre = 'uploads/' . $imagen_nombre;
 
             $actualizar_sql = "UPDATE productos SET nombre_producto = ?, descripcion_producto = ?, valor_unitario = ?, foto = ? WHERE id_producto = ?";
             $actualizar_stmt = $conn->prepare($actualizar_sql);
