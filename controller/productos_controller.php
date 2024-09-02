@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-header('Content-Type: application/json');
+
 
 include '../includes/conexion.php';
 
@@ -195,8 +195,6 @@ function eliminarProducto($id_producto)
     $respuesta = ['exito' => false, 'mensaje' => ''];
 
     try {
-        $conn->begin_transaction();
-
         $eliminar_sql = "DELETE FROM productos WHERE id_producto = ?";
         $eliminar_stmt = $conn->prepare($eliminar_sql);
         if (!$eliminar_stmt) {
@@ -211,16 +209,14 @@ function eliminarProducto($id_producto)
             throw new Exception("Error al ejecutar la consulta de eliminación: " . $eliminar_stmt->error);
         }
 
-        $conn->commit();
         $respuesta['exito'] = true;
         $respuesta['mensaje'] = "Producto eliminado correctamente";
     } catch (Exception $e) {
-        $conn->rollback();
         error_log("Error al eliminar producto: " . $e->getMessage());
         $respuesta['mensaje'] = "Hubo un error al eliminar el producto: " . $e->getMessage();
     }
 
-    return json_encode($respuesta);
+    return $respuesta;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

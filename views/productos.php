@@ -250,48 +250,47 @@ $insumos = obtenerInsumos();
                     }
                 }
 
-                function confirmarEliminacion(id) {
+                window.confirmarEliminacion = function(id) {
                     Swal.fire({
-                        title: '¿Estás seguro?',
-                        text: "No podrás revertir esta acción",
+                        title: '¿Estás seguro de eliminar este producto?',
+                        text: "No podrás revertir esto!",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Sí, eliminar'
+                        confirmButtonText: 'Sí, eliminarlo!',
+                        cancelButtonText: 'Cancelar'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             fetch(`../controller/productos_controller.php?eliminar=${id}`)
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('Network response was not ok');
-                                    }
-                                    return response.json();
-                                })
+                                .then(response => response.json())
                                 .then(data => {
                                     if (data.exito) {
-                                        Swal.fire(
-                                            'Eliminado!',
-                                            data.mensaje,
-                                            'success'
-                                        ).then(() => {
-                                            location.reload();
+                                        Swal.fire({
+                                            title: 'Eliminado!',
+                                            text: data.mensaje,
+                                            icon: 'success',
+                                            confirmButtonText: 'OK'
+                                        }).then(() => {
+                                            window.location.reload();
                                         });
                                     } else {
-                                        Swal.fire(
-                                            'Error!',
-                                            data.mensaje,
-                                            'error'
-                                        );
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: data.mensaje,
+                                            icon: 'error',
+                                            confirmButtonText: 'OK'
+                                        });
                                     }
                                 })
                                 .catch(error => {
                                     console.error('Error:', error);
-                                    Swal.fire(
-                                        'Error!',
-                                        'Hubo un problema al eliminar el producto',
-                                        'error'
-                                    );
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: 'Hubo un error al procesar la solicitud.',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
                                 });
                         }
                     });
