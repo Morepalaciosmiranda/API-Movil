@@ -81,14 +81,14 @@ if ($_SESSION['rol'] !== 'Usuario') {
                     if ($conteoTarjetas > 0 && $conteoTarjetas % $tarjetasPorFila === 0) {
                         echo '</div><div class="tarjetas-contenedor">';
                     }
-                    $ruta_imagen = "uploads/" . $row['foto'];
+                    $ruta_imagen = $row['foto'];
                     $categoria = isset($row['categoria']) ? strtolower($row['categoria']) : 'sin-categoria';
                     $categoria_data = isset($row['categoria']) ? $row['categoria'] : 'sin-categoria'; // Valor predeterminado para data-category
                     $precio_formateado = number_format($row['valor_unitario'], 0, '.', ',');
 
                     echo '
         <div class="dashboard-card ' . $categoria . '" data-product-id="' . $row['id_producto'] . '" data-category="' . $categoria_data . '">
-            <a href="./visualizar.php?id=' . $row['id_producto'] . '"><img class="card-image" src="' . $ruta_imagen . '"></a>
+            <a href="./visualizar.php?id=' . $row['id_producto'] . '"><img class="card-image" src="/' . $ruta_imagen . '"></a>
             <div class="card-detail">
                 <h4>' . $row['nombre_producto'] . '</h4>
                 <p>Descripción: ' . $row['descripcion_producto'] . '</p>

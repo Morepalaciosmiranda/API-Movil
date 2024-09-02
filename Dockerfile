@@ -37,6 +37,14 @@ RUN mkdir -p /var/www/html/public/uploads && \
     chown -R www-data:www-data /var/www/html/public/uploads && \
     chmod -R 755 /var/www/html/public/uploads
 
+RUN mkdir -p /var/www/html/uploads && \
+    chown -R www-data:www-data /var/www/html/uploads && \
+    chmod -R 755 /var/www/html/uploads
+
+RUN chown -R www-data:www-data /var/www/html
+
+RUN echo "upload_max_filesize = 10M" >> /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "post_max_size = 10M" >> /usr/local/etc/php/conf.d/uploads.ini
 # Expone el puerto en el que Apache escuchará.
 EXPOSE 80
 

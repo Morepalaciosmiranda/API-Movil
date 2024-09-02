@@ -9,6 +9,11 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+if ($imagen_error !== UPLOAD_ERR_OK) {
+    error_log("Error al cargar la imagen: " . $imagen_error);
+    throw new Exception("Error al cargar la imagen: " . $imagen_error);
+}
+
 function obtenerProductos()
 {
     global $conn;
@@ -46,7 +51,7 @@ function procesarProducto()
             throw new Exception("Error al cargar la imagen: " . $imagen_error);
         }
 
-        $upload_dir = '/tmp/uploads/';
+        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
 
         // Verificar y crear el directorio si no existe
         if (!is_dir($upload_dir)) {
@@ -68,6 +73,7 @@ function procesarProducto()
         $conn->begin_transaction();
 
         $insert_sql = "INSERT INTO productos (nombre_producto, foto, descripcion_producto, valor_unitario) VALUES (?, ?, ?, ?)";
+        $imagen_nombre = 'uploads/' . $imagen_nombre;
         $insert_stmt = $conn->prepare($insert_sql);
         if (!$insert_stmt) {
             throw new Exception("Error al preparar la consulta de inserción: " . $conn->error);
