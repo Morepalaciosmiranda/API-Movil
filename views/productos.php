@@ -263,8 +263,21 @@ $insumos = obtenerInsumos();
                     }).then((result) => {
                         if (result.isConfirmed) {
                             fetch(`../controller/productos_controller.php?eliminar=${id}`)
-                                .then(response => response.json())
-                                .then(data => {
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.text(); // Cambia a text() en lugar de json()
+                                })
+                                .then(text => {
+                                    let data;
+                                    try {
+                                        data = JSON.parse(text); // Intenta parsear el texto como JSON
+                                    } catch (error) {
+                                        console.error('Error parsing JSON:', error);
+                                        throw new Error('Invalid JSON response');
+                                    }
+
                                     if (data.exito) {
                                         Swal.fire({
                                             title: 'Eliminado!',
@@ -277,7 +290,7 @@ $insumos = obtenerInsumos();
                                     } else {
                                         Swal.fire({
                                             title: 'Error',
-                                            text: data.mensaje,
+                                            text: data.mensaje || 'Error desconocido',
                                             icon: 'error',
                                             confirmButtonText: 'OK'
                                         });
@@ -287,7 +300,7 @@ $insumos = obtenerInsumos();
                                     console.error('Error:', error);
                                     Swal.fire({
                                         title: 'Error',
-                                        text: 'Hubo un error al procesar la solicitud.',
+                                        text: 'Hubo un error al procesar la solicitud: ' + error.message,
                                         icon: 'error',
                                         confirmButtonText: 'OK'
                                     });
