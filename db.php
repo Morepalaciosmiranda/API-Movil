@@ -1,31 +1,22 @@
 <?php
-// Incluye el archivo de conexiónN
-include './includes/conexion.php';
+// Incluir el archivo de conexión
+require_once './includes/conexion.php';
 
-// Verifica si la columna ya existe
-$checkColumn = "SHOW COLUMNS FROM pedidos LIKE 'timestamp_pedido'";
-$result = $conn->query($checkColumn);
-
-if ($result->num_rows == 0) {
-    // La columna no existe, así que la agregamos
-    $addColumn = "ALTER TABLE pedidos ADD COLUMN timestamp_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP";
-    
-    if ($conn->query($addColumn) === TRUE) {
-        echo "La columna 'timestamp_pedido' se ha agregado correctamente a la tabla 'pedidos'.";
-        
-        // Actualiza los registros existentes
-        $updateExisting = "UPDATE pedidos SET timestamp_pedido = fecha_pedido WHERE timestamp_pedido IS NULL";
-        if ($conn->query($updateExisting) === TRUE) {
-            echo "<br>Los registros existentes se han actualizado con éxito.";
-        } else {
-            echo "<br>Error al actualizar los registros existentes: " . $conn->error;
-        }
-    } else {
-        echo "Error al agregar la columna: " . $conn->error;
-    }
-} else {
-    echo "La columna 'timestamp_pedido' ya existe en la tabla 'pedidos'.";
+// Verificar la conexión
+if ($conn->connect_error) {
+    die("La conexión falló: " . $conn->connect_error);
 }
 
-// Cierra la conexión
+// Consulta SQL para actualizar la tabla productos
+$sql = "UPDATE productos SET foto = CONCAT('uploads/', foto) WHERE foto NOT LIKE 'uploads/%'";
+
+// Ejecutar la consulta
+if ($conn->query($sql) === TRUE) {
+    echo "Registros actualizados correctamente";
+} else {
+    echo "Error al actualizar registros: " . $conn->error;
+}
+
+// Cerrar la conexión
 $conn->close();
+?>

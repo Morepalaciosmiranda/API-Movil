@@ -20,6 +20,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copia el código fuente de tu aplicación al contenedor.
 COPY . .
 
+COPY ./uploads /var/www/html/uploads
 # Instala TCPDF manualmente
 RUN mkdir -p vendor/tecnickcom/tcpdf && \
     curl -L https://github.com/tecnickcom/TCPDF/archive/6.4.1.tar.gz | tar xz -C vendor/tecnickcom/tcpdf --strip-components=1

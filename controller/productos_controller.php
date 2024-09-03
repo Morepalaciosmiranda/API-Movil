@@ -62,8 +62,9 @@ function procesarProducto()
                 throw new Exception("El directorio de uploads no tiene permisos de escritura");
             }
 
-            $imagen_nombre = '/uploads/' . uniqid('producto_') . '_' . basename($imagen['name']);
-            $imagen_destino = $upload_dir . $imagen_nombre;
+            // Cuando guardas una nueva imagen
+            $imagen_nombre = 'uploads/' . uniqid('producto_') . '_' . basename($imagen['name']);
+            $imagen_destino = $_SERVER['DOCUMENT_ROOT'] . '/' . $imagen_nombre;
 
             if (!move_uploaded_file($imagen_tmp_name, $imagen_destino)) {
                 throw new Exception("Error al mover la imagen al directorio de destino.");

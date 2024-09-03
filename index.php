@@ -12,7 +12,14 @@ if ($_SESSION['rol'] !== 'Usuario') {
     header('Location: ./no_autorizado.php');
     exit();
 }
+
+$ruta_imagen = $row['foto'];
+if (!str_starts_with($ruta_imagen, 'uploads/')) {
+    $ruta_imagen = 'uploads/' . $ruta_imagen;
+}
 ?>
+<img class="card-image" src="<?php echo $ruta_imagen; ?>" onerror="this.src='ruta/a/imagen_por_defecto.jpg';" alt="<?php echo htmlspecialchars($row['nombre_producto']); ?>">
+
 <!DOCTYPE html>
 <html lang="en">
 
