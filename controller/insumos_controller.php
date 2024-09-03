@@ -67,27 +67,38 @@ if (isset($_POST['id_editar'], $_POST['nombre_editar'], $_POST['id_proveedor_edi
 }
 
 
-
 if (isset($_GET['eliminar'])) {
     $id_insumo = $_GET['eliminar'];
 
-    $eliminar_sql = "DELETE FROM insumos WHERE id_insumo = ?";
-    $eliminar_stmt = $conn->prepare($eliminar_sql);
-    if (!$eliminar_stmt) {
-        die("Error al preparar la consulta de eliminación: " . $conn->error);
-    }
+    try {
+        $eliminar_sql = "DELETE FROM insumos WHERE id_insumo = ?";
+        $eliminar_stmt = $conn->prepare($eliminar_sql);
+        if (!$eliminar_stmt) {
+            throw new Exception("Error al preparar la consulta de eliminación: " . $conn->error);
+        }
 
-    if (!$eliminar_stmt->bind_param("i", $id_insumo)) {
-        die("Error al enlazar parámetros: " . $eliminar_stmt->error);
-    }
+        if (!$eliminar_stmt->bind_param("i", $id_insumo)) {
+            throw new Exception("Error al enlazar parámetros: " . $eliminar_stmt->error);
+        }
 
-    if (!$eliminar_stmt->execute()) {
-        die("Error al ejecutar la consulta de eliminación: " . $eliminar_stmt->error);
-    }
+        if (!$eliminar_stmt->execute()) {
+            // Si hay una excepción, la capturamos
+            throw new mysqli_sql_exception($eliminar_stmt->error, $eliminar_stmt->errno);
+        }
 
-    header('Location: ../views/insumos.php');
-    exit();
+        // Redirigir a la vista de insumos si todo salió bien
+        header('Location: ../views/insumos.php?eliminar=exito');
+        exit();
+    } catch (mysqli_sql_exception $e) {
+        // Verificamos si el error es debido a la restricción de clave foránea
+        if ($e->getCode() == 1451) {
+            header('Location: ../views/insumos.php?error=relacion');
+        } else {
+            die("Error inesperado al intentar eliminar el insumo: " . $e->getMessage());
+        }
+    }
 }
+
 
 $consulta_insumos = "SELECT * FROM insumos";
 $resultado_insumos = $conn->query($consulta_insumos);

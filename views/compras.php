@@ -27,13 +27,18 @@ $sql = "SELECT compras.id_compra, proveedores.nombre_proveedor, compras.fecha_co
         FROM compras
         JOIN proveedores ON compras.id_proveedor = proveedores.id_proveedor";
 
+// Capturar el valor de la fecha desde la solicitud GET
+$fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : null;
+
+// Consulta SQL inicial
+$sql = "SELECT * FROM compras";
+
 // Si se ha seleccionado una fecha, agrega la condición a la consulta
-if ($fecha_filtro) {
+if (!empty($fecha_filtro)) {
     $sql .= " WHERE DATE(compras.fecha_compra) = '$fecha_filtro'";
 }
 
-
-// Agregar una cláusula ORDER BY antes del LIMIT para evitar el error
+// Agregar una cláusula ORDER BY antes del LIMIT
 $sql .= " ORDER BY compras.fecha_compra DESC LIMIT $items_por_pagina OFFSET $offset";
 
 // Ejecutar la consulta
@@ -46,7 +51,7 @@ if (!$result) {
 
 // Consulta SQL para obtener el número total de compras (con o sin filtro)
 $sql_total = "SELECT COUNT(*) as total FROM compras";
-if ($fecha_filtro) {
+if (!empty($fecha_filtro)) {
     $sql_total .= " WHERE DATE(fecha_compra) = '$fecha_filtro'";
 }
 $result_total = $conn->query($sql_total);
@@ -586,6 +591,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
     }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/validaciones.js"></script>
 </body>
 
 </html>

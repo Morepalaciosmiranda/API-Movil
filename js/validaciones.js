@@ -360,3 +360,114 @@ function mostrarAlerta(mensaje) {
     });
 }
 
+
+/* ALERTAS COMPRAS */
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación de usuario
+    const usuarioInput = document.getElementById('id_usuario');
+    usuarioInput.addEventListener('change', function() {
+        validarUsuario(this);
+    });
+
+    // Validación de proveedor
+    const proveedorInput = document.getElementById('id_proveedor');
+    proveedorInput.addEventListener('change', function() {
+        validarProveedor(this);
+    });
+
+    // Validación de fecha de compra
+    const fechaCompraInput = document.getElementById('fecha_compra');
+    fechaCompraInput.addEventListener('change', function() {
+        validarFechaCompra(this);
+    });
+
+    // Validación de subtotal
+    const subtotalInput = document.getElementById('subtotal');
+    subtotalInput.addEventListener('blur', function() {
+        validarSubtotal(this);
+    });
+
+    // Validación de cantidad
+    const cantidadInput = document.getElementById('cantidad');
+    cantidadInput.addEventListener('blur', function() {
+        validarCantidad(this);
+    });
+
+    // Validación de valor unitario
+    const valorUnitarioInput = document.getElementById('valor_unitario');
+    valorUnitarioInput.addEventListener('blur', function() {
+        validarValorUnitario(this);
+    });
+});
+
+function validarUsuario(input) {
+    if (input.value === '') {
+        mostrarAlerta('Debe seleccionar un usuario.');
+    }
+}
+
+function validarProveedor(input) {
+    if (input.value === '') {
+        mostrarAlerta('Debe seleccionar un proveedor.');
+    }
+}
+
+function validarFechaCompra(input) {
+    const fecha = new Date(input.value);
+    const hoy = new Date();
+    const dosMesesDesdeHoy = new Date();
+    dosMesesDesdeHoy.setMonth(hoy.getMonth() + 2);
+
+    if (fecha < hoy) {
+        mostrarAlerta('La fecha de compra debe ser posterior a 5 días.');
+    } else if (fecha > dosMesesDesdeHoy) {
+        mostrarAlerta('La fecha de compra no puede ser mayor a dos meses desde hoy.');
+    }
+}
+
+function validarSubtotal(input) {
+    const subtotal = input.value;
+    if (subtotal === '') {
+        mostrarAlerta('El campo de subtotal no puede estar vacío.');
+    } else if (parseFloat(subtotal) < 0) {
+        mostrarAlerta('El subtotal no puede ser un número negativo.');
+    } else if (/[^0-9.]/.test(subtotal)) {
+        mostrarAlerta('El subtotal solo puede contener caracteres numéricos.');
+    } else if (subtotal.length > 15) {
+        mostrarAlerta('El subtotal no puede tener más de 15 caracteres.');
+    } else if (/^[\d]+(\.\d{1,2})?$/.test(subtotal)) {
+        mostrarAlerta('El subtotal debe ser un número positivo con hasta dos decimales.');
+    }
+}
+
+function validarCantidad(input) {
+    const cantidad = input.value;
+    if (cantidad === '') {
+        mostrarAlerta('El campo de cantidad no puede estar vacío.');
+    } else if (parseInt(cantidad) <= 0) {
+        mostrarAlerta('La cantidad debe ser un número positivo mayor a 0.');
+    } else if (!/^\d+$/.test(cantidad)) {
+        mostrarAlerta('La cantidad debe ser un número entero.');
+    }
+}
+
+function validarValorUnitario(input) {
+    const valor = parseFloat(input.value);
+
+    if (isNaN(valor)) {
+        mostrarAlerta('El valor unitario debe ser un número.');
+    } else if (valor <= 0) {
+        mostrarAlerta('El valor unitario debe ser un número positivo.');
+    } else if (!Number.isInteger(valor) && valor.toFixed(2).length > valor.toString().length) {
+        mostrarAlerta('El valor unitario no puede tener más de dos decimales.');
+    }
+}
+
+function mostrarAlerta(mensaje) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error de validación',
+        text: mensaje,
+    });
+}

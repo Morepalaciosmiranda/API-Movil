@@ -337,17 +337,33 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                 confirmButtonText: 'Sí, eliminarlo!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Eliminado!',
-                        text: 'El insumo ha sido eliminado.',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        window.location.href = '../controller/insumos_controller.php?eliminar=' + idInsumo;
-                    });
+                    // Redirigimos a la URL del controlador
+                    window.location.href = '../controller/insumos_controller.php?eliminar=' + idInsumo;
                 }
             });
         }
+
+        // Manejo de alertas basado en los parámetros de la URL
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.has('error') && urlParams.get('error') === 'relacion') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No se puede eliminar',
+                    text: 'Este insumo está relacionado con un producto y no se puede eliminar.',
+                    confirmButtonText: 'Entendido'
+                });
+            } else if (urlParams.has('eliminar') && urlParams.get('eliminar') === 'exito') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Eliminado!',
+                    text: 'El insumo ha sido eliminado correctamente.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+
 
         function buscarInsumo() {
             const input = document.getElementById('searchInsumos').value.toLowerCase();

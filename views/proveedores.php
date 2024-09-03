@@ -338,7 +338,7 @@ $result = mysqli_query($conn, $sql);
                                                 }
                                             })
                                             .catch(error => {
-                                                console.error('Error al intentar eliminar el proveedor:', error);
+                                                console.error('Este proveedor esta relacionado a una compra no se puede eliminar..', error);
                                                 Swal.fire({
                                                     title: 'Error',
                                                     text: 'Ocurrió un error inesperado.',
