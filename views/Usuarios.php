@@ -47,29 +47,41 @@ if (isset($_POST['user_id']) && isset($_POST['new_role'])) {
 }
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
-    // Redirigir a la página de inicio de sesión si no hay sesión
     header('Location: ../loginRegister.php');
     exit();
 }
 
 if ($_SESSION['rol'] !== 'Administrador') {
-    // Redirigir a una página de acceso no autorizado o hacer otra acción
     header('Location: ../no_autorizado.php');
     exit();
 }
 
-
 $results_per_page = 10;
-$page = isset($_GET['page']) ? $_GET['page'] : 1;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $start_from = ($page - 1) * $results_per_page;
 
-$sql = "SELECT * FROM usuarios LIMIT $start_from, $results_per_page";
-$result = $conn->query($sql);
+// Consulta para obtener el número total de usuarios
+$sql_count = "SELECT COUNT(*) AS total FROM usuarios";
+$result_count = $conn->query($sql_count);
+$row_count = $result_count->fetch_assoc();
+$total_users = $row_count['total'];
+
+// Calcular el número total de páginas
+$total_pages = ceil($total_users / $results_per_page);
+
+// Asegurarse de que la página actual está dentro del rango válido
+$page = max(1, min($page, $total_pages));
+
+// Consulta para obtener los usuarios de la página actual
+$sql = "SELECT * FROM usuarios LIMIT ?, ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ii", $start_from, $results_per_page);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="./css/usuarios11.css">
@@ -80,7 +92,6 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 </head>
-
 <body>
     <div class="container">
         <?php include 'sidebar.php'; ?>
@@ -103,7 +114,7 @@ $result = $conn->query($sql);
                     <div id="userOptionsContainer" class="user-options-container">
                         <p><i class="fa fa-cog"></i> Configuración</p>
                         <a href="../loginRegister.php">
-                            <p><i class="fa fa-power-off"></i> Cerrar sesión</p>
+                        <p><i class="fa fa-power-off"></i> Cerrar sesión</p>
                         </a>
                     </div>
                 </div>
@@ -121,10 +132,7 @@ $result = $conn->query($sql);
                         </thead>
                         <tbody id="userTableBody">
                             <?php
-                            $sql = "SELECT * FROM usuarios";
-                            $result = $conn->query($sql);
-
-                            if ($result && $result->num_rows > 0) {
+                            if ($result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
                                     echo "<tr>";
                                     echo "<td>" . $row["id_usuario"] . "</td>";
@@ -135,14 +143,10 @@ $result = $conn->query($sql);
                                     echo "<td>";
                                     echo "<div class='actions'>";
                                     echo "<button class='btn state-button action-btn' data-user-id='" . $row["id_usuario"] . "' data-current-state='" . $row["estado_usuario"] . "' onclick='openStateModal(" . $row["id_usuario"] . ", \"" . $row["estado_usuario"] . "\")'><i class='fa fa-edit'></i></button>";
-
-                                    // Mostrar el botón de asignar rol para todos los usuarios
                                     echo "<form class='assign-role-form' method='post' action='../controller/assign_role.php'>";
                                     echo "<input type='hidden' name='user_id' value='" . $row["id_usuario"] . "'>";
                                     echo "<button class='btn assign-role-button action-btn' data-user-id='" . $row["id_usuario"] . "'><i class='fa fa-user-plus'></i></button>";
                                     echo "</form>";
-
-                                    // Mostrar el botón de permisos solo para usuarios con id_rol 1
                                     if ($row["id_rol"] == 1) {
                                         echo "<button class='btn permission-button action-btn' data-user-id='" . $row["id_usuario"] . "' onclick='openPermissionsModal(" . $row["id_usuario"] . ")'><i class='fa fa-lock'></i></button>";
                                     }
@@ -151,28 +155,39 @@ $result = $conn->query($sql);
                                     echo "</tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='6'>No hay usuarios registrados.</td></tr>";
+                                echo "<tr><td colspan='6'>No hay usuarios registrados en esta página.</td></tr>";
                             }
                             ?>
                         </tbody>
                     </table>
-                    <?php
-                    $sql_count = "SELECT COUNT(*) AS total FROM usuarios";
-                    $result_count = $conn->query($sql_count);
-                    $row_count = $result_count->fetch_assoc();
-                    $total_pages = ceil($row_count["total"] / $results_per_page);
                     
-                    // Mostrar la paginación
-                    echo "<div class='pagination'>";
-                    for ($i = 1; $i <= $total_pages; $i++) {
-                        echo "<a href='?page=" . $i . "'>" . $i . "</a> ";
-                    }
-                    echo "</div>";
-                    ?>
+                    <div class="pagination">
+                        <?php
+                        // Mostrar enlace "Anterior" si no estamos en la primera página
+                        if ($page > 1) {
+                            echo "<a href='?page=" . ($page - 1) . "'>Anterior</a> ";
+                        }
+                        
+                        // Mostrar enlaces de página
+                        for ($i = 1; $i <= $total_pages; $i++) {
+                            if ($i == $page) {
+                                echo "<strong>$i</strong> ";
+                            } else {
+                                echo "<a href='?page=$i'>$i</a> ";
+                            }
+                        }
+                        
+                        // Mostrar enlace "Siguiente" si no estamos en la última página
+                        if ($page < $total_pages) {
+                            echo "<a href='?page=" . ($page + 1) . "'>Siguiente</a>";
+                        }
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- Modales -->
         <div id="permissionsModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closePermissionsModal()">&times;</span>
@@ -194,8 +209,7 @@ $result = $conn->query($sql);
                     }
                     ?>
                 </ul>
-                <button id="confirmPermissionsBtn" class='btn btn-primary'><i class='fa fa-check'></i> Confirmar
-                    Permisos</button>
+                <button id="confirmPermissionsBtn" class='btn btn-primary'><i class='fa fa-check'></i> Confirmar Permisos</button>
             </div>
         </div>
 
@@ -236,16 +250,14 @@ $result = $conn->query($sql);
                         <option value="Inactivo">Inactivo</option>
                     </select>
                     <label for="state_message">Mensaje:</label>
-                    <textarea name="state_message" id="state_message" rows="4"
-                        placeholder="Ingrese el mensaje para el usuario..."></textarea>
-                    <button id="confirmStateBtn" type="submit" class='btn btn-primary'><i class='fa fa-check'></i>
-                        Confirmar</button>
+                    <textarea name="state_message" id="state_message" rows="4" placeholder="Ingrese el mensaje para el usuario..."></textarea>
+                    <button id="confirmStateBtn" type="submit" class='btn btn-primary'><i class='fa fa-check'></i> Confirmar</button>
                 </form>
             </div>
         </div>
 
-
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
         <script>
             var modal = document.getElementById('permissionsModal');
             var rolesModal = document.getElementById('rolesModal');
@@ -319,8 +331,7 @@ $result = $conn->query($sql);
                                         } else {
                                             let errorMessage = response.message;
                                             if (response.details) {
-                                                errorMessage += "\n\nDetalles: " + JSON.stringify(response
-                                                    .details);
+                                                errorMessage += "\n\nDetalles: " + JSON.stringify(response.details);
                                             }
                                             Swal.fire({
                                                 title: 'Error',
@@ -502,76 +513,10 @@ $result = $conn->query($sql);
                                 closeStateModal();
                             }
                         };
-                        xhr.send("user_id=" + userId + "&new_state=" + newState + "&state_message=" +
-                            encodeURIComponent(stateMessage));
+                        xhr.send("user_id=" + userId + "&new_state=" + newState + "&state_message=" + encodeURIComponent(stateMessage));
                     }
                 });
                 return false;
-            }
-
-            var createRoleBtn = document.getElementById('createRoleBtn');
-            var createRoleModal = document.getElementById('createRoleModal');
-
-            createRoleBtn.onclick = function() {
-                createRoleModal.style.display = "block";
-            }
-
-            function closeCreateRoleModal() {
-                createRoleModal.style.display = "none";
-            }
-
-            document.getElementById('createRoleForm').onsubmit = function(e) {
-                e.preventDefault();
-                var roleName = document.getElementById('roleName').value;
-                var permissions = Array.from(document.querySelectorAll('input[name="permissions[]"]:checked')).map(el =>
-                    el.value);
-
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: '¿Quieres crear este nuevo rol con los permisos seleccionados?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, crear rol',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var xhr = new XMLHttpRequest();
-                        xhr.open("POST", "../controller/create_role.php", true);
-                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                        xhr.onreadystatechange = function() {
-                            if (xhr.readyState == 4 && xhr.status == 200) {
-                                var response = JSON.parse(xhr.responseText);
-                                if (response.status === "success") {
-                                    Swal.fire({
-                                        title: 'Éxito',
-                                        text: response.message,
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    }).then(() => {
-                                        location.reload();
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: 'Error',
-                                        text: response.message,
-                                        icon: 'error',
-                                        confirmButtonText: 'OK'
-                                    });
-                                }
-                                closeCreateRoleModal();
-                            }
-                        };
-                        xhr.send("roleName=" + encodeURIComponent(roleName) + "&permissions=" + JSON.stringify(
-                            permissions));
-                    }
-                });
-            }
-
-            // Cerrar la modal si se hace clic fuera de ella
-            window.onclick = function(event) {
-                if (event.target == createRoleModal) {
-                    closeCreateRoleModal();
-                }
             }
 
             function buscarUsuario() {
@@ -579,21 +524,18 @@ $result = $conn->query($sql);
                 const tableRows = document.querySelectorAll('#userTableBody tr');
 
                 tableRows.forEach(row => {
-                    // Concatenar todo el texto de la fila para buscar en todos los campos
                     const rowText = Array.from(row.getElementsByTagName('td'))
                         .map(td => td.textContent.toLowerCase())
                         .join(' ');
 
-                    // Verificar si el texto de búsqueda está en alguna parte de la fila
                     if (rowText.includes(input)) {
-                        row.style.display = ''; // Mostrar fila
+                        row.style.display = '';
                     } else {
-                        row.style.display = 'none'; // Ocultar fila
+                        row.style.display = 'none';
                     }
                 });
             }
         </script>
     </div>
 </body>
-
 </html>
