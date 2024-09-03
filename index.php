@@ -88,7 +88,7 @@ if ($_SESSION['rol'] !== 'Usuario') {
 
                     echo '
         <div class="dashboard-card ' . $categoria . '" data-product-id="' . $row['id_producto'] . '" data-category="' . $categoria_data . '">
-            <a href="./visualizar.php?id=' . $row['id_producto'] . '"><img class="card-image" src="/' . $ruta_imagen . '"></a>
+            <a href="./visualizar.php?id=' . $row['id_producto'] . '"><img class="card-image" src="' . $ruta_imagen . '"></a>
             <div class="card-detail">
                 <h4>' . $row['nombre_producto'] . '</h4>
                 <p>Descripción: ' . $row['descripcion_producto'] . '</p>
