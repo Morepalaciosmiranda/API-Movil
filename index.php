@@ -12,32 +12,7 @@ if ($_SESSION['rol'] !== 'Usuario') {
     header('Location: ./no_autorizado.php');
     exit();
 }
-
-$query = "SELECT foto, nombre_producto FROM productos WHERE id = ?"; // Ajusta esta consulta según tus necesidades
-$stmt = $conn->prepare($query);
-$stmt->bind_param("i", $producto_id); // Asegúrate de que $producto_id esté definido
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($row = $result->fetch_assoc()) {
-    $ruta_imagen = $row['foto'];
-    if (!empty($ruta_imagen)) {
-        if (!str_starts_with($ruta_imagen, 'uploads/')) {
-            $ruta_imagen = 'uploads/' . $ruta_imagen;
-        }
-    } else {
-        $ruta_imagen = 'ruta/a/imagen_por_defecto.jpg';
-    }
-    
-    $nombre_producto = htmlspecialchars($row['nombre_producto']);
-} else {
-    // Si no se encontró el producto, usa valores por defecto
-    $ruta_imagen = 'ruta/a/imagen_por_defecto.jpg';
-    $nombre_producto = 'Producto no encontrado';
-}
 ?>
-<img class="card-image" src="<?php echo $ruta_imagen; ?>" alt="<?php echo $nombre_producto; ?>"
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -113,7 +88,7 @@ if ($row = $result->fetch_assoc()) {
 
                     echo '
         <div class="dashboard-card ' . $categoria . '" data-product-id="' . $row['id_producto'] . '" data-category="' . $categoria_data . '">
-            <a href="./visualizar.php?id=' . $row['id_producto'] . '"><img class="card-image" src="' . $ruta_imagen . '"></a>
+            <a href="./visualizar.php?id=' . $row['id_producto'] . '"><img class="card-image" src="/' . $ruta_imagen . '"></a>
             <div class="card-detail">
                 <h4>' . $row['nombre_producto'] . '</h4>
                 <p>Descripción: ' . $row['descripcion_producto'] . '</p>
