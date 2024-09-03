@@ -56,28 +56,27 @@ if ($_SESSION['rol'] !== 'Administrador') {
     exit();
 }
 
-$results_per_page = 10;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$start_from = ($page - 1) * $results_per_page;
+$items_por_pagina = 10;
+$pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$offset = ($pagina_actual - 1) * $items_por_pagina;
 
-// Consulta para obtener el número total de usuarios
-$sql_count = "SELECT COUNT(*) AS total FROM usuarios";
-$result_count = $conn->query($sql_count);
-$row_count = $result_count->fetch_assoc();
-$total_users = $row_count['total'];
+$sql = "SELECT * FROM usuarios LIMIT $items_por_pagina OFFSET $offset";
+$result = mysqli_query($conn, $sql);
 
-// Calcular el número total de páginas
-$total_pages = ceil($total_users / $results_per_page);
+if (!$result) {
+    die("Error en la consulta: " . mysqli_error($conn));
+}
 
-// Asegurarse de que la página actual está dentro del rango válido
-$page = max(1, min($page, $total_pages));
+// Guarda los resultados en un array
+$usuarios = [];
+while ($row = mysqli_fetch_assoc($result)) {
+    $usuarios[] = $row;
+}
 
-// Consulta para obtener los usuarios de la página actual
-$sql = "SELECT * FROM usuarios LIMIT ?, ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("ii", $start_from, $results_per_page);
-$stmt->execute();
-$result = $stmt->get_result();
+$sql_total = "SELECT COUNT(*) as total FROM usuarios";
+$result_total = mysqli_query($conn, $sql_total);
+$total_usuarios = mysqli_fetch_assoc($result_total)['total'];
+$total_paginas = ceil($total_usuarios / $items_por_pagina);
 ?>
 
 <!DOCTYPE html>
@@ -119,73 +118,63 @@ $result = $stmt->get_result();
                     </div>
                 </div>
                 <div class="content">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Correo Electrónico</th>
-                                <th>ID Rol</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="userTableBody">
-                            <?php
-                            if ($result->num_rows > 0) {
-                                while ($row = $result->fetch_assoc()) {
-                                    echo "<tr>";
-                                    echo "<td>" . $row["id_usuario"] . "</td>";
-                                    echo "<td>" . $row["nombre_usuario"] . "</td>";
-                                    echo "<td>" . $row["correo_electronico"] . "</td>";
-                                    echo "<td>" . $row["id_rol"] . "</td>";
-                                    echo "<td>" . $row["estado_usuario"] . "</td>";
-                                    echo "<td>";
-                                    echo "<div class='actions'>";
-                                    echo "<button class='btn state-button action-btn' data-user-id='" . $row["id_usuario"] . "' data-current-state='" . $row["estado_usuario"] . "' onclick='openStateModal(" . $row["id_usuario"] . ", \"" . $row["estado_usuario"] . "\")'><i class='fa fa-edit'></i></button>";
-                                    echo "<form class='assign-role-form' method='post' action='../controller/assign_role.php'>";
-                                    echo "<input type='hidden' name='user_id' value='" . $row["id_usuario"] . "'>";
-                                    echo "<button class='btn assign-role-button action-btn' data-user-id='" . $row["id_usuario"] . "'><i class='fa fa-user-plus'></i></button>";
-                                    echo "</form>";
-                                    if ($row["id_rol"] == 1) {
-                                        echo "<button class='btn permission-button action-btn' data-user-id='" . $row["id_usuario"] . "' onclick='openPermissionsModal(" . $row["id_usuario"] . ")'><i class='fa fa-lock'></i></button>";
-                                    }
-                                    echo "</div>";
-                                    echo "</td>";
-                                    echo "</tr>";
-                                }
-                            } else {
-                                echo "<tr><td colspan='6'>No hay usuarios registrados en esta página.</td></tr>";
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                    
-                    <div class="pagination">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Correo Electrónico</th>
+                            <th>ID Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
                         <?php
-                        // Mostrar enlace "Anterior" si no estamos en la primera página
-                        if ($page > 1) {
-                            echo "<a href='?page=" . ($page - 1) . "'>Anterior</a> ";
-                        }
-                        
-                        // Mostrar enlaces de página
-                        for ($i = 1; $i <= $total_pages; $i++) {
-                            if ($i == $page) {
-                                echo "<strong>$i</strong> ";
-                            } else {
-                                echo "<a href='?page=$i'>$i</a> ";
+                        if (count($usuarios) > 0) {
+                            foreach ($usuarios as $row) {
+                                echo "<tr>";
+                                echo "<td>" . htmlspecialchars($row['id_usuario']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['nombre_usuario']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['correo_electronico']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['id_rol']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['estado_usuario']) . "</td>";
+                                echo "<td>";
+                                echo "<div class='actions'>";
+                                echo "<button class='btn state-button action-btn' data-user-id='" . $row["id_usuario"] . "' data-current-state='" . $row["estado_usuario"] . "' onclick='openStateModal(" . $row["id_usuario"] . ", \"" . $row["estado_usuario"] . "\")'><i class='fa fa-edit'></i></button>";
+                                echo "<form class='assign-role-form' method='post' action='../controller/assign_role.php'>";
+                                echo "<input type='hidden' name='user_id' value='" . $row["id_usuario"] . "'>";
+                                echo "<button class='btn assign-role-button action-btn' data-user-id='" . $row["id_usuario"] . "'><i class='fa fa-user-plus'></i></button>";
+                                echo "</form>";
+                                if ($row["id_rol"] == 1) {
+                                    echo "<button class='btn permission-button action-btn' data-user-id='" . $row["id_usuario"] . "' onclick='openPermissionsModal(" . $row["id_usuario"] . ")'><i class='fa fa-lock'></i></button>";
+                                }
+                                echo "</div>";
+                                echo "</td>";
+                                echo "</tr>";
                             }
-                        }
-                        
-                        // Mostrar enlace "Siguiente" si no estamos en la última página
-                        if ($page < $total_pages) {
-                            echo "<a href='?page=" . ($page + 1) . "'>Siguiente</a>";
+                        } else {
+                            echo "<tr><td colspan='6'>No hay usuarios registrados.</td></tr>";
                         }
                         ?>
-                    </div>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <?php
+                    if ($total_paginas > 0) {
+                        for ($i = 1; $i <= $total_paginas; $i++) {
+                            if ($i == $pagina_actual) {
+                                echo "<a href='Usuarios.php?pagina=$i' class='active'>$i</a>";
+                            } else {
+                                echo "<a href='Usuarios.php?pagina=$i'>$i</a>";
+                            }
+                        }
+                    }
+                    ?>
                 </div>
             </div>
         </div>
+    </div>
 
         <!-- Modales -->
         <div id="permissionsModal" class="modal">
