@@ -3,35 +3,37 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Validación de nombre
     const nombreInput = document.getElementById('nombre');
-    nombreInput.addEventListener('blur', function() {
+    nombreInput.addEventListener('input', function() {
         validarNombre(this);
     });
 
     // Validación de correo electrónico
     const correoInput = document.getElementById('correo');
-    correoInput.addEventListener('blur', function() {
+    correoInput.addEventListener('input', function() {
         validarCorreo(this);
     });
 
     // Validación de celular
     const celularInput = document.getElementById('celular');
-    celularInput.addEventListener('blur', function() {
+    celularInput.addEventListener('input', function() {
         validarCelular(this);
     });
 
     // Validación de contacto
     const contactoInput = document.getElementById('contacto');
-    contactoInput.addEventListener('blur', function() {
+    contactoInput.addEventListener('input', function() {
         validarContacto(this);
     });
 });
 
 function validarNombre(input) {
     const nombre = input.value;
-    const regex = /^[a-zA-Z\s]{3,30}$/;
+    const regex = /^[a-zA-Z\s]{3,25}$/;
 
-    if (!regex.test(nombre) && nombre.length > 0) {
-        mostrarAlerta('El nombre debe tener entre 3 y 30 caracteres y solo puede contener letras y espacios.');
+    if (!regex.test(nombre)) {
+        mostrarError(input, 'El nombre debe tener entre 3 y 25 caracteres y solo puede contener letras y espacios.');
+    } else {
+        eliminarError(input);
     }
 }
 
@@ -42,20 +44,20 @@ function validarCorreo(input) {
     const regexEspacios = /\s/;
     const regexMultiplesArrobas = /@.*@/;
 
-    if (correo.length > 0) {
-        if (!correo.includes('@')) {
-            mostrarAlerta('El correo electrónico debe contener un @.');
-        } else if (!regexDominio.test(correo)) {
-            mostrarAlerta('El correo electrónico debe contener un dominio válido.');
-        } else if (!correo.endsWith('.com')) {
-            mostrarAlerta('El correo electrónico debe terminar en .com.');
-        } else if (regexEspacios.test(correo)) {
-            mostrarAlerta('El correo electrónico no puede contener espacios.');
-        } else if (regexMultiplesArrobas.test(correo)) {
-            mostrarAlerta('El correo electrónico no puede contener múltiples @.');
-        } else if (!regexCorreo.test(correo)) {
-            mostrarAlerta('El formato del correo electrónico no es válido.');
-        }
+    if (!correo.includes('@')) {
+        mostrarError(input, 'El correo electrónico debe contener un @.');
+    } else if (!regexDominio.test(correo)) {
+        mostrarError(input, 'El correo electrónico debe contener un dominio válido.');
+    } else if (!correo.endsWith('.com')) {
+        mostrarError(input, 'El correo electrónico debe terminar en .com.');
+    } else if (regexEspacios.test(correo)) {
+        mostrarError(input, 'El correo electrónico no puede contener espacios.');
+    } else if (regexMultiplesArrobas.test(correo)) {
+        mostrarError(input, 'El correo electrónico no puede contener múltiples @.');
+    } else if (!regexCorreo.test(correo)) {
+        mostrarError(input, 'El formato del correo electrónico no es válido.');
+    } else {
+        eliminarError(input);
     }
 }
 
@@ -63,30 +65,41 @@ function validarCelular(input) {
     const celular = input.value;
     const regexNumero = /^[0-9]{10}$/;
 
-    if (celular.length > 0) {
-        if (!regexNumero.test(celular)) {
-            mostrarAlerta('El celular debe contener exactamente 10 dígitos y solo números.');
-        }
+    if (!regexNumero.test(celular)) {
+        mostrarError(input, 'El celular debe contener exactamente 10 dígitos y solo números.');
+    } else {
+        eliminarError(input);
     }
 }
-
 
 function validarContacto(input) {
     const contacto = input.value;
     const regex = /^[a-zA-Z0-9\s]{1,25}$/;
 
-    if (!regex.test(contacto) && contacto.length > 0) {
-        mostrarAlerta('El contacto debe tener hasta 25 caracteres y no puede contener caracteres especiales.');
+    if (!regex.test(contacto)) {
+        mostrarError(input, 'El contacto debe tener hasta 25 caracteres y no puede contener caracteres especiales.');
+    } else {
+        eliminarError(input);
     }
 }
 
-function mostrarAlerta(mensaje) {
-    Swal.fire({
-        icon: 'error',
-        title: 'Error de validación',
-        text: mensaje,
-    });
+function mostrarError(input, mensaje) {
+    let error = input.nextElementSibling;
+    if (!error || !error.classList.contains('error')) {
+        error = document.createElement('div');
+        error.className = 'error';
+        input.parentNode.insertBefore(error, input.nextSibling);
+    }
+    error.textContent = mensaje;
 }
+
+function eliminarError(input) {
+    let error = input.nextElementSibling;
+    if (error && error.classList.contains('error')) {
+        error.remove();
+    }
+}
+
 
 
 
