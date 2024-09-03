@@ -26,10 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             $_SESSION['cancelado_exitosamente'][] = $id_pedido;
 
-            header("Location: ../configuracion.php?mensaje=pedido_cancelado");
+            header("Location: ../configuracion.php?mensaje=Pedido Cancelado Correctamente");
             exit();
         } else {
-            header("Location: ../configuracion.php?error=error_cancelacion");
+            header("Location: ../configuracion.php?error=Error en la Cancelación");
             exit();
         }
     } else {
