@@ -15,8 +15,7 @@ if ($_SESSION['rol'] === 'Usuario') {
 include_once('../controller/productos_controller.php');
 include_once('../controller/insumos_controller.php');
 
-// Asegúrate de que obtenerProductos() esté definida en tu controlador
-$productos = obtenerProductos(); // Esta función debe devolver un array de productos
+$productos = obtenerProductos();
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
