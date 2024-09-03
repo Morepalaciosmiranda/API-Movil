@@ -157,21 +157,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
     };
 })
 
-function confirmCancel(idPedido, segundosDesdePedido) {
-    if (segundosDesdePedido >= 600) {
+function confirmCancel(idPedido, segundosTranscurridos) {
+    if (segundosTranscurridos >= 600) {
         Swal.fire({
-            title: 'No se puede cancelar',
-            text: "Han pasado más de 10 minutos desde que se realizó el pedido.",
+            title: 'Tiempo excedido',
+            text: 'No se puede cancelar el pedido después de 10 minutos de realizado.',
             icon: 'error',
-            confirmButtonColor: '#3085d6',
             confirmButtonText: 'Entendido'
         });
         return;
     }
 
     Swal.fire({
-        title: '¿Está seguro de cancelar el pedido?',
-        text: "Esta acción no se puede deshacer.",
+        title: '¿Estás seguro?',
+        text: "¿Quieres cancelar este pedido?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
