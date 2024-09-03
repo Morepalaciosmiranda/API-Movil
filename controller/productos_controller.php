@@ -264,23 +264,5 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
 }
 
-// Función para obtener insumos (si es necesaria)
-function obtenerInsumos()
-{
-    global $conn;
-    $insumos = [];
-
-    $sql = "SELECT * FROM insumos";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $insumos[] = $row;
-        }
-    }
-
-    return $insumos;
-}
-
 // Cerrar la conexión a la base de datos
 $conn->close();
