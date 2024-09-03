@@ -147,32 +147,32 @@ function validarNombreProducto(input) {
     const regex = /^[a-zA-Z0-9\s]{3,30}$/;
 
     if (nombre.length === 0) {
-        mostrarAlerta('El campo de nombre del producto no puede estar vacío.');
+        mostrarError(input, 'El campo de nombre del producto no puede estar vacío.');
     } else if (nombre.length > 30) {
-        mostrarAlerta('El nombre del producto no puede tener más de 30 caracteres.');
+        mostrarError(input, 'El nombre del producto no puede tener más de 30 caracteres.');
     } else if (nombre.length <= 3) {
-        mostrarAlerta('El nombre del producto debe tener más de 3 caracteres.');
+        mostrarError(input, 'El nombre del producto debe tener más de 3 caracteres.');
     } else if (!regex.test(nombre)) {
-        mostrarAlerta('El nombre del producto no puede contener caracteres especiales.');
+        mostrarError(input, 'El nombre del producto no puede contener caracteres especiales.');
     } else {
-        eliminarAlerta();
+        eliminarError(input);
     }
 }
 
 function validarFoto(input) {
     const file = input.files[0];
     if (!file) {
-        mostrarAlerta('Debe seleccionar una foto.');
+        mostrarError(input, 'Debe seleccionar una foto.');
     } else {
         const validFormats = ['image/jpeg', 'image/png', 'image/gif'];
         const maxSize = 5 * 1024 * 1024; // 5MB
 
         if (!validFormats.includes(file.type)) {
-            mostrarAlerta('Formato de archivo no válido. Solo se permiten JPEG, PNG y GIF.');
+            mostrarError(input, 'Formato de archivo no válido. Solo se permiten JPEG, PNG y GIF.');
         } else if (file.size > maxSize) {
-            mostrarAlerta('El tamaño de la foto debe ser menor a 5MB.');
+            mostrarError(input, 'El tamaño de la foto debe ser menor a 5MB.');
         } else {
-            eliminarAlerta();
+            eliminarError(input);
         }
     }
 }
@@ -182,15 +182,15 @@ function validarDescripcionProducto(input) {
     const regexEspeciales = /^[^!@#$%^&*(),?":{}|<>]*$/;
 
     if (descripcion.length === 0) {
-        mostrarAlerta('El campo de descripción del producto no puede estar vacío.');
-    } else if (descripcion.length < 10 || descripcion.length > 300) {
-        mostrarAlerta('La descripción debe tener entre 10 y 300 caracteres.');
+        mostrarError(input, 'El campo de descripción del producto no puede estar vacío.');
+    } else if (descripcion.length < 5 || descripcion.length > 300) {
+        mostrarError(input, 'La descripción debe tener entre 10 y 300 caracteres.');
     } else if (!regexEspeciales.test(descripcion)) {
-        mostrarAlerta('La descripción no puede contener caracteres especiales.');
+        mostrarError(input, 'La descripción no puede contener caracteres especiales.');
     } else if (/^\d+$/.test(descripcion)) {
-        mostrarAlerta('La descripción no puede contener solo números.');
+        mostrarError(input, 'La descripción no puede contener solo números.');
     } else {
-        eliminarAlerta();
+        eliminarError(input);
     }
 }
 
@@ -198,21 +198,21 @@ function validarValorUnitario(input) {
     const valor = parseFloat(input.value);
 
     if (isNaN(valor)) {
-        mostrarAlerta('El valor unitario debe ser un número.');
+        mostrarError(input, 'El valor unitario debe ser un número.');
     } else if (valor <= 0) {
-        mostrarAlerta('El valor unitario debe ser un número positivo.');
+        mostrarError(input, 'El valor unitario debe ser un número positivo.');
     } else if (!Number.isInteger(valor) && valor.toFixed(2).length > valor.toString().length) {
-        mostrarAlerta('El valor unitario no puede tener más de dos decimales.');
+        mostrarError(input, 'El valor unitario no puede tener más de dos decimales.');
     } else {
-        eliminarAlerta();
+        eliminarError(input);
     }
 }
 
 function validarNombreInsumo(input) {
     if (input.value.trim() === '') {
-        mostrarAlerta('Debe seleccionar un insumo.');
+        mostrarError(input, 'Debe seleccionar un insumo.');
     } else {
-        eliminarAlerta();
+        eliminarError(input);
     }
 }
 
@@ -220,35 +220,34 @@ function validarCantidadInsumo(input) {
     const cantidad = parseInt(input.value, 10);
 
     if (isNaN(cantidad)) {
-        mostrarAlerta('La cantidad de insumo debe ser un número.');
+        mostrarError(input, 'La cantidad de insumo debe ser un número.');
     } else if (cantidad <= 0) {
-        mostrarAlerta('La cantidad de insumo debe ser mayor a 0.');
+        mostrarError(input, 'La cantidad de insumo debe ser mayor a 0.');
     } else if (cantidad > 15) {
-        mostrarAlerta('La cantidad de insumo no puede ser mayor a 15.');
+        mostrarError(input, 'La cantidad de insumo no puede ser mayor a 15.');
     } else if (!Number.isInteger(cantidad)) {
-        mostrarAlerta('La cantidad de insumo debe ser un número entero.');
+        mostrarError(input, 'La cantidad de insumo debe ser un número entero.');
     } else {
-        eliminarAlerta();
+        eliminarError(input);
     }
 }
 
-function mostrarAlerta(mensaje) {
-    Swal.fire({
-        icon: 'error',
-        title: 'Error de validación',
-        text: mensaje,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true
-    });
+function mostrarError(input, mensaje) {
+    let error = input.nextElementSibling;
+    if (!error || !error.classList.contains('error')) {
+        error = document.createElement('div');
+        error.className = 'error';
+        input.parentNode.insertBefore(error, input.nextSibling);
+    }
+    error.textContent = mensaje;
 }
 
-function eliminarAlerta() {
-    Swal.close();
+function eliminarError(input) {
+    let error = input.nextElementSibling;
+    if (error && error.classList.contains('error')) {
+        error.remove();
+    }
 }
-
 
 
 /* ALERTAS INSUMOS */
