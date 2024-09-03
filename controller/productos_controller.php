@@ -240,6 +240,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_GET['eliminar'])) {
         $id_producto = intval($_GET['eliminar']);
         $resultado = eliminarProducto($id_producto);
+        header('Content-Type: application/json');
         echo json_encode($resultado);
         exit;
     }

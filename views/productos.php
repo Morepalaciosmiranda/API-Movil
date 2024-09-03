@@ -263,7 +263,24 @@ $insumos = obtenerInsumos();
                     }).then((result) => {
                         if (result.isConfirmed) {
                             fetch(`../controller/productos_controller.php?eliminar=${id}`)
-                                .then(response => response.json())
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP error! status: ${response.status}`);
+                                    }
+                                    return response.text();
+                                })
+                                .then(text => {
+                                    if (!text.trim()) {
+                                        throw new Error('La respuesta del servidor está vacía');
+                                    }
+                                    try {
+                                        return JSON.parse(text);
+                                    } catch (e) {
+                                        console.error('Error parsing JSON:', e);
+                                        console.log('Respuesta del servidor:', text);
+                                        throw new Error('La respuesta no es un JSON válido');
+                                    }
+                                })
                                 .then(data => {
                                     if (data.exito) {
                                         Swal.fire({
@@ -287,7 +304,7 @@ $insumos = obtenerInsumos();
                                     console.error('Error:', error);
                                     Swal.fire({
                                         title: 'Error',
-                                        text: 'Hubo un error al procesar la solicitud.',
+                                        text: 'Hubo un error al procesar la solicitud: ' + error.message,
                                         icon: 'error',
                                         confirmButtonText: 'OK'
                                     });
