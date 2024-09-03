@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->close();
     }
 } else {
-    // El formulario HTML se mantiene iguall
+    // El formulario HTML se mantiene igualll
     ?>
     <!DOCTYPE html>
     <html lang="es">
