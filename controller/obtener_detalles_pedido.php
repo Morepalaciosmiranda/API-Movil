@@ -45,7 +45,7 @@ try {
         while ($row_producto = mysqli_fetch_assoc($result_productos)) {
             $detalle = array(
                 'nombre_producto' => htmlspecialchars($row_producto['nombre_producto']),
-                'cantidad' => intval($row_producto['cantidad']), // Asegúrate de que sea un entero
+                'cantidad' => htmlspecialchars($row_producto['cantidad']),
                 'valor_unitario' => number_format($row_producto['valor_unitario'], 2),
                 'subtotal' => number_format($row_producto['subtotal'], 2)
             );

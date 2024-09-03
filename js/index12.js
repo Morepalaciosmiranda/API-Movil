@@ -163,59 +163,46 @@ document.getElementById('exit').addEventListener('click', function () {
 
 function pagarAhora() {
     const carrito = cart.map(producto => ({
-        id: producto.id,
-        name: producto.name,
-        price: producto.price,
-        quantity: producto.quantity,
-        image: producto.imageSrc
+        id_producto: producto.id,
+        nombre_producto: producto.name,
+        precio_producto: Number(producto.price).toLocaleString('es-CO', { minimumFractionDigits: 0 }), // Asegúrate de que el precio no tenga decimales
+        cantidad_producto: producto.quantity,
+        nombre: document.getElementById('nombre').value,
+        direccion: document.getElementById('direccion').value,
+        barrio: document.getElementById('barrio').value,
+        telefono: document.getElementById('telefono').value
     }));
 
     document.getElementById('productos').value = JSON.stringify(carrito);
 
-    const formData = new FormData(document.getElementById('pedidoFormulario'));
-
-    fetch('./controller/pedidos_controller.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.text())
-    .then(data => {
-        console.log("Pedido realizado con éxito:", data);
-        cart = [];
-        updateCart();
-        localStorage.removeItem('shoppingCart');
-        Swal.fire({
-            position: 'bottom-end',
-            icon: 'success',
-            iconColor: '#4CAF50',
-            background: '#020202',
-            confirmButtonColor: '#f15d07',
-            title: 'Pedido realizado con éxito',
-            text: '¡Gracias por tu compra!',
-            showConfirmButton: false,
-            customClass: {
-                popup: 'alert-text-color'
-            },
-            timer: 1500
-        });
-    })
-    .catch(error => {
-        console.error("Error al realizar el pedido:", error);
-        Swal.fire('Error', 'Hubo un problema al procesar tu pedido. Por favor, intenta de nuevo.', 'error');
+    $.ajax({
+        type: "POST",
+        url: "./controller/pedidos_controller.php",
+        data: $('#pedidoFormulario').serialize(),
+        success: function (response) {
+            console.log("Pedido realizado con éxito:", response);
+            cart = [];
+            updateCart();
+            localStorage.removeItem('shoppingCart');
+            Swal.fire({
+                position: 'bottom-end',
+                icon: 'success',
+                iconColor: '#4CAF50',
+                background: '#020202',
+                confirmButtonColor: '#f15d07',
+                title: 'Pedido realizado con éxito',
+                text: '¡Gracias por tu compra!',
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'alert-text-color'
+                },
+                timer: 1500
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error al realizar el pedido:", error);
+        }
     });
-}
-
-function submitForm() {
-    const productos = obtenerCarrito();
-    document.getElementById('productos').value = JSON.stringify(productos);
-    
-    // Validar el formulario
-    const form = document.getElementById('pedidoFormulario');
-    if (form.checkValidity()) {
-        pagarAhora();
-    } else {
-        form.reportValidity();
-    }
 }
 
 function obtenerCarrito() {
@@ -224,4 +211,3 @@ function obtenerCarrito() {
 
 updateCart();
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

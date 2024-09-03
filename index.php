@@ -133,6 +133,7 @@ if ($_SESSION['rol'] !== 'Usuario') {
                 $productos = isset($_SESSION['carritos'][$_SESSION['id_usuario']]) ? $_SESSION['carritos'][$_SESSION['id_usuario']] : array();
 
                 foreach ($productos as $producto) {
+                    // Formatear el precio con dos decimales para mostrarlo correctamente
                     $precio_formateado = number_format($producto['precio'], 2, '.', ',');
                     echo '<div class="order-card">';
                     echo '<img class="order-image" src="' . htmlspecialchars($producto['imagen']) . '" />';
@@ -284,86 +285,79 @@ if ($_SESSION['rol'] !== 'Usuario') {
                         });
 
                         function submitForm() {
-                            const productos = obtenerCarrito();
-                            document.getElementById('productos').value = JSON.stringify(productos);
+                            const btnComprar = document.getElementById('btn_comprar');
+                            const telefonoCliente = document.getElementById('telefono_cliente').value;
+                            const barrioCliente = document.getElementById('barrio_cliente').value;
+                            const barrioList = document.querySelectorAll('#barrios option');
+                            let barrioValido = false;
 
-                            // Validar el formulario
-                            const form = document.getElementById('pedidoFormulario');
-                            if (form.checkValidity()) {
-                                if (productos.length === 0) {
-                                    Swal.fire('Error', 'No hay productos en el carrito. Agrega productos antes de enviar el pedido.', 'error');
-                                    return;
+                            barrioList.forEach(option => {
+                                if (option.value === barrioCliente) {
+                                    barrioValido = true;
                                 }
+                            });
 
-                                const telefonoCliente = document.getElementById('telefono_cliente').value;
-                                const barrioCliente = document.getElementById('barrio_cliente').value;
-                                const barrioList = document.querySelectorAll('#barrios option');
-                                let barrioValido = false;
+                            if (!barrioValido) {
+                                Swal.fire('Error', 'Por favor seleccione un barrio válido de la lista.', 'error');
+                                return;
+                            }
 
-                                barrioList.forEach(option => {
-                                    if (option.value === barrioCliente) {
-                                        barrioValido = true;
-                                    }
-                                });
+                            if (!/^\d{10}$/.test(telefonoCliente)) {
+                                Swal.fire('Error', 'El número de teléfono debe tener 10 dígitos y solo contener números.', 'error');
+                                return;
+                            }
 
-                                if (!barrioValido) {
-                                    Swal.fire('Error', 'Por favor seleccione un barrio válido de la lista.', 'error');
-                                    return;
+                            var productos = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
+                            if (productos.length > 0) {
+                                document.getElementById('productos').value = JSON.stringify(productos);
+
+                                var form = document.getElementById('pedidoFormulario');
+                                if (form.checkValidity()) {
+                                    Swal.fire({
+                                        title: '¿Estás seguro?',
+                                        text: '¿Deseas realizar el pedido?',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Sí, realizar pedido',
+                                        cancelButtonText: 'Cancelar'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            var formData = new FormData(form);
+
+                                            // Deshabilitar el botón mientras se procesa la solicitud
+                                            btnComprar.setAttribute('disabled', true);
+
+                                            fetch('./controller/pedidos_controller.php', {
+                                                    method: 'POST',
+                                                    body: formData
+                                                })
+                                                .then(response => response.text())
+                                                .then(data => {
+                                                    Swal.fire('Éxito', 'Pedido realizado correctamente.', 'success');
+                                                    document.getElementById('modalContainer').style.display = 'none';
+                                                    localStorage.removeItem('shoppingCart'); // Limpiar el carrito después de la compra
+                                                    updateCartBadge(); // Actualizar la insignia del carrito si es necesario
+                                                })
+                                                .catch(error => {
+                                                    Swal.fire('Error', 'Error: ' + error.message, 'error');
+                                                })
+                                                .finally(() => {
+                                                    btnComprar.removeAttribute('disabled'); // Habilitar el botón después de completar la solicitud
+                                                });
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire('Error', 'Por favor complete todos los campos obligatorios.', 'error');
                                 }
-
-                                if (!/^\d{10}$/.test(telefonoCliente)) {
-                                    Swal.fire('Error', 'El número de teléfono debe tener 10 dígitos y solo contener números.', 'error');
-                                    return;
-                                }
-
-                                Swal.fire({
-                                    title: '¿Estás seguro?',
-                                    text: '¿Deseas realizar el pedido?',
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Sí, realizar pedido',
-                                    cancelButtonText: 'Cancelar'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        const formData = new FormData(form);
-
-                                        fetch('./controller/pedidos_controller.php', {
-                                                method: 'POST',
-                                                body: formData
-                                            })
-                                            .then(response => response.text())
-                                            .then(data => {
-                                                Swal.fire('Éxito', 'Pedido realizado correctamente.', 'success');
-                                                document.getElementById('modalContainer').style.display = 'none';
-                                                localStorage.removeItem('shoppingCart'); // Limpiar el carrito después de la compra
-                                                cart = []; // Limpiar el carrito en memoria
-                                                updateCart(); // Actualizar la vista del carrito
-                                                updateCartBadge(); // Actualizar la insignia del carrito
-                                            })
-                                            .catch(error => {
-                                                Swal.fire('Error', 'Error: ' + error.message, 'error');
-                                            });
-                                    }
-                                });
                             } else {
-                                Swal.fire('Error', 'Por favor complete todos los campos obligatorios.', 'error');
+                                Swal.fire('Error', 'No hay productos en el carrito. Agrega productos antes de enviar el pedido.', 'error');
                             }
                         }
 
-                        function obtenerCarrito() {
-                            return cart.map(producto => ({
-                                id: producto.id,
-                                name: producto.name,
-                                price: producto.price,
-                                quantity: producto.quantity,
-                                image: producto.imageSrc
-                            }));
-                        }
-
                         function updateCartBadge() {
-                            const cartBadge = document.querySelector('.cart-badge');
-                            const totalItems = cart.reduce((total, producto) => total + producto.quantity, 0);
-                            cartBadge.textContent = totalItems;
+                            const cartProducts = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+                            document.querySelector('.cart-badge').textContent = cartProducts.length;
                         }
 
                         document.addEventListener('DOMContentLoaded', function() {
@@ -405,7 +399,6 @@ if ($_SESSION['rol'] !== 'Usuario') {
 <script src="./js/index12.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-canvas/2.0.2/dom-canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.all.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 
