@@ -1,6 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+TZ:wght@100..400&display=swap" rel="stylesheet');
 
 * {
+    font-family: 'Bebas Neue', cursive;
     padding: 0;
     margin: 0;
     box-sizing: border-box;
