@@ -211,7 +211,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         </div>
     </div>
 
-    <div id="modalDetallesPedido" class="modal">
+    <div id="modalDetallesPedido" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close" onclick="closeDetailsModal()">&times;</span>
             <h2>Detalles del Pedido</h2>
