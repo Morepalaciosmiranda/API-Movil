@@ -44,7 +44,7 @@ if ($_SESSION['rol'] !== 'Usuario') {
             </a>
         </div>
         <div class="logout">
-            <a href="./loginRegister.php" id="toggle-logout"><i class="fa-solid fa-right-from-bracket" style="color: #ff0000;"></i></a>
+            <a href="#" id="logout-link"><i class="fa-solid fa-right-from-bracket" style="color: #ff0000;"></i></a>
         </div>
     </header>
 
@@ -390,6 +390,45 @@ if ($_SESSION['rol'] !== 'Usuario') {
                         function closeForm() {
                             document.getElementById('pedidoFormulario').style.display = 'none';
                         }
+
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const logoutLink = document.getElementById('logout-link');
+
+                            logoutLink.addEventListener('click', function(e) {
+                                e.preventDefault();
+
+                                Swal.fire({
+                                    title: 'Cerrando sesión',
+                                    text: 'Por favor espere...',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    showConfirmButton: false,
+                                    willOpen: () => {
+                                        Swal.showLoading();
+                                    }
+                                });
+
+                                // Simular una demora basada en la velocidad de conexión
+                                setTimeout(() => {
+                                    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                                    let delay = 2000; // Demora predeterminada de 2 segundos
+
+                                    if (connection) {
+                                        if (connection.effectiveType === '4g') {
+                                            delay = 1000;
+                                        } else if (connection.effectiveType === '3g') {
+                                            delay = 2000;
+                                        } else {
+                                            delay = 3000;
+                                        }
+                                    }
+
+                                    setTimeout(() => {
+                                        window.location.href = './loginRegister.php'; // Redirige a la página de inicio de sesión
+                                    }, delay);
+                                }, 500);
+                            });
+                        });
                     </script>
 
 
