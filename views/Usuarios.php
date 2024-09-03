@@ -29,7 +29,6 @@ if (isset($_POST['user_id']) && isset($_POST['new_role'])) {
                 echo "Error al eliminar permisos anteriores: " . $conn->error . "<br>";
             }
 
-
             $insert_sql = "INSERT INTO rolesxpermiso (id_usuario, id_permiso) VALUES (?, ?)";
             $insert_stmt = $conn->prepare($insert_sql);
             foreach ($permissions as $permission) {
@@ -47,13 +46,11 @@ if (isset($_POST['user_id']) && isset($_POST['new_role'])) {
 }
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
-    // Redirigir a la página de inicio de sesión si no hay sesión
     header('Location: ../loginRegister.php');
     exit();
 }
 
 if ($_SESSION['rol'] !== 'Administrador') {
-    // Redirigir a una página de acceso no autorizado o hacer otra acción
     header('Location: ../no_autorizado.php');
     exit();
 }
@@ -62,13 +59,22 @@ $results_per_page = 10;
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 $start_from = ($page - 1) * $results_per_page;
 
+// Consulta para obtener el total de registros
+$total_query = "SELECT COUNT(*) as total FROM usuarios";
+$total_result = $conn->query($total_query);
+$total_row = $total_result->fetch_assoc();
+$total_records = $total_row['total'];
+
+// Calcular el número total de páginas
+$total_pages = ceil($total_records / $results_per_page);
+
+// Consulta para obtener los registros de la página actual
 $sql = "SELECT * FROM usuarios LIMIT $start_from, $results_per_page";
 $result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="./css/usuarios11.css">
@@ -79,7 +85,6 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 </head>
-
 <body>
     <div class="container">
         <?php include 'sidebar.php'; ?>
@@ -120,9 +125,6 @@ $result = $conn->query($sql);
                         </thead>
                         <tbody id="userTableBody">
                             <?php
-                            $sql = "SELECT * FROM usuarios";
-                            $result = $conn->query($sql);
-
                             if ($result && $result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
                                     echo "<tr>";
@@ -134,14 +136,10 @@ $result = $conn->query($sql);
                                     echo "<td>";
                                     echo "<div class='actions'>";
                                     echo "<button class='btn state-button action-btn' data-user-id='" . $row["id_usuario"] . "' data-current-state='" . $row["estado_usuario"] . "' onclick='openStateModal(" . $row["id_usuario"] . ", \"" . $row["estado_usuario"] . "\")'><i class='fa fa-edit'></i></button>";
-
-                                    // Mostrar el botón de asignar rol para todos los usuarios
                                     echo "<form class='assign-role-form' method='post' action='../controller/assign_role.php'>";
                                     echo "<input type='hidden' name='user_id' value='" . $row["id_usuario"] . "'>";
                                     echo "<button class='btn assign-role-button action-btn' data-user-id='" . $row["id_usuario"] . "'><i class='fa fa-user-plus'></i></button>";
                                     echo "</form>";
-
-                                    // Mostrar el botón de permisos solo para usuarios con id_rol 1
                                     if ($row["id_rol"] == 1) {
                                         echo "<button class='btn permission-button action-btn' data-user-id='" . $row["id_usuario"] . "' onclick='openPermissionsModal(" . $row["id_usuario"] . ")'><i class='fa fa-lock'></i></button>";
                                     }
@@ -156,11 +154,7 @@ $result = $conn->query($sql);
                         </tbody>
                     </table>
                     <?php
-                    $sql = "SELECT COUNT(id_usuario) AS total FROM usuarios";
-                    $result = $conn->query($sql);
-                    $row = $result->fetch_assoc();
-                    $total_pages = ceil($row["total"] / $results_per_page);
-
+                    // Mostrar la paginación
                     echo "<div class='pagination'>";
                     for ($i = 1; $i <= $total_pages; $i++) {
                         echo "<a href='?page=" . $i . "'>" . $i . "</a>";
@@ -192,8 +186,7 @@ $result = $conn->query($sql);
                     }
                     ?>
                 </ul>
-                <button id="confirmPermissionsBtn" class='btn btn-primary'><i class='fa fa-check'></i> Confirmar
-                    Permisos</button>
+                <button id="confirmPermissionsBtn" class='btn btn-primary'><i class='fa fa-check'></i> Confirmar Permisos</button>
             </div>
         </div>
 
@@ -234,14 +227,11 @@ $result = $conn->query($sql);
                         <option value="Inactivo">Inactivo</option>
                     </select>
                     <label for="state_message">Mensaje:</label>
-                    <textarea name="state_message" id="state_message" rows="4"
-                        placeholder="Ingrese el mensaje para el usuario..."></textarea>
-                    <button id="confirmStateBtn" type="submit" class='btn btn-primary'><i class='fa fa-check'></i>
-                        Confirmar</button>
+                    <textarea name="state_message" id="state_message" rows="4" placeholder="Ingrese el mensaje para el usuario..."></textarea>
+                    <button id="confirmStateBtn" type="submit" class='btn btn-primary'><i class='fa fa-check'></i> Confirmar</button>
                 </form>
             </div>
         </div>
-
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script>
@@ -317,8 +307,7 @@ $result = $conn->query($sql);
                                         } else {
                                             let errorMessage = response.message;
                                             if (response.details) {
-                                                errorMessage += "\n\nDetalles: " + JSON.stringify(response
-                                                    .details);
+                                                errorMessage += "\n\nDetalles: " + JSON.stringify(response.details);
                                             }
                                             Swal.fire({
                                                 title: 'Error',
@@ -343,6 +332,63 @@ $result = $conn->query($sql);
                             xhr.open("POST", "../controller/assign_role.php", true);
                             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                             xhr.send("user_id=" + userId + "&new_role=" + roleId);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        text: 'Por favor, selecciona un rol.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            };
+
+            var confirmPermissionsBtn = document.getElementById('confirmPermissionsBtn');
+            confirmPermissionsBtn.onclick = function() {
+                var userId = modal.getAttribute('data-user-id');
+                var selectedPermissions = document.querySelectorAll('.permission-checkbox:checked');
+                if (selectedPermissions.length > 0) {
+                    var permissions = Array.from(selectedPermissions).map(function(checkbox) {
+                        return checkbox.id.replace('permiso_', '');
+                    });
+
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: '¿Quieres asignar estos permisos al usuario?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, asignar permisos',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            var xhr = new XMLHttpRequest();
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState == 4 && xhr.status == 200) {
+                                    var response = JSON.parse(xhr.responseText);
+                                    if (response.status == 'success') {
+                                        Swal.fire({
+                                            title: 'Éxito',
+                                            text: response.message,
+                                            icon: 'success',
+                                            confirmButtonText: 'OK'
+                                        }).then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: response.message,
+                                            icon: 'error',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    }
+                                    closePermissionsModal();
+                                }
+                            };
+                            xhr.open("POST", "../controller/assign_permission.php", true);
+                            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                            xhr.send("user_id=" + userId + "&permissions=" + JSON.stringify(permissions));
                         }
                     });
                 } else {

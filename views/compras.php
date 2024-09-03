@@ -151,7 +151,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                             <span class="close">&times;</span>
                             <h2>Editar Compra</h2>
                             <form id="formEditarCompra" action="../controller/compras_controller.php" method="post">
-                                <label for="edit_id_compra">ID de Compra:</label>
+                                <label for="edit_id_compra"># de Compra:</label>
                                 <input type="text" id="edit_id_compra" name="edit_id_compra" readonly><br><br>
 
                                 <label for="edit_id_usuario">Usuario:</label>

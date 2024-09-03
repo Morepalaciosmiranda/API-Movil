@@ -29,8 +29,8 @@ $response = array();
 if ($result->num_rows > 0) {
     $detalles_compra = "<ul>";
     while ($row_detalles_compra = $result->fetch_assoc()) {
-        $detalles_compra .= "<li>ID Detalle Compra: " . $row_detalles_compra['id_detalle_compra'] . "</li>";
-        $detalles_compra .= "<li>ID Compra: " . $row_detalles_compra['id_compra'] . "</li>";
+        $detalles_compra .= "<li># Detalle Compra: " . $row_detalles_compra['id_detalle_compra'] . "</li>";
+        $detalles_compra .= "<li># Compra: " . $row_detalles_compra['id_compra'] . "</li>";
         $detalles_compra .= "<li>Cantidad: " . $row_detalles_compra['cantidad'] . "</li>";
         $detalles_compra .= "<li>Valor Unitario: " . $row_detalles_compra['valor_unitario'] . "</li>";
     }
