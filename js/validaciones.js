@@ -436,9 +436,7 @@ function validarSubtotal(input) {
         mostrarAlerta('El subtotal solo puede contener caracteres numéricos.');
     } else if (subtotal.length > 15) {
         mostrarAlerta('El subtotal no puede tener más de 15 caracteres.');
-    } else if (/^[\d]+(\.\d{1,2})?$/.test(subtotal)) {
-        mostrarAlerta('El subtotal debe ser un número positivo con hasta dos decimales.');
-    }
+    } 
 }
 
 function validarCantidad(input) {

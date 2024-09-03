@@ -331,7 +331,7 @@ $result = mysqli_query($conn, $sql);
 
                                                     Swal.fire({
                                                         title: 'Error',
-                                                        text: 'Error al intentar eliminar el proveedor.',
+                                                        text: 'Este proveedor esta relacionado a una compra no se puede eliminar..',
                                                         icon: 'error',
                                                         confirmButtonText: 'OK'
                                                     });
