@@ -1,9 +1,7 @@
 <?php
-header('Content-Type: application/json');
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
 
 include '../includes/conexion.php';
 
@@ -197,29 +195,53 @@ function eliminarProducto($id_producto)
     $respuesta = ['exito' => false, 'mensaje' => ''];
 
     try {
-        $eliminar_sql = "DELETE FROM productos WHERE id_producto = ?";
-        $eliminar_stmt = $conn->prepare($eliminar_sql);
-        if (!$eliminar_stmt) {
-            throw new Exception("Error al preparar la consulta de eliminación: " . $conn->error);
+        $conn->begin_transaction();
+
+        // Primero, eliminar las relaciones en la tabla productos_insumos
+        $eliminar_relaciones_sql = "DELETE FROM productos_insumos WHERE id_producto = ?";
+        $eliminar_relaciones_stmt = $conn->prepare($eliminar_relaciones_sql);
+        if (!$eliminar_relaciones_stmt) {
+            throw new Exception("Error al preparar la consulta de eliminación de relaciones: " . $conn->error);
         }
 
-        if (!$eliminar_stmt->bind_param("i", $id_producto)) {
-            throw new Exception("Error al enlazar parámetros: " . $eliminar_stmt->error);
+        if (!$eliminar_relaciones_stmt->bind_param("i", $id_producto)) {
+            throw new Exception("Error al enlazar parámetros para eliminar relaciones: " . $eliminar_relaciones_stmt->error);
         }
 
-        if (!$eliminar_stmt->execute()) {
-            throw new Exception("Error al ejecutar la consulta de eliminación: " . $eliminar_stmt->error);
+        if (!$eliminar_relaciones_stmt->execute()) {
+            throw new Exception("Error al ejecutar la consulta de eliminación de relaciones: " . $eliminar_relaciones_stmt->error);
         }
+
+        // Luego, eliminar el producto
+        $eliminar_producto_sql = "DELETE FROM productos WHERE id_producto = ?";
+        $eliminar_producto_stmt = $conn->prepare($eliminar_producto_sql);
+        if (!$eliminar_producto_stmt) {
+            throw new Exception("Error al preparar la consulta de eliminación del producto: " . $conn->error);
+        }
+
+        if (!$eliminar_producto_stmt->bind_param("i", $id_producto)) {
+            throw new Exception("Error al enlazar parámetros para eliminar producto: " . $eliminar_producto_stmt->error);
+        }
+
+        if (!$eliminar_producto_stmt->execute()) {
+            throw new Exception("Error al ejecutar la consulta de eliminación del producto: " . $eliminar_producto_stmt->error);
+        }
+
+        $conn->commit();
 
         $respuesta['exito'] = true;
         $respuesta['mensaje'] = "Producto eliminado correctamente";
     } catch (Exception $e) {
+        $conn->rollback();
         error_log("Error al eliminar producto: " . $e->getMessage());
         $respuesta['mensaje'] = "Hubo un error al eliminar el producto: " . $e->getMessage();
     }
 
     return $respuesta;
 }
+
+// Manejo de solicitudes
+header('Content-Type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['accion'])) {
@@ -236,12 +258,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo json_encode(['exito' => false, 'mensaje' => 'Acción no válida']);
                 break;
         }
+    } else {
+        echo json_encode(['exito' => false, 'mensaje' => 'No se especificó una acción']);
     }
-
-    if (isset($_POST['eliminar_id'])) {
-        $id_producto = intval($_POST['eliminar_id']);
+} elseif ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if (isset($_GET['eliminar'])) {
+        $id_producto = intval($_GET['eliminar']);
         $resultado = eliminarProducto($id_producto);
         echo json_encode($resultado);
+    } else {
+        echo json_encode(['exito' => false, 'mensaje' => 'No se especificó una acción']);
     }
 }
 
