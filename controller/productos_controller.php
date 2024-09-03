@@ -237,10 +237,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    if (isset($_POST['eliminar_id'])) {
-        $id_producto = intval($_POST['eliminar_id']);
+    if (isset($_GET['eliminar'])) {
+        $id_producto = intval($_GET['eliminar']);
         $resultado = eliminarProducto($id_producto);
         echo json_encode($resultado);
+        exit;
     }
 }
 

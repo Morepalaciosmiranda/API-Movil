@@ -263,21 +263,8 @@ $insumos = obtenerInsumos();
                     }).then((result) => {
                         if (result.isConfirmed) {
                             fetch(`../controller/productos_controller.php?eliminar=${id}`)
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('Network response was not ok');
-                                    }
-                                    return response.text(); // Cambia a text() en lugar de json()
-                                })
-                                .then(text => {
-                                    let data;
-                                    try {
-                                        data = JSON.parse(text); // Intenta parsear el texto como JSON
-                                    } catch (error) {
-                                        console.error('Error parsing JSON:', error);
-                                        throw new Error('Invalid JSON response');
-                                    }
-
+                                .then(response => response.json())
+                                .then(data => {
                                     if (data.exito) {
                                         Swal.fire({
                                             title: 'Eliminado!',
@@ -300,7 +287,7 @@ $insumos = obtenerInsumos();
                                     console.error('Error:', error);
                                     Swal.fire({
                                         title: 'Error',
-                                        text: 'Hubo un error al procesar la solicitud: ' + error.message,
+                                        text: 'Hubo un error al procesar la solicitud.',
                                         icon: 'error',
                                         confirmButtonText: 'OK'
                                     });
