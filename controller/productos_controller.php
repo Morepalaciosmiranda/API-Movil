@@ -3,7 +3,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
 include '../includes/conexion.php';
 
 if ($conn->connect_error) {
@@ -52,7 +51,6 @@ function procesarProducto()
 
             $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
 
-            // Verificar y crear el directorio si no existe
             if (!is_dir($upload_dir)) {
                 if (!mkdir($upload_dir, 0755, true)) {
                     throw new Exception("No se pudo crear el directorio de uploads.");
@@ -62,7 +60,6 @@ function procesarProducto()
                 throw new Exception("El directorio de uploads no tiene permisos de escritura");
             }
 
-            // Cuando guardas una nueva imagen
             $imagen_nombre = 'uploads/' . uniqid('producto_') . '_' . basename($imagen['name']);
             $imagen_destino = $_SERVER['DOCUMENT_ROOT'] . '/' . $imagen_nombre;
 
@@ -96,8 +93,7 @@ function procesarProducto()
 
             $insert_producto_insumo_sql = "INSERT INTO productos_insumos (id_producto, id_insumo, cantidad) VALUES (?, ?, ?)";
             $insert_producto_insumo_stmt = $conn->prepare($insert_producto_insumo_sql);
-            if (!$insert_producto_insumo_stmt) {
-                throw new Exception("Error al preparar la consulta de inserción de producto_insumo: " . $conn->error);
+            if (!$insert_producto_insumo_stmt) {throw new Exception("Error al preparar la consulta de inserción de producto_insumo: " . $conn->error);
             }
 
             if (!$insert_producto_insumo_stmt->bind_param("iii", $producto_id, $insumo_id, $cantidad_insumo)) {
@@ -139,7 +135,6 @@ function editarProducto()
             $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
             $imagen_destino = $upload_dir . $imagen_nombre;
 
-            // Verificar y crear el directorio si no existe
             if (!is_dir($upload_dir)) {
                 if (!mkdir($upload_dir, 0755, true)) {
                     throw new Exception("No se pudo crear el directorio de uploads.");
@@ -171,8 +166,7 @@ function editarProducto()
                 throw new Exception("Error al preparar la consulta de actualización: " . $conn->error);
             }
 
-            if (!$actualizar_stmt->bind_param("ssdi", $nombre_editar, $descripcion_editar, $precio_editar, $id_editar)) {
-                throw new Exception("Error al enlazar parámetros: " . $actualizar_stmt->error);
+            if (!$actualizar_stmt->bind_param("ssdi", $nombre_editar, $descripcion_editar, $precio_editar, $id_editar)) {throw new Exception("Error al enlazar parámetros: " . $actualizar_stmt->error);
             }
         }
 
@@ -196,23 +190,43 @@ function eliminarProducto($id_producto)
     $respuesta = ['exito' => false, 'mensaje' => ''];
 
     try {
-        $eliminar_sql = "DELETE FROM productos WHERE id_producto = ?";
-        $eliminar_stmt = $conn->prepare($eliminar_sql);
-        if (!$eliminar_stmt) {
-            throw new Exception("Error al preparar la consulta de eliminación: " . $conn->error);
+        $conn->begin_transaction();
+
+        // Primero, eliminar las relaciones en la tabla productos_insumos
+        $eliminar_relaciones_sql = "DELETE FROM productos_insumos WHERE id_producto = ?";
+        $eliminar_relaciones_stmt = $conn->prepare($eliminar_relaciones_sql);
+        if (!$eliminar_relaciones_stmt) {
+            throw new Exception("Error al preparar la consulta de eliminación de relaciones: " . $conn->error);
         }
 
-        if (!$eliminar_stmt->bind_param("i", $id_producto)) {
-            throw new Exception("Error al enlazar parámetros: " . $eliminar_stmt->error);
+        if (!$eliminar_relaciones_stmt->bind_param("i", $id_producto)) {
+            throw new Exception("Error al enlazar parámetros para eliminar relaciones: " . $eliminar_relaciones_stmt->error);
         }
 
-        if (!$eliminar_stmt->execute()) {
-            throw new Exception("Error al ejecutar la consulta de eliminación: " . $eliminar_stmt->error);
+        if (!$eliminar_relaciones_stmt->execute()) {
+            throw new Exception("Error al ejecutar la consulta de eliminación de relaciones: " . $eliminar_relaciones_stmt->error);
         }
 
+        // Luego, eliminar el producto
+        $eliminar_producto_sql = "DELETE FROM productos WHERE id_producto = ?";
+        $eliminar_producto_stmt = $conn->prepare($eliminar_producto_sql);
+        if (!$eliminar_producto_stmt) {
+            throw new Exception("Error al preparar la consulta de eliminación del producto: " . $conn->error);
+        }
+
+        if (!$eliminar_producto_stmt->bind_param("i", $id_producto)) {
+            throw new Exception("Error al enlazar parámetros para eliminar producto: " . $eliminar_producto_stmt->error);
+        }
+
+        if (!$eliminar_producto_stmt->execute()) {
+            throw new Exception("Error al ejecutar la consulta de eliminación del producto: " . $eliminar_producto_stmt->error);
+        }
+
+        $conn->commit();
         $respuesta['exito'] = true;
         $respuesta['mensaje'] = "Producto eliminado correctamente";
     } catch (Exception $e) {
+        $conn->rollback();
         error_log("Error al eliminar producto: " . $e->getMessage());
         $respuesta['mensaje'] = "Hubo un error al eliminar el producto: " . $e->getMessage();
     }
@@ -220,6 +234,7 @@ function eliminarProducto($id_producto)
     return $respuesta;
 }
 
+// Manejo de solicitudes POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['accion'])) {
         switch ($_POST['accion']) {
@@ -236,7 +251,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 break;
         }
     }
+}
 
+// Manejo de solicitudes GET
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (isset($_GET['eliminar'])) {
         $id_producto = intval($_GET['eliminar']);
         $resultado = eliminarProducto($id_producto);
@@ -246,4 +264,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
+// Función para obtener insumos (si es necesaria)
+function obtenerInsumos()
+{
+    global $conn;
+    $insumos = [];
+
+    $sql = "SELECT * FROM insumos";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $insumos[] = $row;
+        }
+    }
+
+    return $insumos;
+}
+
+// Cerrar la conexión a la base de datos
 $conn->close();

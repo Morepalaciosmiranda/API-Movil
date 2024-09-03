@@ -264,22 +264,16 @@ $insumos = obtenerInsumos();
                         if (result.isConfirmed) {
                             fetch(`../controller/productos_controller.php?eliminar=${id}`)
                                 .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error(`HTTP error! status: ${response.status}`);
-                                    }
+                                    console.log('Status:', response.status);
+                                    console.log('StatusText:', response.statusText);
                                     return response.text();
                                 })
                                 .then(text => {
+                                    console.log('Respuesta del servidor:', text);
                                     if (!text.trim()) {
                                         throw new Error('La respuesta del servidor está vacía');
                                     }
-                                    try {
-                                        return JSON.parse(text);
-                                    } catch (e) {
-                                        console.error('Error parsing JSON:', e);
-                                        console.log('Respuesta del servidor:', text);
-                                        throw new Error('La respuesta no es un JSON válido');
-                                    }
+                                    return JSON.parse(text);
                                 })
                                 .then(data => {
                                     if (data.exito) {
