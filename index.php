@@ -13,7 +13,7 @@ if ($_SESSION['rol'] !== 'Usuario') {
     exit();
 }
 
-include_once('./controller/productos_controller.php');
+include_once(__DIR__ . './controller/productos_controller.php');
 
 $productos = obtenerProductosActivos()
 ?>
