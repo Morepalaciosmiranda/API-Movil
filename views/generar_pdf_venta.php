@@ -19,25 +19,45 @@ $venta = $result->fetch_assoc();
 
 class MYPDF extends TCPDF {
     public function Header() {
-        $this->SetFont('helvetica', 'B', 20);
-        $this->SetTextColor(0, 0, 0);
-        $this->Cell(0, 15, 'Factura de Venta', 0, false, 'C', 0, '', 0, false, 'M', 'M');
+        // Fondo negro para toda la página
+        $this->Rect(0, 0, $this->getPageWidth(), $this->getPageHeight(), 'F', array(), array(0, 0, 0));
         
-        // Agregar logo
-        $this->Image('../img/LogoExterminio.png', 10, 10, 30, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+        $this->SetFont('helvetica', 'B', 24);
+        $this->SetTextColor(255, 255, 255); // Texto blanco
+        $this->Cell(0, 20, 'Factura de Venta', 0, false, 'C', 0, '', 0, false, 'M', 'M');
+        
+        // Agregar logo (si lo deseas)
+        // $this->Image('ruta/a/tu/logo.png', 10, 10, 30, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
     }
 
     public function Footer() {
         $this->SetY(-15);
         $this->SetFont('helvetica', 'I', 8);
-        $this->SetTextColor(128, 128, 128);
+        $this->SetTextColor(200, 200, 200); // Gris claro para el pie de página
         $this->Cell(0, 10, 'Página '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
     }
 }
 
 $pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
-// ... (configuración del PDF)
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Tu Empresa');
+$pdf->SetTitle('Factura de Venta');
+$pdf->SetSubject('Factura');
+$pdf->SetKeywords('Factura, Venta, PDF');
+
+$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
 $pdf->AddPage();
 
@@ -45,17 +65,15 @@ $pdf->SetFont('helvetica', '', 12);
 
 $html = '
 <style>
-    h2, h3 {color: #FF6600; text-align: center; margin-bottom: 20px;}
+    body {color: #FFFFFF;} /* Texto blanco para todo el contenido */h2, h3 {color: #FF6600; text-align: center; margin-bottom: 20px;}
     h2 {font-size: 18pt;}
     h3 {font-size: 14pt;}
     table {border-collapse: collapse; width: 100%; margin-bottom: 20px;}
     th {background-color: #FF6600; color: white; font-weight: bold;}
-    td {border-bottom: 1px solid #ddd;}
-    tr:nth-child(even) {background-color: #f2f2f2;}
+    td {border-bottom: 1px solid #444; color: #FFFFFF;} /* Borde más oscuro y texto blanco */
+    tr:nth-child(even) {background-color: #222;} /* Fondo ligeramente más claro para filas pares */
     .total {background-color: #FF6600; color: white; font-weight: bold;}
 </style>
-<h2>
-
 <h2>Detalles de la Venta</h2>
 <table cellpadding="5">
     <tr>
@@ -93,6 +111,7 @@ $html .= '<tr class="total">
 </tr>';
 $html .= '</table>';
 
+$pdf->SetTextColor(255, 255, 255); // Asegura que el texto principal sea blanco
 $pdf->writeHTML($html, true, false, true, false, '');
 
 $pdf->Output('factura_venta_' . $venta['id_venta'] . '.pdf', 'I');
