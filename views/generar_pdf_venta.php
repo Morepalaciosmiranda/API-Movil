@@ -26,8 +26,8 @@ class MYPDF extends TCPDF {
         $this->SetTextColor(255, 255, 255); // Texto blanco
         $this->Cell(0, 20, 'Factura de Venta', 0, false, 'C', 0, '', 0, false, 'M', 'M');
         
-        // Agregar logo (si lo deseas)
-        // $this->Image('ruta/a/tu/logo.png', 10, 10, 30, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+      
+        $this->Image('../img/LogoExterminio.png', 10, 10, 30, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
     }
 
     public function Footer() {
