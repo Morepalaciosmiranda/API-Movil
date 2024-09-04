@@ -429,6 +429,17 @@ if ($_SESSION['rol'] !== 'Usuario') {
                                 }, 500);
                             });
                         });
+
+                        document.addEventListener('DOMContentLoaded', function() {
+                            let productosEliminados = JSON.parse(localStorage.getItem('productosEliminados') || '[]');
+
+                            productosEliminados.forEach(id => {
+                                let card = document.querySelector(`.dashboard-card[data-product-id="${id}"]`);
+                                if (card) {
+                                    card.style.display = 'none';
+                                }
+                            });
+                        });
                     </script>
 
 

@@ -250,7 +250,7 @@ $insumos = obtenerInsumos();
                     }
                 }
 
-                window.confirmarEliminacion = function(id) {
+                function confirmarEliminacion(id) {
                     Swal.fire({
                         title: '¿Estás seguro de eliminar este producto?',
                         text: "No podrás revertir esto!",
@@ -263,20 +263,14 @@ $insumos = obtenerInsumos();
                     }).then((result) => {
                         if (result.isConfirmed) {
                             fetch(`../controller/productos_controller.php?eliminar=${id}`)
-                                .then(response => {
-                                    console.log('Status:', response.status);
-                                    console.log('StatusText:', response.statusText);
-                                    return response.text();
-                                })
-                                .then(text => {
-                                    console.log('Respuesta del servidor:', text);
-                                    if (!text.trim()) {
-                                        throw new Error('La respuesta del servidor está vacía');
-                                    }
-                                    return JSON.parse(text);
-                                })
+                                .then(response => response.json())
                                 .then(data => {
                                     if (data.exito) {
+                                        // Aquí agregamos el nuevo código para manejar productos eliminados
+                                        let productosEliminados = JSON.parse(localStorage.getItem('productosEliminados') || '[]');
+                                        productosEliminados.push(id);
+                                        localStorage.setItem('productosEliminados', JSON.stringify(productosEliminados));
+
                                         Swal.fire({
                                             title: 'Eliminado!',
                                             text: data.mensaje,
