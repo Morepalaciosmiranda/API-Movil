@@ -14,7 +14,7 @@ function obtenerProductos()
     global $conn;
     $productos = [];
 
-    $sql = "SELECT * FROM productos";
+    $sql = "SELECT * FROM productos WHERE activo = 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -190,45 +190,25 @@ function eliminarProducto($id_producto)
     $respuesta = ['exito' => false, 'mensaje' => ''];
 
     try {
-        $conn->begin_transaction();
-
-        // Primero, eliminar las relaciones en la tabla productos_insumos
-        $eliminar_relaciones_sql = "DELETE FROM productos_insumos WHERE id_producto = ?";
-        $eliminar_relaciones_stmt = $conn->prepare($eliminar_relaciones_sql);
-        if (!$eliminar_relaciones_stmt) {
-            throw new Exception("Error al preparar la consulta de eliminación de relaciones: " . $conn->error);
+        $sql = "UPDATE productos SET activo = 0 WHERE id_producto = ?";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Error al preparar la consulta: " . $conn->error);
         }
 
-        if (!$eliminar_relaciones_stmt->bind_param("i", $id_producto)) {
-            throw new Exception("Error al enlazar parámetros para eliminar relaciones: " . $eliminar_relaciones_stmt->error);
+        if (!$stmt->bind_param("i", $id_producto)) {
+            throw new Exception("Error al enlazar parámetros: " . $stmt->error);
         }
 
-        if (!$eliminar_relaciones_stmt->execute()) {
-            throw new Exception("Error al ejecutar la consulta de eliminación de relaciones: " . $eliminar_relaciones_stmt->error);
+        if (!$stmt->execute()) {
+            throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
         }
 
-        // Luego, eliminar el producto
-        $eliminar_producto_sql = "DELETE FROM productos WHERE id_producto = ?";
-        $eliminar_producto_stmt = $conn->prepare($eliminar_producto_sql);
-        if (!$eliminar_producto_stmt) {
-            throw new Exception("Error al preparar la consulta de eliminación del producto: " . $conn->error);
-        }
-
-        if (!$eliminar_producto_stmt->bind_param("i", $id_producto)) {
-            throw new Exception("Error al enlazar parámetros para eliminar producto: " . $eliminar_producto_stmt->error);
-        }
-
-        if (!$eliminar_producto_stmt->execute()) {
-            throw new Exception("Error al ejecutar la consulta de eliminación del producto: " . $eliminar_producto_stmt->error);
-        }
-
-        $conn->commit();
         $respuesta['exito'] = true;
-        $respuesta['mensaje'] = "Producto eliminado correctamente";
+        $respuesta['mensaje'] = "Producto desactivado correctamente";
     } catch (Exception $e) {
-        $conn->rollback();
-        error_log("Error al eliminar producto: " . $e->getMessage());
-        $respuesta['mensaje'] = "Hubo un error al eliminar el producto: " . $e->getMessage();
+        error_log("Error al desactivar producto: " . $e->getMessage());
+        $respuesta['mensaje'] = "Hubo un error al desactivar el producto: " . $e->getMessage();
     }
 
     return $respuesta;

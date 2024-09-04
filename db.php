@@ -1,20 +1,15 @@
 <?php
-// Incluir el archivo de conexión
+// alter_productos.php
 require_once './includes/conexion.php';
 
-// Verificar la conexión
-if ($conn->connect_error) {
-    die("La conexión falló: " . $conn->connect_error);
-}
-
-// Consulta SQL para actualizar la tabla productos
-$sql = "UPDATE productos SET foto = CONCAT('uploads/', foto) WHERE foto NOT LIKE 'uploads/%'";
+// SQL para alterar la tabla
+$sql = "ALTER TABLE productos ADD COLUMN activo TINYINT(1) DEFAULT 1";
 
 // Ejecutar la consulta
 if ($conn->query($sql) === TRUE) {
-    echo "Registros actualizados correctamente";
+    echo "La columna 'activo' ha sido añadida a la tabla 'productos' exitosamente.";
 } else {
-    echo "Error al actualizar registros: " . $conn->error;
+    echo "Error al alterar la tabla: " . $conn->error;
 }
 
 // Cerrar la conexión
