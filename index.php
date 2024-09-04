@@ -13,6 +13,8 @@ if ($_SESSION['rol'] !== 'Usuario') {
     exit();
 }
 
+include_once('./controller/productos_controller.php');
+
 $productos = obtenerProductosActivos()
 ?>
 <!DOCTYPE html>
