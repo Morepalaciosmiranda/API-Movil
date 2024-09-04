@@ -13,51 +13,48 @@ $result = $conn->query($sql);
 class MYPDF extends TCPDF {
     public function Header() {
         $this->SetFont('helvetica', 'B', 20);
+        $this->SetTextColor(0, 0, 0);
         $this->Cell(0, 15, 'Reporte General de Ventas', 0, false, 'C', 0, '', 0, false, 'M', 'M');
+        
+        // Agregar logo
+        $this->Image('../img/LogoExterminio.png', 10, 10, 30, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
     }
 
     public function Footer() {
         $this->SetY(-15);
         $this->SetFont('helvetica', 'I', 8);
+        $this->SetTextColor(128, 128, 128);
         $this->Cell(0, 10, 'Página '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
     }
 }
 
 $pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
-$pdf->SetCreator(PDF_CREATOR);
-$pdf->SetAuthor('Tu Empresa');
-$pdf->SetTitle('Reporte General de Ventas');
-$pdf->SetSubject('Ventas');
-$pdf->SetKeywords('Reporte, Ventas, PDF');
-
-$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
-
-$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-
-$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-
-$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-
-$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+// ... (configuración del PDF)
 
 $pdf->AddPage();
 
 $pdf->SetFont('helvetica', '', 12);
 
-$html = '<h2>Resumen de Ventas</h2>';
-$html .= '<table border="1" cellpadding="5">
-    <tr style="background-color: #f2f2f2;">
-        <th><b>ID Venta</b></th>
-        <th><b>Fecha</b></th>
-        <th><b>Cliente</b></th>
-        <th><b>Producto</b></th>
-        <th><b>Cantidad</b></th>
-        <th><b>Precio Unitario</b></th>
-        <th><b>Subtotal</b></th>
+$html = '
+<style>
+    h2 {color: #FF6600; font-size: 18pt; text-align: center; margin-bottom: 20px;}
+    table {border-collapse: collapse; width: 100%; margin-bottom: 20px;}
+    th {background-color: #FF6600; color: white; font-weight: bold;}
+    td {border-bottom: 1px solid #ddd;}
+    tr:nth-child(even) {background-color: #f2f2f2;}
+    .total {background-color: #FF6600; color: white; font-weight: bold;}
+</style>
+<h2>Resumen de Ventas</h2>
+<table cellpadding="5">
+    <tr>
+        <th>ID Venta</th>
+        <th>Fecha</th>
+        <th>Cliente</th>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Precio Unitario</th>
+        <th>Subtotal</th>
     </tr>';
 
 $total_general = 0;
@@ -77,9 +74,9 @@ while ($row = $result->fetch_assoc()) {
     </tr>';
 }
 
-$html .= '<tr style="background-color: #f2f2f2;">
-    <th colspan="6" align="right"><b>Total General:</b></th>
-    <td><b>$' . number_format($total_general, 2) . '</b></td>
+$html .= '<tr class="total">
+    <td colspan="6" align="right">Total General:</td>
+    <td>$' . number_format($total_general, 2) . '</td>
 </tr>';
 $html .= '</table>';
 
