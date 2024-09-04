@@ -3701,3 +3701,14 @@ footer h4{
         background-color: #0056b3;
      }
 }
+
+.whatsapp-icon {
+    color: #25D366; /* Color verde de WhatsApp */
+    font-size: 24px; /* Ajusta el tamaño según lo necesites */
+    display: block;
+    margin-top: 10px; /* Espacio entre el título y el icono */
+}
+
+.whatsapp-icon:hover {
+    color: #128C7E; /* Color verde más oscuro para el efecto hover */
+}

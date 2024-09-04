@@ -161,7 +161,9 @@ if ($_SESSION['rol'] !== 'Usuario') {
                 <div class="content-footer">
                     <div class="contact">
                         <h4>REDES SOCIALES</h4>
-                        <a href="#"><ion-icon name="logo-whatsapp"></ion-icon></a>
+                        <a href="#" class="whatsapp-icon">
+                            <ion-icon name="logo-whatsapp"></ion-icon>
+                        </a>
                     </div>
                     <div class="group">
                         <p>Disfruta de nuestras deliciosas comidas rápidas preparadas con los mejores ingredientes. Desde hamburguesas jugosas hasta crujientes papas fritas, tenemos todo lo que necesitas para satisfacer tus antojos. ¡Haz tu pedido ahora y experimenta el sabor del auténtico fast food!</p>
