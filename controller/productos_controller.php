@@ -31,10 +31,15 @@ function obtenerProductosActivos()
     global $conn;
     $productos = [];
 
+    // Verificar si la conexión está cerrada y reabrirla si es necesario
+    if (!$conn || $conn->connect_errno) {
+        include './includes/conexion.php';
+    }
+
     $sql = "SELECT * FROM productos WHERE activo = 1";
     $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
+    if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $productos[] = $row;
         }
