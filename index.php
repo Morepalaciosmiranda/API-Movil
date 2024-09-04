@@ -161,16 +161,10 @@ if ($_SESSION['rol'] !== 'Usuario') {
                 <div class="content-footer">
                     <div class="contact">
                         <h4>REDES SOCIALES</h4>
-                        <a href="#"><ion-icon name="logo-whatsapp"></ion-icon></i></a>
-                        <!-- <a href="#"><i class="fa-brands fa-square-instagram"></i></a> -->
+                        <a href="#"><ion-icon name="logo-whatsapp"></ion-icon></a>
                     </div>
                     <div class="group">
-                        <ul>
-                            <li>DESARROLLADORES:</li><br>
-                            <li>CARLOS MOSQUERA</li>
-                            <li>YEFFERSON PALACIOS</li>
-                            <li>KEVIN HURTADO</li>
-                        </ul>
+                        <p>Disfruta de nuestras deliciosas comidas rápidas preparadas con los mejores ingredientes. Desde hamburguesas jugosas hasta crujientes papas fritas, tenemos todo lo que necesitas para satisfacer tus antojos. ¡Haz tu pedido ahora y experimenta el sabor del auténtico fast food!</p>
                     </div>
                 </div>
                 <div class="copy">
@@ -438,6 +432,8 @@ if ($_SESSION['rol'] !== 'Usuario') {
 <script src="./js/index12.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-canvas/2.0.2/dom-canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.all.min.js"></script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
 
 
