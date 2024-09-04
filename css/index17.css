@@ -3249,7 +3249,32 @@ footer h4{
     }
 
     .content-footer {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .contact {
+        display: flex;
         flex-direction: column;
+        align-items: center;
+    }
+    
+    .contact h4 {
+        margin-bottom: 10px;
+    }
+    
+    .social-icons {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .whatsapp-icon {
+        color: #25D366; /* Color verde de WhatsApp */
+        font-size: 24px; /* Ajusta el tamaño según lo necesites */
+    }
+    
+    .whatsapp-icon:hover {
+        color: #128C7E; /* Color verde más oscuro para el efecto hover */
     }
 
     .contact,
@@ -3702,13 +3727,3 @@ footer h4{
      }
 }
 
-.whatsapp-icon {
-    color: #25D366; /* Color verde de WhatsApp */
-    font-size: 24px; /* Ajusta el tamaño según lo necesites */
-    display: block;
-    margin-top: 10px; /* Espacio entre el título y el icono */
-}
-
-.whatsapp-icon:hover {
-    color: #128C7E; /* Color verde más oscuro para el efecto hover */
-}
