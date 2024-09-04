@@ -250,7 +250,7 @@ $insumos = obtenerInsumos();
                     }
                 }
 
-                function confirmarEliminacion(id) {
+                window.confirmarEliminacion = function(id) {
                     Swal.fire({
                         title: '¿Estás seguro de eliminar este producto?',
                         text: "No podrás revertir esto!",
@@ -266,7 +266,6 @@ $insumos = obtenerInsumos();
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.exito) {
-                                        // Aquí agregamos el nuevo código para manejar productos eliminados
                                         let productosEliminados = JSON.parse(localStorage.getItem('productosEliminados') || '[]');
                                         productosEliminados.push(id);
                                         localStorage.setItem('productosEliminados', JSON.stringify(productosEliminados));
@@ -300,6 +299,7 @@ $insumos = obtenerInsumos();
                         }
                     });
                 }
+
 
                 document.getElementById('formAgregarProducto').addEventListener('submit', function(event) {
                     event.preventDefault();
