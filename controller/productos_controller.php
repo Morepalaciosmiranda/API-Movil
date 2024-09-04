@@ -28,13 +28,8 @@ function obtenerProductos()
 
 function obtenerProductosActivos()
 {
-    global $conn;
+    $conn = obtenerConexion();
     $productos = [];
-
-    // Verificar si la conexión está cerrada y reabrirla si es necesario
-    if (!$conn || $conn->connect_errno) {
-        include './includes/conexion.php';
-    }
 
     $sql = "SELECT * FROM productos WHERE activo = 1";
     $result = $conn->query($sql);
