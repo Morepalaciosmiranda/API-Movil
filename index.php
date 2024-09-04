@@ -12,11 +12,6 @@ if ($_SESSION['rol'] !== 'Usuario') {
     header('Location: ./no_autorizado.php');
     exit();
 }
-
-include_once(__DIR__ . '/includes/conexion.php');
-include_once(__DIR__ . '/controller/productos_controller.php');
-
-$productos = obtenerProductosActivos();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +37,7 @@ $productos = obtenerProductosActivos();
                 <li><a href="./configuracion.php">Mi Perfil</a></li>
             </ul>
         </nav>
-        <div class="card" data-product-id="<?php echo $producto['id_producto']; ?>">
+        <div class="car-shop">
             <a href="#" id="toggle-car" class="cart-icon">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-badge">0</span>
@@ -434,17 +429,6 @@ $productos = obtenerProductosActivos();
                                 }, 500);
                             });
                         });
-
-                        document.addEventListener('DOMContentLoaded', function() {
-                            let productosEliminados = JSON.parse(localStorage.getItem('productosEliminados') || '[]');
-
-                            productosEliminados.forEach(id => {
-                                let card = document.querySelector(`.dashboard-card[data-product-id="${id}"]`);
-                                if (card) {
-                                    card.style.display = 'none';
-                                }
-                            });
-                        });
                     </script>
 
 
@@ -454,27 +438,6 @@ $productos = obtenerProductosActivos();
 <script src="./js/index12.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-canvas/2.0.2/dom-canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.all.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Obtener la lista de productos eliminados
-        let productosEliminados = JSON.parse(localStorage.getItem('productosEliminados') || '[]');
-
-        // Ocultar las cards de los productos eliminados
-        productosEliminados.forEach(id => {
-            let card = document.querySelector(`.card[data-product-id="${id}"]`);
-            if (card) {
-                card.style.display = 'none';
-            }
-        });
-    });
-
-    // Agregar este evento de storage
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'productosEliminados') {
-            location.reload();
-        }
-    });
-</script>
 </body>
 
 

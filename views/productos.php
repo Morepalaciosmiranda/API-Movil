@@ -263,14 +263,20 @@ $insumos = obtenerInsumos();
                     }).then((result) => {
                         if (result.isConfirmed) {
                             fetch(`../controller/productos_controller.php?eliminar=${id}`)
-                                .then(response => response.json())
+                                .then(response => {
+                                    console.log('Status:', response.status);
+                                    console.log('StatusText:', response.statusText);
+                                    return response.text();
+                                })
+                                .then(text => {
+                                    console.log('Respuesta del servidor:', text);
+                                    if (!text.trim()) {
+                                        throw new Error('La respuesta del servidor está vacía');
+                                    }
+                                    return JSON.parse(text);
+                                })
                                 .then(data => {
                                     if (data.exito) {
-                                        // Guardar el ID del producto eliminado en localStorage
-                                        let productosEliminados = JSON.parse(localStorage.getItem('productosEliminados') || '[]');
-                                        productosEliminados.push(id);
-                                        localStorage.setItem('productosEliminados', JSON.stringify(productosEliminados));
-
                                         Swal.fire({
                                             title: 'Eliminado!',
                                             text: data.mensaje,
@@ -300,14 +306,6 @@ $insumos = obtenerInsumos();
                         }
                     });
                 }
-
-                // Agregar este evento de storage
-                window.addEventListener('storage', function(e) {
-                    if (e.key === 'productosEliminados') {
-                        location.reload();
-                    }
-                });
-
 
                 document.getElementById('formAgregarProducto').addEventListener('submit', function(event) {
                     event.preventDefault();

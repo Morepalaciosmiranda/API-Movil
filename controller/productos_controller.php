@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-include './includes/conexion.php';
+include '../includes/conexion.php';
 
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
@@ -18,23 +18,6 @@ function obtenerProductos()
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $productos[] = $row;
-        }
-    }
-
-    return $productos;
-}
-
-function obtenerProductosActivos()
-{
-    $conn = obtenerConexion();
-    $productos = [];
-
-    $sql = "SELECT * FROM productos WHERE activo = 1";
-    $result = $conn->query($sql);
-
-    if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $productos[] = $row;
         }
