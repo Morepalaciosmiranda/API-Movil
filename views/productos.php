@@ -266,6 +266,7 @@ $insumos = obtenerInsumos();
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.exito) {
+                                        // Guardar el ID del producto eliminado en localStorage
                                         let productosEliminados = JSON.parse(localStorage.getItem('productosEliminados') || '[]');
                                         productosEliminados.push(id);
                                         localStorage.setItem('productosEliminados', JSON.stringify(productosEliminados));
@@ -299,6 +300,13 @@ $insumos = obtenerInsumos();
                         }
                     });
                 }
+
+                // Agregar este evento de storage
+                window.addEventListener('storage', function(e) {
+                    if (e.key === 'productosEliminados') {
+                        location.reload();
+                    }
+                });
 
 
                 document.getElementById('formAgregarProducto').addEventListener('submit', function(event) {

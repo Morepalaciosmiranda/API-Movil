@@ -26,6 +26,23 @@ function obtenerProductos()
     return $productos;
 }
 
+function obtenerProductosActivos()
+{
+    global $conn;
+    $productos = [];
+
+    $sql = "SELECT * FROM productos WHERE activo = 1";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $productos[] = $row;
+        }
+    }
+
+    return $productos;
+}
+
 function procesarProducto()
 {
     global $conn;

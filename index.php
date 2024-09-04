@@ -12,6 +12,8 @@ if ($_SESSION['rol'] !== 'Usuario') {
     header('Location: ./no_autorizado.php');
     exit();
 }
+
+$productos = obtenerProductosActivos()
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +39,7 @@ if ($_SESSION['rol'] !== 'Usuario') {
                 <li><a href="./configuracion.php">Mi Perfil</a></li>
             </ul>
         </nav>
-        <div class="car-shop">
+        <div class="card" data-product-id="<?php echo $producto['id_producto']; ?>">
             <a href="#" id="toggle-car" class="cart-icon">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-badge">0</span>
@@ -449,6 +451,27 @@ if ($_SESSION['rol'] !== 'Usuario') {
 <script src="./js/index12.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-canvas/2.0.2/dom-canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.all.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener la lista de productos eliminados
+        let productosEliminados = JSON.parse(localStorage.getItem('productosEliminados') || '[]');
+
+        // Ocultar las cards de los productos eliminados
+        productosEliminados.forEach(id => {
+            let card = document.querySelector(`.card[data-product-id="${id}"]`);
+            if (card) {
+                card.style.display = 'none';
+            }
+        });
+    });
+
+    // Agregar este evento de storage
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'productosEliminados') {
+            location.reload();
+        }
+    });
+</script>
 </body>
 
 
