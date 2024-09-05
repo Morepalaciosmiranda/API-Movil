@@ -77,31 +77,35 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                     <button type="submit" name="buscar_nombre"><i class="fa fa-search"></i></button>
                 </form> -->
                 <br>
-
                 <button id="btnAgregarInsumo" class="btn btn-success">Agregar Insumo</button>
                 <br><br>
-
                 <!-- En el formulario de agregar insumo -->
                 <form id="formAgregarInsumo" action="../controller/insumos_controller.php" method="post">
                     <label for="id_compra">Compra:</label>
                     <select id="id_compra" name="id_compra" required onchange="llenarDatosCompra()">
                         <option value="">Seleccione una compra</option>
                         <?php
-                        $consulta_compras = "SELECT c.id_compra, c.fecha_compra, c.marca, c.cantidad, p.nombre_proveedor 
+                        $consulta_compras = "SELECT c.id_compra, c.fecha_compra, c.marca, c.cantidad, c.total_compra, p.nombre_proveedor 
                              FROM compras c 
-                             JOIN proveedores p ON c.id_proveedor = p.id_proveedor";
+                             JOIN proveedores p ON c.id_proveedor = p.id_proveedor
+                             ORDER BY c.fecha_compra DESC";
                         $resultado_compras = $conn->query($consulta_compras);
                         if ($resultado_compras->num_rows > 0) {
                             while ($row = $resultado_compras->fetch_assoc()) {
                                 echo "<option value='" . $row['id_compra'] . "' 
-                             data-marca='" . $row['marca'] . "' 
+                             data-marca='" . htmlspecialchars($row['marca'], ENT_QUOTES) . "' 
                              data-cantidad='" . $row['cantidad'] . "' 
-                             data-proveedor='" . $row['nombre_proveedor'] . "'>"
+                             data-proveedor='" . htmlspecialchars($row['nombre_proveedor'], ENT_QUOTES) . "'
+                             data-fecha-compra='" . $row['fecha_compra'] . "'
+                             data-total-compra='" . $row['total_compra'] . "'>"
                                     . $row['id_compra'] . " - " . $row['fecha_compra'] . " - " . $row['marca'] . "</option>";
                             }
                         }
                         ?>
                     </select><br><br>
+
+                    <label for="proveedor">Proveedor:</label>
+                    <input type="text" id="proveedor" name="proveedor" readonly><br><br>
 
                     <label for="marca">Marca (Nombre del Insumo):</label>
                     <input type="text" id="marca" name="marca" readonly><br><br>
@@ -109,8 +113,11 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                     <label for="cantidad">Cantidad:</label>
                     <input type="number" id="cantidad" name="cantidad" readonly><br><br>
 
-                    <label for="proveedor">Proveedor:</label>
-                    <input type="text" id="proveedor" name="proveedor" readonly><br><br>
+                    <label for="fecha_compra">Fecha de Compra:</label>
+                    <input type="date" id="fecha_compra" name="fecha_compra" readonly><br><br>
+
+                    <label for="total_compra">Total de Compra:</label>
+                    <input type="number" id="total_compra" name="total_compra" step="0.01" readonly><br><br>
 
                     <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
                     <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required><br><br>
@@ -123,6 +130,7 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
 
                     <input type="submit" value="Agregar Insumo">
                 </form>
+
 
             </div>
         </div>
@@ -404,14 +412,26 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
             var select = document.getElementById('id_compra');
             var option = select.options[select.selectedIndex];
 
-            document.getElementById('marca').value = option.getAttribute('data-marca');
-            document.getElementById('cantidad').value = option.getAttribute('data-cantidad');
-            document.getElementById('proveedor').value = option.getAttribute('data-proveedor');
+            if (option.value !== "") {
+                document.getElementById('proveedor').value = option.getAttribute('data-proveedor');
+                document.getElementById('marca').value = option.getAttribute('data-marca');
+                document.getElementById('cantidad').value = option.getAttribute('data-cantidad');
+                document.getElementById('fecha_compra').value = option.getAttribute('data-fecha-compra');
+                document.getElementById('total_compra').value = option.getAttribute('data-total-compra');
 
-            // Establecer la fecha de vencimiento a un año después de la fecha actual
-            var fechaVencimiento = new Date();
-            fechaVencimiento.setFullYear(fechaVencimiento.getFullYear() + 1);
-            document.getElementById('fecha_vencimiento').value = fechaVencimiento.toISOString().split('T')[0];
+                // Establecer la fecha de vencimiento a un año después de la fecha de compra
+                var fechaCompra = new Date(option.getAttribute('data-fecha-compra'));
+                var fechaVencimiento = new Date(fechaCompra.getFullYear() + 1, fechaCompra.getMonth(), fechaCompra.getDate());
+                document.getElementById('fecha_vencimiento').value = fechaVencimiento.toISOString().split('T')[0];
+            } else {
+                // Limpiar los campos si no se selecciona ninguna compra
+                document.getElementById('proveedor').value = '';
+                document.getElementById('marca').value = '';
+                document.getElementById('cantidad').value = '';
+                document.getElementById('fecha_compra').value = '';
+                document.getElementById('total_compra').value = '';
+                document.getElementById('fecha_vencimiento').value = '';
+            }
         }
     </script>
     <script src="../js/validaciones.js"></script>
