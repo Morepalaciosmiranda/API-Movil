@@ -147,10 +147,10 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                     if (isset($insumos) && is_array($insumos)) {
                         foreach ($insumos as $insumo) {
                             echo "<tr>";
-                            echo "<td>" . $insumo['nombre_proveedor'] . "</td>"; // Cambiado de id_proveedor a nombre_proveedor
+                            echo "<td>" . $insumo['nombre_proveedor'] . "</td>";
                             echo "<td>" . $insumo['nombre_insumo'] . "</td>";
                             echo "<td>" . $insumo['precio'] . "</td>";
-                            echo "<td>" . $insumo['fecha_vencimiento'] . "</td>";
+                            echo "<td>" . $insumo['fecha_compra'] . "</td>";
                             echo "<td>" . $insumo['marca'] . "</td>";
                             echo "<td>" . $insumo['cantidad'] . "</td>";
                             echo "<td>" . $insumo['estado_insumo'] . "</td>";

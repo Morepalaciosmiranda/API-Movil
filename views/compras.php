@@ -201,12 +201,11 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <?php
                                 include '../includes/conexion.php';
 
-                                $sql = "SELECT c.id_compra, p.nombre_proveedor, i.nombre_insumo, c.fecha_compra, c.total_compra, c.cantidad, c.marca
-                                FROM compras c
-                                JOIN proveedores p ON c.id_proveedor = p.id_proveedor
-                                JOIN insumos i ON c.id_insumo = i.id_insumo
-                                ORDER BY c.fecha_compra DESC
-                                LIMIT $items_por_pagina OFFSET $offset";
+                                $sql = "SELECT c.id_compra, p.nombre_proveedor, c.fecha_compra, c.total_compra, c.cantidad, c.marca
+        FROM compras c
+        JOIN proveedores p ON c.id_proveedor = p.id_proveedor
+        ORDER BY c.fecha_compra DESC
+        LIMIT $items_por_pagina OFFSET $offset";
                                 $resultado = $conn->query($sql);
 
                                 if ($resultado->num_rows > 0) {
