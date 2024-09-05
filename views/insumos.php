@@ -83,38 +83,37 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
 
                 <!-- En el formulario de agregar insumo -->
                 <form id="formAgregarInsumo" action="../controller/insumos_controller.php" method="post">
-                    <label for="id_proveedor">Proveedor:</label>
-                    <select id="id_proveedor" name="id_proveedor" required>
-                        <?php
-                        include_once('../includes/conexion.php');
-                        $consulta_proveedores = "SELECT * FROM proveedores";
-                        $resultado_proveedores = $conn->query($consulta_proveedores);
-                        if ($resultado_proveedores->num_rows > 0) {
-                            while ($row = $resultado_proveedores->fetch_assoc()) {
-                                echo "<option value='" . $row['id_proveedor'] . "'>" . $row['nombre_proveedor'] . "</option>";
-                            }
-                        }
-                        ?>
-                    </select><br><br>
-
                     <label for="id_compra">Compra:</label>
-                    <select id="id_compra" name="id_compra" required onchange="actualizarCantidad()">
+                    <select id="id_compra" name="id_compra" required onchange="llenarDatosCompra()">
+                        <option value="">Seleccione una compra</option>
                         <?php
-                        $consulta_compras = "SELECT * FROM compras";
+                        $consulta_compras = "SELECT c.id_compra, c.fecha_compra, c.marca, c.cantidad, p.nombre_proveedor 
+                             FROM compras c 
+                             JOIN proveedores p ON c.id_proveedor = p.id_proveedor";
                         $resultado_compras = $conn->query($consulta_compras);
                         if ($resultado_compras->num_rows > 0) {
                             while ($row = $resultado_compras->fetch_assoc()) {
-                                echo "<option value='" . $row['id_compra'] . "' data-cantidad='" . $row['cantidad'] . "'>" . $row['id_compra'] . " - " . $row['fecha_compra'] . "</option>";
+                                echo "<option value='" . $row['id_compra'] . "' 
+                             data-marca='" . $row['marca'] . "' 
+                             data-cantidad='" . $row['cantidad'] . "' 
+                             data-proveedor='" . $row['nombre_proveedor'] . "'>"
+                                    . $row['id_compra'] . " - " . $row['fecha_compra'] . " - " . $row['marca'] . "</option>";
                             }
                         }
                         ?>
                     </select><br><br>
 
-                    <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
-                    <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required min="<?php echo date('Y-m-d'); ?>"><br><br>
+                    <label for="marca">Marca (Nombre del Insumo):</label>
+                    <input type="text" id="marca" name="marca" readonly><br><br>
 
                     <label for="cantidad">Cantidad:</label>
                     <input type="number" id="cantidad" name="cantidad" readonly><br><br>
+
+                    <label for="proveedor">Proveedor:</label>
+                    <input type="text" id="proveedor" name="proveedor" readonly><br><br>
+
+                    <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
+                    <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required><br><br>
 
                     <label for="estado_insumo">Estado del Insumo:</label>
                     <select id="estado_insumo" name="estado_insumo" required>
@@ -133,10 +132,11 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                 <thead>
                     <tr>
                         <th>Proveedor</th>
-                        <th>Insumo</th>
+                        <th>Insumo (Marca)</th>
+                        <th>Fecha de Compra</th>
                         <th>Fecha de Vencimiento</th>
-                        <th>Marca</th>
                         <th>Cantidad</th>
+                        <th>Precio Total</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -147,10 +147,11 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                         foreach ($insumos as $insumo) {
                             echo "<tr>";
                             echo "<td>" . $insumo['nombre_proveedor'] . "</td>";
-                            echo "<td>" . $insumo['marca'] . "</td>"; // Usamos 'marca' como nombre del insumo
-                            echo "<td>" . $insumo['fecha_vencimiento'] . "</td>";
                             echo "<td>" . $insumo['marca'] . "</td>";
+                            echo "<td>" . $insumo['fecha_compra'] . "</td>";
+                            echo "<td>" . $insumo['fecha_vencimiento'] . "</td>";
                             echo "<td>" . $insumo['cantidad'] . "</td>";
+                            echo "<td>" . $insumo['total_compra'] . "</td>";
                             echo "<td>" . $insumo['estado_insumo'] . "</td>";
                             echo '<td class="actions">';
                             echo '<button class="edit-btn" onclick="openEditModal(' . htmlspecialchars(json_encode($insumo), ENT_QUOTES, 'UTF-8') . ')"><i class="fa fa-edit"></i></button>';
@@ -159,7 +160,7 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='7'>No hay insumos disponibles.</td></tr>";
+                        echo "<tr><td colspan='8'>No hay insumos disponibles.</td></tr>";
                     }
                     ?>
                 </tbody>
@@ -190,28 +191,18 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
             <h2>Editar Insumo</h2>
             <form id="formEditarInsumo" action="../controller/insumos_controller.php" method="post">
                 <input type="hidden" id="edit-id" name="id_editar">
-                <label for="edit-nombre">Nombre del Insumo:</label>
-                <input type="text" id="edit-nombre" name="nombre_editar" required><br><br>
                 <label for="edit-proveedor">Proveedor:</label>
-                <select id="edit-proveedor" name="id_proveedor_editar" required>
-                    <?php
-                    $consulta_proveedores = "SELECT * FROM proveedores";
-                    $resultado_proveedores = $conn->query($consulta_proveedores);
-                    if ($resultado_proveedores->num_rows > 0) {
-                        while ($row = $resultado_proveedores->fetch_assoc()) {
-                            echo "<option value='" . $row['id_proveedor'] . "'>" . $row['nombre_proveedor'] . "</option>";
-                        }
-                    }
-                    ?>
-                </select><br><br>
-                <label for="edit-precio">Precio:</label>
-                <input type="number" id="edit-precio" name="precio_editar" required><br><br>
+                <input type="text" id="edit-proveedor" name="proveedor_editar" readonly><br><br>
+                <label for="edit-marca">Insumo (Marca):</label>
+                <input type="text" id="edit-marca" name="marca_editar" readonly><br><br>
+                <label for="edit-fecha-compra">Fecha de Compra:</label>
+                <input type="date" id="edit-fecha-compra" name="fecha_compra_editar" readonly><br><br>
                 <label for="edit-fecha">Fecha de Vencimiento:</label>
                 <input type="date" id="edit-fecha" name="fecha_vencimiento_editar" required><br><br>
-                <label for="edit-marca">Marca:</label>
-                <input type="text" id="edit-marca" name="marca_editar" required><br><br>
                 <label for="edit-cantidad">Cantidad:</label>
-                <input type="number" id="edit-cantidad" name="cantidad_editar" required><br><br>
+                <input type="number" id="edit-cantidad" name="cantidad_editar" readonly><br><br>
+                <label for="edit-precio">Precio Total:</label>
+                <input type="number" id="edit-precio" name="precio_editar" readonly step="0.01"><br><br>
                 <label for="edit-estado">Estado del Insumo:</label>
                 <select id="edit-estado" name="estado_insumo_editar" required>
                     <option value="Buen Estado">Buen Estado</option>
@@ -323,12 +314,12 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
         function openEditModal(insumo) {
             var modalEditar = document.getElementById("modalEditarInsumo");
             document.getElementById("edit-id").value = insumo.id_insumo;
-            document.getElementById("edit-nombre").value = insumo.nombre_insumo;
-            document.getElementById("edit-proveedor").value = insumo.id_proveedor;
-            document.getElementById("edit-precio").value = insumo.precio;
-            document.getElementById("edit-fecha").value = insumo.fecha_vencimiento;
+            document.getElementById("edit-proveedor").value = insumo.nombre_proveedor;
             document.getElementById("edit-marca").value = insumo.marca;
+            document.getElementById("edit-fecha-compra").value = insumo.fecha_compra;
+            document.getElementById("edit-fecha").value = insumo.fecha_vencimiento;
             document.getElementById("edit-cantidad").value = insumo.cantidad;
+            document.getElementById("edit-precio").value = insumo.total_compra;
             document.getElementById("edit-estado").value = insumo.estado_insumo;
 
             modalEditar.style.display = "block";
@@ -355,18 +346,28 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
         document.addEventListener("DOMContentLoaded", function() {
             const urlParams = new URLSearchParams(window.location.search);
 
-            if (urlParams.has('error') && urlParams.get('error') === 'relacion') {
+            if (urlParams.has('success')) {
+                const successCode = urlParams.get('success');
+                let message = '';
+                if (successCode === '1') {
+                    message = 'Insumo agregado exitosamente.';
+                } else if (successCode === '2') {
+                    message = 'Insumo actualizado exitosamente.';
+                }
+                if (message) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: message,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } else if (urlParams.has('error')) {
+                const errorMessage = urlParams.get('error');
                 Swal.fire({
                     icon: 'error',
-                    title: 'No se puede eliminar',
-                    text: 'Este insumo está relacionado con un producto y no se puede eliminar.',
-                    confirmButtonText: 'Entendido'
-                });
-            } else if (urlParams.has('eliminar') && urlParams.get('eliminar') === 'exito') {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Eliminado!',
-                    text: 'El insumo ha sido eliminado correctamente.',
+                    title: 'Error',
+                    text: decodeURIComponent(errorMessage),
                     confirmButtonText: 'OK'
                 });
             }
@@ -397,6 +398,20 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
             var inputCantidad = document.getElementById('cantidad');
             var cantidadSeleccionada = selectCompra.options[selectCompra.selectedIndex].getAttribute('data-cantidad');
             inputCantidad.value = cantidadSeleccionada;
+        }
+
+        function llenarDatosCompra() {
+            var select = document.getElementById('id_compra');
+            var option = select.options[select.selectedIndex];
+
+            document.getElementById('marca').value = option.getAttribute('data-marca');
+            document.getElementById('cantidad').value = option.getAttribute('data-cantidad');
+            document.getElementById('proveedor').value = option.getAttribute('data-proveedor');
+
+            // Establecer la fecha de vencimiento a un año después de la fecha actual
+            var fechaVencimiento = new Date();
+            fechaVencimiento.setFullYear(fechaVencimiento.getFullYear() + 1);
+            document.getElementById('fecha_vencimiento').value = fechaVencimiento.toISOString().split('T')[0];
         }
     </script>
     <script src="../js/validaciones.js"></script>
