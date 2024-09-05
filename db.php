@@ -1,17 +1,38 @@
 <?php
-// alter_productos.php
-require_once './includes/conexion.php';
+include_once './includes/conexion.php';
 
-// SQL para alterar la tabla
-$sql = "ALTER TABLE productos ADD COLUMN activo TINYINT(1) DEFAULT 1";
+// Modificar la tabla compras
+$sql_compras = "
+ALTER TABLE compras
+DROP COLUMN id_usuario,
+ADD COLUMN id_insumo INT AFTER id_proveedor,
+ADD COLUMN marca VARCHAR(100) AFTER id_insumo,
+DROP COLUMN subtotal,
+DROP COLUMN valor_unitario;
+";
 
-// Ejecutar la consulta
-if ($conn->query($sql) === TRUE) {
-    echo "La columna 'activo' ha sido añadida a la tabla 'productos' exitosamente.";
+// Modificar la tabla insumos
+$sql_insumos = "
+ALTER TABLE insumos
+DROP COLUMN nombre_insumo,
+DROP COLUMN marca,
+DROP COLUMN precio,
+ADD COLUMN id_compra INT AFTER id_proveedor;
+";
+
+// Ejecutar las consultas
+if ($conn->multi_query($sql_compras . $sql_insumos)) {
+    do {
+        // Almacenar el resultado
+        if ($result = $conn->store_result()) {
+            $result->free();
+        }
+    } while ($conn->more_results() && $conn->next_result());
+
+    echo "Las tablas se han modificado correctamente.";
 } else {
-    echo "Error al alterar la tabla: " . $conn->error;
+    echo "Error al modificar las tablas: " . $conn->error;
 }
 
-// Cerrar la conexión
 $conn->close();
 ?>

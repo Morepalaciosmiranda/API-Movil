@@ -1,27 +1,27 @@
 <?php
 include '../includes/conexion.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombre_insumo'], $_POST['id_proveedor'], $_POST['precio'], $_POST['fecha_vencimiento'], $_POST['marca'], $_POST['cantidad'], $_POST['estado_insumo'])) {
-    $nombre_insumo = $_POST['nombre_insumo'];
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['id_compra'], $_POST['fecha_vencimiento'], $_POST['estado_insumo'])) {
     $id_proveedor = $_POST['id_proveedor'];
-    $precio = $_POST['precio'];
+    $id_compra = $_POST['id_compra'];
     $fecha_vencimiento = $_POST['fecha_vencimiento'];
-    $marca = $_POST['marca'];
-    $cantidad = $_POST['cantidad'];
     $estado_insumo = $_POST['estado_insumo'];
 
+    // Obtener la cantidad de la compra seleccionada
+    $sql_cantidad = "SELECT cantidad FROM compras WHERE id_compra = ?";
+    $stmt_cantidad = $conn->prepare($sql_cantidad);
+    $stmt_cantidad->bind_param("i", $id_compra);
+    $stmt_cantidad->execute();
+    $result_cantidad = $stmt_cantidad->get_result();
+    $cantidad = $result_cantidad->fetch_assoc()['cantidad'];
 
-    if (strtotime($fecha_vencimiento) < strtotime(date('Y-m-d'))) {
-        die("Error: La fecha de vencimiento no puede ser una fecha pasada.");
-    }
-
-    $insert_sql = "INSERT INTO insumos (nombre_insumo, id_proveedor, precio, fecha_vencimiento, marca, cantidad, estado_insumo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $insert_sql = "INSERT INTO insumos (id_proveedor, id_compra, fecha_vencimiento, cantidad, estado_insumo) VALUES (?, ?, ?, ?, ?)";
     $insert_stmt = $conn->prepare($insert_sql);
     if (!$insert_stmt) {
         die("Error al preparar la consulta de inserción: " . $conn->error);
     }
 
-    if (!$insert_stmt->bind_param("sisssis", $nombre_insumo, $id_proveedor, $precio, $fecha_vencimiento, $marca, $cantidad, $estado_insumo)) {
+    if (!$insert_stmt->bind_param("iisis", $id_proveedor, $id_compra, $fecha_vencimiento, $cantidad, $estado_insumo)) {
         die("Error al enlazar parámetros: " . $insert_stmt->error);
     }
 
@@ -116,9 +116,10 @@ function obtenerInsumos() {
     global $conn;
     $insumos = array();
 
-    $consulta = "SELECT i.*, p.nombre_proveedor 
+    $consulta = "SELECT i.*, p.nombre_proveedor, c.fecha_compra, c.marca 
                  FROM insumos i 
-                 JOIN proveedores p ON i.id_proveedor = p.id_proveedor";
+                 JOIN proveedores p ON i.id_proveedor = p.id_proveedor
+                 JOIN compras c ON i.id_compra = c.id_compra";
     $resultado = $conn->query($consulta);
 
     if ($resultado->num_rows > 0) {
