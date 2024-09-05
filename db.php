@@ -10,51 +10,60 @@ function ejecutarConsulta($conn, $sql) {
     }
 }
 
-// Función para verificar si existe una clave foránea
-function existeClaveForanea($conn, $tabla, $nombreClave) {
-    $sql = "SELECT COUNT(*) as count FROM information_schema.TABLE_CONSTRAINTS 
-            WHERE TABLE_SCHEMA = DATABASE() 
-            AND TABLE_NAME = '$tabla' 
-            AND CONSTRAINT_NAME = '$nombreClave' 
-            AND CONSTRAINT_TYPE = 'FOREIGN KEY'";
+// Función para verificar si existe una columna
+function existeColumna($conn, $tabla, $columna) {
+    $sql = "SHOW COLUMNS FROM $tabla LIKE '$columna'";
     $result = $conn->query($sql);
-    $row = $result->fetch_assoc();
-    return $row['count'] > 0;
-}
-
-// Verificar y eliminar la restricción de clave foránea si existe
-if (existeClaveForanea($conn, 'compras', 'compras_ibfk_1')) {
-    $sql_drop_fk = "ALTER TABLE compras DROP FOREIGN KEY compras_ibfk_1;";
-    ejecutarConsulta($conn, $sql_drop_fk);
-} else {
-    echo "La clave foránea compras_ibfk_1 no existe, continuando con las modificaciones.<br>";
+    return $result->num_rows > 0;
 }
 
 // Modificar la tabla compras
-$sql_compras = "
-ALTER TABLE compras
-DROP COLUMN IF EXISTS id_usuario,
-ADD COLUMN IF NOT EXISTS id_insumo INT AFTER id_proveedor,
-ADD COLUMN IF NOT EXISTS marca VARCHAR(100) AFTER id_insumo,
-DROP COLUMN IF EXISTS subtotal,
-DROP COLUMN IF EXISTS valor_unitario;
-";
-ejecutarConsulta($conn, $sql_compras);
+$sql_compras = "";
+
+if (existeColumna($conn, 'compras', 'id_usuario')) {
+    $sql_compras .= "ALTER TABLE compras DROP COLUMN id_usuario;";
+}
+if (!existeColumna($conn, 'compras', 'id_insumo')) {
+    $sql_compras .= "ALTER TABLE compras ADD COLUMN id_insumo INT AFTER id_proveedor;";
+}
+if (!existeColumna($conn, 'compras', 'marca')) {
+    $sql_compras .= "ALTER TABLE compras ADD COLUMN marca VARCHAR(100) AFTER id_insumo;";
+}
+if (existeColumna($conn, 'compras', 'subtotal')) {
+    $sql_compras .= "ALTER TABLE compras DROP COLUMN subtotal;";
+}
+if (existeColumna($conn, 'compras', 'valor_unitario')) {
+    $sql_compras .= "ALTER TABLE compras DROP COLUMN valor_unitario;";
+}
+
+if (!empty($sql_compras)) {
+    ejecutarConsulta($conn, $sql_compras);
+}
 
 // Modificar la tabla insumos
-$sql_insumos = "
-ALTER TABLE insumos
-DROP COLUMN IF EXISTS nombre_insumo,
-DROP COLUMN IF EXISTS marca,
-DROP COLUMN IF EXISTS precio,
-ADD COLUMN IF NOT EXISTS id_compra INT AFTER id_proveedor;
-";
-ejecutarConsulta($conn, $sql_insumos);
+$sql_insumos = "";
 
-// Agregar nuevas claves foráneas si es necesario
+if (existeColumna($conn, 'insumos', 'nombre_insumo')) {
+    $sql_insumos .= "ALTER TABLE insumos DROP COLUMN nombre_insumo;";
+}
+if (existeColumna($conn, 'insumos', 'marca')) {
+    $sql_insumos .= "ALTER TABLE insumos DROP COLUMN marca;";
+}
+if (existeColumna($conn, 'insumos', 'precio')) {
+    $sql_insumos .= "ALTER TABLE insumos DROP COLUMN precio;";
+}
+if (!existeColumna($conn, 'insumos', 'id_compra')) {
+    $sql_insumos .= "ALTER TABLE insumos ADD COLUMN id_compra INT AFTER id_proveedor;";
+}
+
+if (!empty($sql_insumos)) {
+    ejecutarConsulta($conn, $sql_insumos);
+}
+
+// Agregar nueva clave foránea si es necesario
 $sql_add_fk = "
 ALTER TABLE insumos
-ADD CONSTRAINT IF NOT EXISTS fk_insumos_compras
+ADD CONSTRAINT fk_insumos_compras
 FOREIGN KEY (id_compra) REFERENCES compras(id_compra);
 ";
 ejecutarConsulta($conn, $sql_add_fk);
