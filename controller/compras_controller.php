@@ -3,9 +3,9 @@ include '../includes/conexion.php';
 
 // ... (código anterior)
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['id_insumo'], $_POST['fecha_compra'], $_POST['total_compra'], $_POST['cantidad'], $_POST['marca'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['nombre_insumo'], $_POST['fecha_compra'], $_POST['total_compra'], $_POST['cantidad'], $_POST['marca'])) {
     $id_proveedor = $_POST['id_proveedor'];
-    $id_insumo = $_POST['id_insumo'];
+    $nombre_insumo = $_POST['nombre_insumo'];
     $fecha_compra = $_POST['fecha_compra'];
     $total_compra = $_POST['total_compra'];
     $cantidad = $_POST['cantidad'];
@@ -14,30 +14,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
     $conn->begin_transaction();
 
     try {
-        $insert_compra_sql = "INSERT INTO compras (id_proveedor, id_insumo, fecha_compra, total_compra, cantidad, marca) VALUES (?, ?, ?, ?, ?, ?)";
+        // Insertar la compra
+        $insert_compra_sql = "INSERT INTO compras (id_proveedor, marca, fecha_compra, total_compra) VALUES (?, ?, ?, ?)";
         $stmt_compra = $conn->prepare($insert_compra_sql);
         if (!$stmt_compra) {
             throw new Exception("Error al preparar la consulta de inserción en compras: " . $conn->error);
         }
 
-        if (!$stmt_compra->bind_param("iisdis", $id_proveedor, $id_insumo, $fecha_compra, $total_compra, $cantidad, $marca)) {
-            throw new Exception("Error al enlazar parámetros: " . $stmt_compra->error);
+        if (!$stmt_compra->bind_param("issd", $id_proveedor, $marca, $fecha_compra, $total_compra)) {
+            throw new Exception("Error al enlazar parámetros de compra: " . $stmt_compra->error);
         }
 
         if (!$stmt_compra->execute()) {
             throw new Exception("Error al ejecutar la consulta de inserción en compras: " . $stmt_compra->error);
         }
 
+        $id_compra = $conn->insert_id;
+        // Insertar el insumo
+        $insert_insumo_sql = "INSERT INTO insumos (cantidad, fecha_vencimiento, estado_insumo, id_proveedor, id_compra) VALUES (?, DATE_ADD(?, INTERVAL 1 YEAR), 'Buen Estado', ?, ?)";
+        $stmt_insumo = $conn->prepare($insert_insumo_sql);
+        if (!$stmt_insumo) {
+            throw new Exception("Error al preparar la consulta de inserción en insumos: " . $conn->error);
+        }
+
+        if (!$stmt_insumo->bind_param("isii", $cantidad, $fecha_compra, $id_proveedor, $id_compra)) {
+            throw new Exception("Error al enlazar parámetros de insumo: " . $stmt_insumo->error);
+        }
+
+        if (!$stmt_insumo->execute()) {
+            throw new Exception("Error al ejecutar la consulta de inserción en insumos: " . $stmt_insumo->error);
+        }
+
         $conn->commit();
 
-        echo json_encode(['success' => true, 'message' => 'Compra agregada exitosamente.']);
+        echo json_encode(['success' => true, 'message' => 'Compra e insumo agregados exitosamente.']);
         exit();
     } catch (Exception $e) {
         $conn->rollback();
-        echo json_encode(['success' => false, 'message' => "Error al procesar la compra: " . $e->getMessage()]);
+        echo json_encode(['success' => false, 'message' => "Error al procesar la compra e insumo: " . $e->getMessage()]);
         exit();
     }
 }
+
 
 if (isset($_GET['eliminar'])) {
     $id_compra = $_GET['eliminar'];

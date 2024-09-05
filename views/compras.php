@@ -123,12 +123,23 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                         <div class="modal-content">
                             <span class="close">&times;</span>
                             <h2>Agregar Nueva Compra</h2>
+                            <!-- En el formulario de agregar compra -->
                             <form id="formAgregarCompra" action="../controller/compras_controller.php" method="post">
                                 <label for="id_proveedor">Proveedor:</label>
-                                <select id="id_proveedor" name="id_proveedor" required></select><br><br>
+                                <select id="id_proveedor" name="id_proveedor" required>
+                                    <?php
+                                    $consulta_proveedores = "SELECT * FROM proveedores";
+                                    $resultado_proveedores = $conn->query($consulta_proveedores);
+                                    if ($resultado_proveedores->num_rows > 0) {
+                                        while ($row = $resultado_proveedores->fetch_assoc()) {
+                                            echo "<option value='" . $row['id_proveedor'] . "'>" . $row['nombre_proveedor'] . "</option>";
+                                        }
+                                    }
+                                    ?>
+                                </select><br><br>
 
-                                <label for="id_insumo">Insumo:</label>
-                                <select id="id_insumo" name="id_insumo" required onchange="actualizarCantidad()"></select><br><br>
+                                <label for="nombre_insumo">Nombre del Insumo:</label>
+                                <input type="text" id="nombre_insumo" name="nombre_insumo" required><br><br>
 
                                 <label for="fecha_compra">Fecha de Compra:</label>
                                 <input type="date" id="fecha_compra" name="fecha_compra" required><br><br>
@@ -143,6 +154,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <input type="text" id="marca" name="marca" required><br><br>
 
                                 <input type="submit" value="Agregar Compra">
+                            </form>
                             </form>
                         </div>
                     </div>

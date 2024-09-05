@@ -133,8 +133,7 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                 <thead>
                     <tr>
                         <th>Proveedor</th>
-                        <th>Nombre</th>
-                        <th>Precio</th>
+                        <th>Insumo</th>
                         <th>Fecha de Vencimiento</th>
                         <th>Marca</th>
                         <th>Cantidad</th>
@@ -148,8 +147,7 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                         foreach ($insumos as $insumo) {
                             echo "<tr>";
                             echo "<td>" . $insumo['nombre_proveedor'] . "</td>";
-                            echo "<td>" . $insumo['marca'] . "</td>"; // Esto sería el "nombre del insumo"
-                            echo "<td>" . $insumo['total_compra'] . "</td>"; // Esto sería el "precio"
+                            echo "<td>" . $insumo['marca'] . "</td>"; // Usamos 'marca' como nombre del insumo
                             echo "<td>" . $insumo['fecha_vencimiento'] . "</td>";
                             echo "<td>" . $insumo['marca'] . "</td>";
                             echo "<td>" . $insumo['cantidad'] . "</td>";
@@ -161,9 +159,10 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='9'>No hay insumos disponibles.</td></tr>";
+                        echo "<tr><td colspan='7'>No hay insumos disponibles.</td></tr>";
                     }
                     ?>
+                </tbody>
             </table>
             <div class="pagination">
                 <?php
