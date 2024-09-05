@@ -128,7 +128,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <select id="id_proveedor" name="id_proveedor" required></select><br><br>
 
                                 <label for="id_insumo">Insumo:</label>
-                                <select id="id_insumo" name="id_insumo" required></select><br><br>
+                                <select id="id_insumo" name="id_insumo" required onchange="actualizarCantidad()"></select><br><br>
 
                                 <label for="fecha_compra">Fecha de Compra:</label>
                                 <input type="date" id="fecha_compra" name="fecha_compra" required><br><br>
@@ -202,10 +202,11 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 include '../includes/conexion.php';
 
                                 $sql = "SELECT c.id_compra, p.nombre_proveedor, i.nombre_insumo, c.fecha_compra, c.total_compra, c.cantidad, c.marca
-            FROM compras c
-            JOIN usuarios u ON c.id_usuario = u.id_usuario
-            JOIN proveedores p ON c.id_proveedor = p.id_proveedor
-            LIMIT $items_por_pagina OFFSET $offset";
+                                FROM compras c
+                                JOIN proveedores p ON c.id_proveedor = p.id_proveedor
+                                JOIN insumos i ON c.id_insumo = i.id_insumo
+                                ORDER BY c.fecha_compra DESC
+                                LIMIT $items_por_pagina OFFSET $offset";
                                 $resultado = $conn->query($sql);
 
                                 if ($resultado->num_rows > 0) {
@@ -618,6 +619,13 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 });
                 row.style.display = showRow ? '' : 'none';
             });
+        }
+
+        function actualizarCantidad() {
+            var selectInsumo = document.getElementById('id_insumo');
+            var inputCantidad = document.getElementById('cantidad');
+            var cantidadSeleccionada = selectInsumo.options[selectInsumo.selectedIndex].getAttribute('data-cantidad');
+            inputCantidad.value = cantidadSeleccionada;
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

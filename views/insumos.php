@@ -81,110 +81,108 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                 <button id="btnAgregarInsumo" class="btn btn-success">Agregar Insumo</button>
                 <br><br>
 
-                <div id="modalAgregarInsumo" class="modal">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <h2>Agregar Nuevo Insumo</h2>
-                        <form id="formAgregarInsumo" action="../controller/insumos_controller.php" method="post">
-                            <label for="id_proveedor">Proveedor:</label>
-                            <select id="id_proveedor" name="id_proveedor" required>
-                                <?php
-                                include_once('../includes/conexion.php');
-                                $consulta_proveedores = "SELECT * FROM proveedores";
-                                $resultado_proveedores = $conn->query($consulta_proveedores);
-                                if ($resultado_proveedores->num_rows > 0) {
-                                    while ($row = $resultado_proveedores->fetch_assoc()) {
-                                        echo "<option value='" . $row['id_proveedor'] . "'>" . $row['nombre_proveedor'] . "</option>";
-                                    }
-                                }
-                                ?>
-                            </select><br><br>
-
-                            <label for="id_compra">Compra:</label>
-                            <select id="id_compra" name="id_compra" required onchange="actualizarCantidad()">
-                                <?php
-                                $consulta_compras = "SELECT * FROM compras";
-                                $resultado_compras = $conn->query($consulta_compras);
-                                if ($resultado_compras->num_rows > 0) {
-                                    while ($row = $resultado_compras->fetch_assoc()) {
-                                        echo "<option value='" . $row['id_compra'] . "' data-cantidad='" . $row['cantidad'] . "'>" . $row['id_compra'] . " - " . $row['fecha_compra'] . "</option>";
-                                    }
-                                }
-                                ?>
-                            </select><br><br>
-
-                            <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
-                            <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required min="<?php echo date('Y-m-d'); ?>"><br><br>
-
-                            <label for="cantidad">Cantidad:</label>
-                            <input type="number" id="cantidad" name="cantidad" readonly><br><br>
-
-                            <label for="estado_insumo">Estado del Insumo:</label>
-                            <select id="estado_insumo" name="estado_insumo" required>
-                                <option value="Buen Estado">Buen Estado</option>
-                                <option value="Mal Estado">Mal Estado</option>
-                            </select><br><br>
-
-                            <input type="submit" value="Agregar Insumo">
-                        </form>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Proveedor</th>
-                                <th>Nombre</th>
-                                <th>Precio</th>
-                                <th>Fecha de Vencimiento</th>
-                                <th>Marca</th>
-                                <th>Cantidad</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            if (isset($insumos) && is_array($insumos)) {
-                                foreach ($insumos as $insumo) {
-                                    echo "<tr>";
-                                    echo "<td>" . $insumo['nombre_proveedor'] . "</td>"; // Cambiado de id_proveedor a nombre_proveedor
-                                    echo "<td>" . $insumo['nombre_insumo'] . "</td>";
-                                    echo "<td>" . $insumo['precio'] . "</td>";
-                                    echo "<td>" . $insumo['fecha_vencimiento'] . "</td>";
-                                    echo "<td>" . $insumo['marca'] . "</td>";
-                                    echo "<td>" . $insumo['cantidad'] . "</td>";
-                                    echo "<td>" . $insumo['estado_insumo'] . "</td>";
-                                    echo '<td class="actions">';
-                                    echo '<button class="edit-btn" onclick="openEditModal(' . htmlspecialchars(json_encode($insumo), ENT_QUOTES, 'UTF-8') . ')"><i class="fa fa-edit"></i></button>';
-                                    echo '<button class="delete-btn" onclick="confirmarEliminacion(' . $insumo['id_insumo'] . ')"><i class="fa fa-trash"></i></button>';
-                                    echo '</td>';
-                                    echo "</tr>";
-                                }
-                            } else {
-                                echo "<tr><td colspan='9'>No hay insumos disponibles.</td></tr>";
-                            }
-                            ?>
-                    </table>
-                    <div class="pagination">
+                <!-- En el formulario de agregar insumo -->
+                <form id="formAgregarInsumo" action="../controller/insumos_controller.php" method="post">
+                    <label for="id_proveedor">Proveedor:</label>
+                    <select id="id_proveedor" name="id_proveedor" required>
                         <?php
-                        if ($total_pag > 0) {
-                            for ($i = 1; $i <= $total_pag; $i++) {
-                                if ($i == $pagina_actual) {
-                                    echo "<a href='insumos.php?pagina=$i' class='active'>$i</a>";
-                                } else {
-                                    echo "<a href='insumos.php?pagina=$i'>$i</a>";
-                                }
+                        include_once('../includes/conexion.php');
+                        $consulta_proveedores = "SELECT * FROM proveedores";
+                        $resultado_proveedores = $conn->query($consulta_proveedores);
+                        if ($resultado_proveedores->num_rows > 0) {
+                            while ($row = $resultado_proveedores->fetch_assoc()) {
+                                echo "<option value='" . $row['id_proveedor'] . "'>" . $row['nombre_proveedor'] . "</option>";
                             }
                         }
                         ?>
-                    </div>
-                    </tbody>
-                    </table>
-                </div>
+                    </select><br><br>
+
+                    <label for="id_compra">Compra:</label>
+                    <select id="id_compra" name="id_compra" required onchange="actualizarCantidad()">
+                        <?php
+                        $consulta_compras = "SELECT * FROM compras";
+                        $resultado_compras = $conn->query($consulta_compras);
+                        if ($resultado_compras->num_rows > 0) {
+                            while ($row = $resultado_compras->fetch_assoc()) {
+                                echo "<option value='" . $row['id_compra'] . "' data-cantidad='" . $row['cantidad'] . "'>" . $row['id_compra'] . " - " . $row['fecha_compra'] . "</option>";
+                            }
+                        }
+                        ?>
+                    </select><br><br>
+
+                    <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
+                    <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required min="<?php echo date('Y-m-d'); ?>"><br><br>
+
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" id="cantidad" name="cantidad" readonly><br><br>
+
+                    <label for="estado_insumo">Estado del Insumo:</label>
+                    <select id="estado_insumo" name="estado_insumo" required>
+                        <option value="Buen Estado">Buen Estado</option>
+                        <option value="Mal Estado">Mal Estado</option>
+                    </select><br><br>
+
+                    <input type="submit" value="Agregar Insumo">
+                </form>
+
             </div>
         </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Proveedor</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Fecha de Vencimiento</th>
+                        <th>Marca</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if (isset($insumos) && is_array($insumos)) {
+                        foreach ($insumos as $insumo) {
+                            echo "<tr>";
+                            echo "<td>" . $insumo['nombre_proveedor'] . "</td>"; // Cambiado de id_proveedor a nombre_proveedor
+                            echo "<td>" . $insumo['nombre_insumo'] . "</td>";
+                            echo "<td>" . $insumo['precio'] . "</td>";
+                            echo "<td>" . $insumo['fecha_vencimiento'] . "</td>";
+                            echo "<td>" . $insumo['marca'] . "</td>";
+                            echo "<td>" . $insumo['cantidad'] . "</td>";
+                            echo "<td>" . $insumo['estado_insumo'] . "</td>";
+                            echo '<td class="actions">';
+                            echo '<button class="edit-btn" onclick="openEditModal(' . htmlspecialchars(json_encode($insumo), ENT_QUOTES, 'UTF-8') . ')"><i class="fa fa-edit"></i></button>';
+                            echo '<button class="delete-btn" onclick="confirmarEliminacion(' . $insumo['id_insumo'] . ')"><i class="fa fa-trash"></i></button>';
+                            echo '</td>';
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='9'>No hay insumos disponibles.</td></tr>";
+                    }
+                    ?>
+            </table>
+            <div class="pagination">
+                <?php
+                if ($total_pag > 0) {
+                    for ($i = 1; $i <= $total_pag; $i++) {
+                        if ($i == $pagina_actual) {
+                            echo "<a href='insumos.php?pagina=$i' class='active'>$i</a>";
+                        } else {
+                            echo "<a href='insumos.php?pagina=$i'>$i</a>";
+                        }
+                    }
+                }
+                ?>
+            </div>
+            </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
     </div>
 
     <div id="modalEditarInsumo" class="modal">
