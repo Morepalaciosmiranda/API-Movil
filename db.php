@@ -1,5 +1,5 @@
 <?php
-include 'conexion.php';
+include './includes/conexion.php';
 
 // Función para ejecutar consultas y manejar errores
 function ejecutarConsulta($conn, $sql) {
