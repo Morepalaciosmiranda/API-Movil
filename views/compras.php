@@ -201,7 +201,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <?php
                                 include '../includes/conexion.php';
 
-                                $sql = "SELECT c.id_compra, u.nombre_usuario, p.nombre_proveedor, c.fecha_compra, c.subtotal, c.total_compra
+                                $sql = "SELECT c.id_compra, p.nombre_proveedor, i.nombre_insumo, c.fecha_compra, c.total_compra, c.cantidad, c.marca
             FROM compras c
             JOIN usuarios u ON c.id_usuario = u.id_usuario
             JOIN proveedores p ON c.id_proveedor = p.id_proveedor
@@ -211,14 +211,14 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 if ($resultado->num_rows > 0) {
                                     while ($row = $resultado->fetch_assoc()) {
                                         echo "<tr id='compra-" . $row['id_compra'] . "'>";
-                                        // echo "<td>" . $row['id_compra'] . "</td>";
-                                        echo "<td>" . $row['nombre_usuario'] . "</td>";
                                         echo "<td>" . $row['nombre_proveedor'] . "</td>";
+                                        echo "<td>" . $row['nombre_insumo'] . "</td>";
                                         echo "<td>" . $row['fecha_compra'] . "</td>";
-                                        echo "<td>" . $row['subtotal'] . "</td>";
                                         echo "<td>" . $row['total_compra'] . "</td>";
+                                        echo "<td>" . $row['cantidad'] . "</td>";
+                                        echo "<td>" . $row['marca'] . "</td>";
                                         echo '<td class="actions">';
-                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . $row['nombre_usuario'] . '\', \'' . $row['nombre_proveedor'] . '\', \'' . $row['fecha_compra'] . '\', ' . $row['subtotal'] . ', ' . $row['total_compra'] . ')"><i class="fa fa-edit"></i></button>';
+                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . $row['nombre_proveedor'] . '\', \'' . $row['nombre_insumo'] . '\', \'' . $row['fecha_compra'] . '\', ' . $row['total_compra'] . ', ' . $row['cantidad'] . ', \'' . $row['marca'] . '\')"><i class="fa fa-edit"></i></button>';
                                         echo '<button class="delete-btn" onclick="eliminarCompra(' . $row['id_compra'] . ')"><i class="fa fa-trash"></i></button>';
                                         echo '<button class="details-btn" onclick="abrirModalDetalle(' . $row['id_compra'] . ')"><i class="fa fa-eye"></i></button>';
                                         echo '</td>';
@@ -295,17 +295,18 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             }
         };
 
-        function abrirModalEditar(idCompra, idUsuario, idProveedor, fechaCompra, subtotal, totalCompra) {
+        function abrirModalEditar(idCompra, nombreProveedor, nombreInsumo, fechaCompra, totalCompra, cantidad, marca) {
             document.getElementById('edit_id_compra').value = idCompra;
-            document.getElementById('edit_id_usuario').value = idUsuario;
-            document.getElementById('edit_id_proveedor').value = idProveedor;
+            document.getElementById('edit_id_proveedor').value = nombreProveedor;
+            document.getElementById('edit_id_insumo').value = nombreInsumo;
             document.getElementById('edit_fecha_compra').value = fechaCompra;
-            document.getElementById('edit_subtotal').value = subtotal;
             document.getElementById('edit_total_compra').value = totalCompra;
+            document.getElementById('edit_cantidad').value = cantidad;
+            document.getElementById('edit_marca').value = marca;
             document.getElementById('modalEditarCompra').style.display = 'block';
             document.getElementById('modalEditarCompra').classList.add('show');
-            cargarUsuariosEditar(idUsuario);
-            cargarProveedoresEditar(idProveedor);
+            cargarProveedoresEditar(nombreProveedor);
+            cargarInsumosEditar(nombreInsumo);
         }
 
         function abrirModalDetalle(idCompra) {
@@ -450,8 +451,8 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         });
 
         document.addEventListener("DOMContentLoaded", function() {
-            cargarUsuarios();
             cargarProveedores();
+            cargarInsumos();
         });
 
         function cargarUsuarios() {
@@ -518,6 +519,41 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                         if (proveedor.id_proveedor == idProveedorSeleccionado) {
                             option.selected = true;
                         }
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function cargarInsumosEditar(nombreInsumoSeleccionado) {
+            fetch('../controller/insumos_controller.php')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('edit_id_insumo');
+                    select.innerHTML = '';
+                    data.forEach(insumo => {
+                        const option = document.createElement('option');
+                        option.value = insumo.id_insumo;
+                        option.textContent = insumo.nombre_insumo;
+                        if (insumo.nombre_insumo == nombreInsumoSeleccionado) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function cargarInsumos() {
+            fetch('../controller/insumos_controller.php')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('id_insumo');
+                    select.innerHTML = '';
+                    data.forEach(insumo => {
+                        const option = document.createElement('option');
+                        option.value = insumo.id_insumo;
+                        option.textContent = insumo.nombre_insumo;
                         select.appendChild(option);
                     });
                 })

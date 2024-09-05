@@ -1,6 +1,10 @@
 <?php
 include '../includes/conexion.php';
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    echo json_encode(obtenerInsumos());
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['id_compra'], $_POST['fecha_vencimiento'], $_POST['estado_insumo'])) {
     $id_proveedor = $_POST['id_proveedor'];
     $id_compra = $_POST['id_compra'];
@@ -116,10 +120,7 @@ function obtenerInsumos() {
     global $conn;
     $insumos = array();
 
-    $consulta = "SELECT i.*, p.nombre_proveedor, c.fecha_compra, c.marca 
-                 FROM insumos i 
-                 JOIN proveedores p ON i.id_proveedor = p.id_proveedor
-                 JOIN compras c ON i.id_compra = c.id_compra";
+    $consulta = "SELECT id_insumo, nombre_insumo FROM insumos";
     $resultado = $conn->query($consulta);
 
     if ($resultado->num_rows > 0) {
