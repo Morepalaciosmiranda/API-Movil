@@ -120,10 +120,11 @@ function obtenerInsumos() {
     global $conn;
     $insumos = array();
 
-    $consulta = "SELECT c.id_compra AS id_insumo, c.marca AS nombre_insumo, c.total_compra AS precio, 
-                        p.nombre_proveedor, c.fecha_compra, c.cantidad, 'Buen Estado' AS estado_insumo
-                 FROM compras c
-                 JOIN proveedores p ON c.id_proveedor = p.id_proveedor";
+    $consulta = "SELECT i.id_insumo, i.cantidad, i.fecha_vencimiento, i.estado_insumo,
+                        p.nombre_proveedor, c.fecha_compra, c.marca, c.total_compra
+                 FROM insumos i
+                 JOIN proveedores p ON i.id_proveedor = p.id_proveedor
+                 JOIN compras c ON i.id_compra = c.id_compra";
     $resultado = $conn->query($consulta);
 
     if ($resultado->num_rows > 0) {

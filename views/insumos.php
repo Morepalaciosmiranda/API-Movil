@@ -148,9 +148,9 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                         foreach ($insumos as $insumo) {
                             echo "<tr>";
                             echo "<td>" . $insumo['nombre_proveedor'] . "</td>";
-                            echo "<td>" . $insumo['nombre_insumo'] . "</td>";
-                            echo "<td>" . $insumo['precio'] . "</td>";
-                            echo "<td>" . $insumo['fecha_compra'] . "</td>";
+                            echo "<td>" . $insumo['marca'] . "</td>"; // Esto sería el "nombre del insumo"
+                            echo "<td>" . $insumo['total_compra'] . "</td>"; // Esto sería el "precio"
+                            echo "<td>" . $insumo['fecha_vencimiento'] . "</td>";
                             echo "<td>" . $insumo['marca'] . "</td>";
                             echo "<td>" . $insumo['cantidad'] . "</td>";
                             echo "<td>" . $insumo['estado_insumo'] . "</td>";
