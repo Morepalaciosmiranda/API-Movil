@@ -49,13 +49,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         sendJsonResponse(false, 'La fecha proporcionada no es válida');
     }
 
-    $insert_sql = "INSERT INTO compras (id_proveedor, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?)";
+    // Primero, insertamos o actualizamos el insumo
+    $insert_insumo_sql = "INSERT INTO insumos (nombre_insumo) VALUES (?) ON DUPLICATE KEY UPDATE id_insumo = LAST_INSERT_ID(id_insumo)";
+    $insert_insumo_stmt = $conn->prepare($insert_insumo_sql);
+    if (!$insert_insumo_stmt) {
+        sendJsonResponse(false, 'Error al preparar la consulta de insumo: ' . $conn->error);
+    }
+    $insert_insumo_stmt->bind_param("s", $nombre_insumo);
+    $insert_insumo_stmt->execute();
+    $id_insumo = $insert_insumo_stmt->insert_id;
+
+    // Ahora insertamos la compra
+    $insert_sql = "INSERT INTO compras (id_proveedor, id_insumo, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $insert_stmt = $conn->prepare($insert_sql);
     if (!$insert_stmt) {
         sendJsonResponse(false, 'Error al preparar la consulta de inserción: ' . $conn->error);
     }
 
-    if (!$insert_stmt->bind_param("issids", $id_proveedor, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
+    if (!$insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
         sendJsonResponse(false, 'Error al enlazar parámetros: ' . $insert_stmt->error);
     }
 
