@@ -15,6 +15,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
     $fecha_compra = $_POST['fecha_compra'];
     $total_compra = $_POST['total_compra'];
 
+    // Validación de la fecha
+    if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $fecha_compra)) {
+        sendJsonResponse(false, 'El formato de la fecha debe ser YYYY-MM-DD');
+    }
+
+    // Convertir la fecha a un objeto DateTime para asegurar que es válida
+    $fecha_obj = DateTime::createFromFormat('Y-m-d', $fecha_compra);
+    if (!$fecha_obj || $fecha_obj->format('Y-m-d') !== $fecha_compra) {
+        sendJsonResponse(false, 'La fecha proporcionada no es válida');
+    }
+
     $insert_sql = "INSERT INTO compras (id_proveedor, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?)";
     $insert_stmt = $conn->prepare($insert_sql);
     if (!$insert_stmt) {
@@ -30,6 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
     }
 
     sendJsonResponse(true, 'Compra agregada exitosamente');
+} else {
+    sendJsonResponse(false, 'Datos de formulario incompletos o método de solicitud incorrecto');
 }
 
 // Agregar un nuevo endpoint para obtener los insumos
