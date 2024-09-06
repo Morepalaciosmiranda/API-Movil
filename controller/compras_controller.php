@@ -60,11 +60,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         if (!$insert_stmt) {
             throw new Exception('Error al preparar la consulta de inserción: ' . $conn->error);
         }
-
+        
         if (!$insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
             throw new Exception('Error al enlazar parámetros: ' . $insert_stmt->error);
         }
-
+        
+        // Añade este código de depuración aquí
+        $debug_sql = "INSERT INTO compras (id_proveedor, id_insumo, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES ($id_proveedor, $id_insumo, '$nombre_insumo', '$marca', $cantidad, '$fecha_compra', $total_compra)";
+        error_log($debug_sql);
+        
         if (!$insert_stmt->execute()) {
             throw new Exception('Error al ejecutar la consulta de inserción: ' . $insert_stmt->error);
         }
