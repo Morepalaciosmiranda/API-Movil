@@ -188,12 +188,11 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                         <table>
                             <thead>
                                 <tr>
-                                    <!-- <th>ID Compra</th> -->
-                                    <th>Usuario</th>
                                     <th>Proveedor</th>
                                     <th>Fecha Compra</th>
-                                    <th>Subtotal</th>
                                     <th>Total Compra</th>
+                                    <th>Marca</th>
+                                    <th>Cantidad</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -201,31 +200,29 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <?php
                                 include '../includes/conexion.php';
 
-                                $sql = "SELECT c.id_compra, u.nombre_usuario, p.nombre_proveedor, c.fecha_compra, c.total_compra
-                                FROM compras c
-                                JOIN usuarios u ON c.id_usuario = u.id_usuario
-                                JOIN proveedores p ON c.id_proveedor = p.id_proveedor
-                                LIMIT $items_por_pagina OFFSET $offset";
+                                $sql = "SELECT c.id_compra, p.nombre_proveedor, c.fecha_compra, c.total_compra, c.marca, c.cantidad
+        FROM compras c
+        JOIN proveedores p ON c.id_proveedor = p.id_proveedor
+        LIMIT $items_por_pagina OFFSET $offset";
                                 $resultado = $conn->query($sql);
 
                                 if ($resultado->num_rows > 0) {
                                     while ($row = $resultado->fetch_assoc()) {
                                         echo "<tr id='compra-" . $row['id_compra'] . "'>";
-                                        // echo "<td>" . $row['id_compra'] . "</td>";
-                                        echo "<td>" . $row['nombre_usuario'] . "</td>";
                                         echo "<td>" . $row['nombre_proveedor'] . "</td>";
                                         echo "<td>" . $row['fecha_compra'] . "</td>";
-                                        echo "<td>" . $row['subtotal'] . "</td>";
                                         echo "<td>" . $row['total_compra'] . "</td>";
+                                        echo "<td>" . $row['marca'] . "</td>";
+                                        echo "<td>" . $row['cantidad'] . "</td>";
                                         echo '<td class="actions">';
-                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . $row['nombre_usuario'] . '\', \'' . $row['nombre_proveedor'] . '\', \'' . $row['fecha_compra'] . '\', ' . $row['subtotal'] . ', ' . $row['total_compra'] . ')"><i class="fa fa-edit"></i></button>';
+                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . $row['nombre_proveedor'] . '\', \'' . $row['fecha_compra'] . '\', ' . $row['total_compra'] . ', \'' . $row['marca'] . '\', ' . $row['cantidad'] . ')"><i class="fa fa-edit"></i></button>';
                                         echo '<button class="delete-btn" onclick="eliminarCompra(' . $row['id_compra'] . ')"><i class="fa fa-trash"></i></button>';
                                         echo '<button class="details-btn" onclick="abrirModalDetalle(' . $row['id_compra'] . ')"><i class="fa fa-eye"></i></button>';
                                         echo '</td>';
                                         echo "</tr>";
                                     }
                                 } else {
-                                    echo "<tr><td colspan='7'>No hay compras disponibles.</td></tr>";
+                                    echo "<tr><td colspan='6'>No hay compras disponibles.</td></tr>";
                                 }
                                 ?>
                             </tbody>
