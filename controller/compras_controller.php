@@ -1,47 +1,40 @@
 <?php
 include '../includes/conexion.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_usuario'], $_POST['id_proveedor'], $_POST['fecha_compra'], $_POST['subtotal'], $_POST['total_compra'], $_POST['cantidad'], $_POST['valor_unitario'])) {
-    $id_usuario = $_POST['id_usuario'];
+if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {
+    $sql = "SELECT DISTINCT id_insumo, nombre_insumo, cantidad FROM compras";
+    $result = $conn->query($sql);
+    $insumos = [];
+    while ($row = $result->fetch_assoc()) {
+        $insumos[] = $row;
+    }
+    echo json_encode($insumos);
+    exit;
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['id_insumo'], $_POST['marca'], $_POST['fecha_compra'], $_POST['total_compra'], $_POST['cantidad'])) {
     $id_proveedor = $_POST['id_proveedor'];
+    $id_insumo = $_POST['id_insumo'];
+    $marca = $_POST['marca'];
     $fecha_compra = $_POST['fecha_compra'];
-    $subtotal = $_POST['subtotal'];
     $total_compra = $_POST['total_compra'];
+    $cantidad = $_POST['cantidad'];
 
     $conn->begin_transaction();
 
     try {
-        $insert_compra_sql = "INSERT INTO compras (id_usuario, id_proveedor, fecha_compra, subtotal, total_compra) VALUES (?, ?, ?, ?, ?)";
+        $insert_compra_sql = "INSERT INTO compras (id_proveedor, id_insumo, marca, fecha_compra, total_compra, cantidad) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt_compra = $conn->prepare($insert_compra_sql);
         if (!$stmt_compra) {
             throw new Exception("Error al preparar la consulta de inserción en compras: " . $conn->error);
         }
 
-        if (!$stmt_compra->bind_param("iissd", $id_usuario, $id_proveedor, $fecha_compra, $subtotal, $total_compra)) {
+        if (!$stmt_compra->bind_param("iissdi", $id_proveedor, $id_insumo, $marca, $fecha_compra, $total_compra, $cantidad)) {
             throw new Exception("Error al enlazar parámetros: " . $stmt_compra->error);
         }
 
         if (!$stmt_compra->execute()) {
             throw new Exception("Error al ejecutar la consulta de inserción en compras: " . $stmt_compra->error);
-        }
-
-        $id_compra = $conn->insert_id;
-
-        $cantidad = $_POST['cantidad'];
-        $valor_unitario = $_POST['valor_unitario'];
-
-        $insert_detalle_sql = "INSERT INTO detalle_compras (id_compra, cantidad, valor_unitario) VALUES (?, ?, ?)";
-        $stmt_detalle = $conn->prepare($insert_detalle_sql);
-        if (!$stmt_detalle) {
-            throw new Exception("Error al preparar la consulta de inserción en detalle_compras: " . $conn->error);
-        }
-
-        if (!$stmt_detalle->bind_param("iid", $id_compra, $cantidad, $valor_unitario)) {
-            throw new Exception("Error al enlazar parámetros: " . $stmt_detalle->error);
-        }
-
-        if (!$stmt_detalle->execute()) {
-            throw new Exception("Error al ejecutar la consulta de inserción en detalle_compras: " . $stmt_detalle->error);
         }
 
         $conn->commit();
@@ -98,24 +91,25 @@ if (isset($_GET['eliminar'])) {
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_id_compra'], $_POST['edit_id_usuario'], $_POST['edit_id_proveedor'], $_POST['edit_fecha_compra'], $_POST['edit_subtotal'], $_POST['edit_total_compra'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_id_compra'], $_POST['edit_id_proveedor'], $_POST['edit_id_insumo'], $_POST['edit_marca'], $_POST['edit_fecha_compra'], $_POST['edit_total_compra'], $_POST['edit_cantidad'])) {
     $id_compra = $_POST['edit_id_compra'];
-    $id_usuario = $_POST['edit_id_usuario'];
     $id_proveedor = $_POST['edit_id_proveedor'];
+    $id_insumo = $_POST['edit_id_insumo'];
+    $marca = $_POST['edit_marca'];
     $fecha_compra = $_POST['edit_fecha_compra'];
-    $subtotal = $_POST['edit_subtotal'];
     $total_compra = $_POST['edit_total_compra'];
+    $cantidad = $_POST['edit_cantidad'];
 
     $conn->begin_transaction();
 
     try {
-        $update_compra_sql = "UPDATE compras SET id_usuario = ?, id_proveedor = ?, fecha_compra = ?, subtotal = ?, total_compra = ? WHERE id_compra = ?";
+        $update_compra_sql = "UPDATE compras SET id_proveedor = ?, id_insumo = ?, marca = ?, fecha_compra = ?, total_compra = ?, cantidad = ? WHERE id_compra = ?";
         $stmt_compra = $conn->prepare($update_compra_sql);
         if (!$stmt_compra) {
             throw new Exception("Error al preparar la consulta de actualización en compras: " . $conn->error);
         }
 
-        if (!$stmt_compra->bind_param("iissdi", $id_usuario, $id_proveedor, $fecha_compra, $subtotal, $total_compra, $id_compra)) {
+        if (!$stmt_compra->bind_param("iissdii", $id_proveedor, $id_insumo, $marca, $fecha_compra, $total_compra, $cantidad, $id_compra)) {
             throw new Exception("Error al enlazar parámetros: " . $stmt_compra->error);
         }
 

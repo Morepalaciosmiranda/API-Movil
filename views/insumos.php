@@ -86,34 +86,23 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                         <span class="close">&times;</span>
                         <h2>Agregar Nuevo Insumo</h2>
                         <form id="formAgregarInsumo" action="../controller/insumos_controller.php" method="post">
-                            <label for="nombre_insumo">Nombre del Insumo:</label>
-                            <input type="text" id="nombre_insumo" name="nombre_insumo" required><br><br>
+                            <label for="id_insumo">Nombre del Insumo:</label>
+                            <select id="id_insumo" name="id_insumo" required onchange="actualizarCantidad()"></select><br><br>
+
                             <label for="id_proveedor">Proveedor:</label>
-                            <select id="id_proveedor" name="id_proveedor" required>
-                                <?php
-                                include_once('../includes/conexion.php');
-                                $consulta_proveedores = "SELECT * FROM proveedores";
-                                $resultado_proveedores = $conn->query($consulta_proveedores);
-                                if ($resultado_proveedores->num_rows > 0) {
-                                    while ($row = $resultado_proveedores->fetch_assoc()) {
-                                        echo "<option value='" . $row['id_proveedor'] . "'>" . $row['nombre_proveedor'] . "</option>";
-                                    }
-                                }
-                                ?>
-                            </select><br><br>
-                            <label for="precio">Precio:</label>
-                            <input type="number" id="precio" name="precio" required><br><br>
+                            <select id="id_proveedor" name="id_proveedor" required></select><br><br>
+
                             <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
-                            <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required min="<?php echo date('Y-m-d'); ?>"><br><br>
-                            <label for="marca">Marca:</label>
-                            <input type="text" id="marca" name="marca" required><br><br>
+                            <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required min="<?php echo date('Y-m-d'); ?>"><br>
                             <label for="cantidad">Cantidad:</label>
-                            <input type="number" id="cantidad" name="cantidad" required><br><br>
+                            <input type="number" id="cantidad" name="cantidad" readonly><br><br>
+
                             <label for="estado_insumo">Estado del Insumo:</label>
                             <select id="estado_insumo" name="estado_insumo" required>
                                 <option value="Buen Estado">Buen Estado</option>
                                 <option value="Mal Estado">Mal Estado</option>
                             </select><br><br>
+
                             <input type="submit" value="Agregar Insumo">
                         </form>
                     </div>
@@ -138,13 +127,11 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                             if (isset($insumos) && is_array($insumos)) {
                                 foreach ($insumos as $insumo) {
                                     echo "<tr>";
-                                    echo "<td>" . $insumo['nombre_proveedor'] . "</td>"; // Cambiado de id_proveedor a nombre_proveedor
-                                    echo "<td>" . $insumo['nombre_insumo'] . "</td>";
-                                    echo "<td>" . $insumo['precio'] . "</td>";
-                                    echo "<td>" . $insumo['fecha_vencimiento'] . "</td>";
-                                    echo "<td>" . $insumo['marca'] . "</td>";
-                                    echo "<td>" . $insumo['cantidad'] . "</td>";
-                                    echo "<td>" . $insumo['estado_insumo'] . "</td>";
+                                    echo "<td>" . ($insumo['id_insumo'] ?? '') . "</td>";
+                                    echo "<td>" . ($insumo['cantidad'] ?? '') . "</td>";
+                                    echo "<td>" . ($insumo['fecha_vencimiento'] ?? '') . "</td>";
+                                    echo "<td>" . ($insumo['estado_insumo'] ?? '') . "</td>";
+                                    echo "<td>" . ($insumo['nombre_proveedor'] ?? '') . "</td>";
                                     echo '<td class="actions">';
                                     echo '<button class="edit-btn" onclick="openEditModal(' . htmlspecialchars(json_encode($insumo), ENT_QUOTES, 'UTF-8') . ')"><i class="fa fa-edit"></i></button>';
                                     echo '<button class="delete-btn" onclick="confirmarEliminacion(' . $insumo['id_insumo'] . ')"><i class="fa fa-trash"></i></button>';
@@ -383,6 +370,33 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                 }
             });
         }
+
+        function actualizarCantidad() {
+            var insumoSelect = document.getElementById('id_insumo');
+            var cantidadInput = document.getElementById('cantidad');
+            var insumoSeleccionado = insumoSelect.options[insumoSelect.selectedIndex];
+            cantidadInput.value = insumoSeleccionado.getAttribute('data-cantidad');
+        }
+
+
+        function cargarInsumosDesdeCompras() {
+            fetch('../controller/compras_controller.php?action=getInsumos')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('id_insumo');
+                    select.innerHTML = '';
+                    data.forEach(insumo => {
+                        const option = document.createElement('option');
+                        option.value = insumo.id_insumo;
+                        option.textContent = insumo.nombre_insumo;
+                        option.setAttribute('data-cantidad', insumo.cantidad);
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', cargarInsumosDesdeCompras);
     </script>
     <script src="../js/validaciones.js"></script>
 </body>
