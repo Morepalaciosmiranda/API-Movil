@@ -147,7 +147,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                         </div>
                     </div>
 
-                    
+
                     <div id="modalEditarCompra" class="modal">
                         <div class="modal-content">
                             <span class="close">&times;</span>
@@ -469,8 +469,12 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 .catch(error => console.error('Error:', error));
         }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarProveedores();
+        });
+
         function cargarProveedores() {
-            fetch('../controller/proveedores_controller.php')
+            fetch('../controller/proveedores_controller.php?action=getProveedores')
                 .then(response => response.json())
                 .then(data => {
                     const select = document.getElementById('id_proveedor');

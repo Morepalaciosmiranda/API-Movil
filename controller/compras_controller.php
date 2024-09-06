@@ -13,9 +13,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {
 }
 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['id_insumo'], $_POST['marca'], $_POST['cantidad'], $_POST['fecha_compra'], $_POST['total_compra'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['nombre_insumo'], $_POST['marca'], $_POST['cantidad'], $_POST['fecha_compra'], $_POST['total_compra'])) {
     $id_proveedor = $_POST['id_proveedor'];
-    $id_insumo = $_POST['id_insumo'];
+    $nombre_insumo = $_POST['nombre_insumo'];
     $marca = $_POST['marca'];
     $cantidad = $_POST['cantidad'];
     $fecha_compra = $_POST['fecha_compra'];
@@ -24,22 +24,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
     $conn->begin_transaction();
 
     try {
-        // Insertamos la compra
+        // Primero, insertamos o actualizamos el insumo
+        $insert_insumo_sql = "INSERT INTO insumos (nombre_insumo, cantidad, id_proveedor) 
+                              VALUES (?, ?, ?) 
+                              ON DUPLICATE KEY UPDATE 
+                              cantidad = cantidad + VALUES(cantidad), 
+                              id_proveedor = VALUES(id_proveedor)";
+        $insert_insumo_stmt = $conn->prepare($insert_insumo_sql);
+        $insert_insumo_stmt->bind_param("sii", $nombre_insumo, $cantidad, $id_proveedor);
+        $insert_insumo_stmt->execute();
+        
+        $id_insumo = $conn->insert_id;
+        if ($id_insumo == 0) {
+            // Si no se insertó un nuevo insumo, obtenemos el id del insumo existente
+            $get_insumo_id_sql = "SELECT id_insumo FROM insumos WHERE nombre_insumo = ?";
+            $get_insumo_id_stmt = $conn->prepare($get_insumo_id_sql);
+            $get_insumo_id_stmt->bind_param("s", $nombre_insumo);
+            $get_insumo_id_stmt->execute();
+            $get_insumo_id_stmt->bind_result($id_insumo);
+            $get_insumo_id_stmt->fetch();
+            $get_insumo_id_stmt->close();
+        }
+
+        // Ahora insertamos la compra
         $insert_compra_sql = "INSERT INTO compras (id_proveedor, id_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?)";
         $insert_compra_stmt = $conn->prepare($insert_compra_sql);
         $insert_compra_stmt->bind_param("iisids", $id_proveedor, $id_insumo, $marca, $cantidad, $fecha_compra, $total_compra);
         $insert_compra_stmt->execute();
+        
         $id_compra = $conn->insert_id;
 
-        // Actualizamos o insertamos en la tabla insumos
-        $update_insumo_sql = "INSERT INTO insumos (id_insumo, cantidad, id_proveedor, id_compra) 
-                              VALUES (?, ?, ?, ?) 
-                              ON DUPLICATE KEY UPDATE 
-                              cantidad = cantidad + VALUES(cantidad), 
-                              id_proveedor = VALUES(id_proveedor), 
-                              id_compra = VALUES(id_compra)";
+        // Actualizamos el id_compra en la tabla insumos
+        $update_insumo_sql = "UPDATE insumos SET id_compra = ? WHERE id_insumo = ?";
         $update_insumo_stmt = $conn->prepare($update_insumo_sql);
-        $update_insumo_stmt->bind_param("iiii", $id_insumo, $cantidad, $id_proveedor, $id_compra);
+        $update_insumo_stmt->bind_param("ii", $id_compra, $id_insumo);
         $update_insumo_stmt->execute();
 
         $conn->commit();
@@ -51,16 +69,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
     }
     exit();
 }
-
 // Agregar un nuevo endpoint para obtener los insumos
-if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {
-    $sql = "SELECT DISTINCT id_insumo, nombre_insumo FROM compras";
+if (isset($_GET['action']) && $_GET['action'] == 'getProveedores') {
+    $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
     $result = $conn->query($sql);
-    $insumos = [];
+    $proveedores = [];
     while ($row = $result->fetch_assoc()) {
-        $insumos[] = $row;
+        $proveedores[] = $row;
     }
-    echo json_encode($insumos);
+    echo json_encode($proveedores);
     exit;
 }
         
