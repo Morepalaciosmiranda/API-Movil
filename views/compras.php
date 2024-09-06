@@ -278,6 +278,9 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
     </div>
 
     <script>
+        const modal = document.getElementById('modalAgregarCompra');
+        const rolesModal = document.getElementById('modalEditarCompra');
+        
         document.getElementById('btnAgregarCompra').onclick = function() {
             cargarUsuarios();
             cargarProveedores();
@@ -461,13 +464,17 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 .then(response => response.json())
                 .then(data => {
                     const select = document.getElementById('id_usuario');
-                    select.innerHTML = '';
-                    data.forEach(usuario => {
-                        const option = document.createElement('option');
-                        option.value = usuario.id_usuario;
-                        option.textContent = usuario.nombre_usuario;
-                        select.appendChild(option);
-                    });
+                    if (select) {
+                        select.innerHTML = '';
+                        data.forEach(usuario => {
+                            const option = document.createElement('option');
+                            option.value = usuario.id_usuario;
+                            option.textContent = usuario.nombre_usuario;
+                            select.appendChild(option);
+                        });
+                    } else {
+                        console.error('Elemento con id "id_usuario" no encontrado');
+                    }
                 })
                 .catch(error => console.error('Error:', error));
         }
@@ -558,10 +565,10 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
 
         window.onclick = function(event) {
             if (event.target == modal) {
-                closePermissionsModal();
+                modal.style.display = "none";
             }
             if (event.target == rolesModal) {
-                closeRolesModal();
+                rolesModal.style.display = "none";
             }
         }
 
