@@ -24,61 +24,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     }
 }
 
-function sendJsonResponse($success, $message)
-{
-    echo json_encode(['success' => $success, 'message' => $message]);
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['nombre_insumo'], $_POST['marca'], $_POST['cantidad'], $_POST['fecha_compra'], $_POST['total_compra'])) {
+    try {
+        $id_proveedor = $_POST['id_proveedor'];
+        $nombre_insumo = $_POST['nombre_insumo'];
+        $marca = $_POST['marca'];
+        $cantidad = $_POST['cantidad'];
+        $fecha_compra = $_POST['fecha_compra'];
+        $total_compra = $_POST['total_compra'];
+
+        // Validación de la fecha
+        if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $fecha_compra)) {
+            throw new Exception('El formato de la fecha debe ser YYYY-MM-DD');
+        }
+
+        // Convertir la fecha a un objeto DateTime para asegurar que es válida
+        $fecha_obj = DateTime::createFromFormat('Y-m-d', $fecha_compra);
+        if (!$fecha_obj || $fecha_obj->format('Y-m-d') !== $fecha_compra) {
+            throw new Exception('La fecha proporcionada no es válida');
+        }
+
+        // Primero, insertamos o actualizamos el insumo
+        $insert_insumo_sql = "INSERT INTO insumos (nombre_insumo) VALUES (?) ON DUPLICATE KEY UPDATE id_insumo = LAST_INSERT_ID(id_insumo)";
+        $insert_insumo_stmt = $conn->prepare($insert_insumo_sql);
+        if (!$insert_insumo_stmt) {
+            throw new Exception('Error al preparar la consulta de insumo: ' . $conn->error);
+        }
+        $insert_insumo_stmt->bind_param("s", $nombre_insumo);
+        $insert_insumo_stmt->execute();
+        $id_insumo = $insert_insumo_stmt->insert_id;
+
+        // Ahora insertamos la compra
+        $insert_sql = "INSERT INTO compras (id_proveedor, id_insumo, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $insert_stmt = $conn->prepare($insert_sql);
+        if (!$insert_stmt) {
+            throw new Exception('Error al preparar la consulta de inserción: ' . $conn->error);
+        }
+
+        if (!$insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
+            throw new Exception('Error al enlazar parámetros: ' . $insert_stmt->error);
+        }
+
+        if (!$insert_stmt->execute()) {
+            throw new Exception('Error al ejecutar la consulta de inserción: ' . $insert_stmt->error);
+        }
+
+        echo json_encode(['success' => true, 'message' => 'Compra agregada exitosamente']);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
     exit;
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['nombre_insumo'], $_POST['marca'], $_POST['cantidad'], $_POST['fecha_compra'], $_POST['total_compra'])) {
-    $id_proveedor = $_POST['id_proveedor'];
-    $nombre_insumo = $_POST['nombre_insumo'];
-    $marca = $_POST['marca'];
-    $cantidad = $_POST['cantidad'];
-    $fecha_compra = $_POST['fecha_compra'];
-    $total_compra = $_POST['total_compra'];
-
-    // Validación de la fecha
-    if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $fecha_compra)) {
-        sendJsonResponse(false, 'El formato de la fecha debe ser YYYY-MM-DD');
-    }
-
-    // Convertir la fecha a un objeto DateTime para asegurar que es válida
-    $fecha_obj = DateTime::createFromFormat('Y-m-d', $fecha_compra);
-    if (!$fecha_obj || $fecha_obj->format('Y-m-d') !== $fecha_compra) {
-        sendJsonResponse(false, 'La fecha proporcionada no es válida');
-    }
-
-    // Primero, insertamos o actualizamos el insumo
-    $insert_insumo_sql = "INSERT INTO insumos (nombre_insumo) VALUES (?) ON DUPLICATE KEY UPDATE id_insumo = LAST_INSERT_ID(id_insumo)";
-    $insert_insumo_stmt = $conn->prepare($insert_insumo_sql);
-    if (!$insert_insumo_stmt) {
-        sendJsonResponse(false, 'Error al preparar la consulta de insumo: ' . $conn->error);
-    }
-    $insert_insumo_stmt->bind_param("s", $nombre_insumo);
-    $insert_insumo_stmt->execute();
-    $id_insumo = $insert_insumo_stmt->insert_id;
-
-    // Ahora insertamos la compra
-    $insert_sql = "INSERT INTO compras (id_proveedor, id_insumo, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $insert_stmt = $conn->prepare($insert_sql);
-    if (!$insert_stmt) {
-        sendJsonResponse(false, 'Error al preparar la consulta de inserción: ' . $conn->error);
-    }
-
-    if (!$insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
-        sendJsonResponse(false, 'Error al enlazar parámetros: ' . $insert_stmt->error);
-    }
-
-    if (!$insert_stmt->execute()) {
-        sendJsonResponse(false, 'Error al ejecutar la consulta de inserción: ' . $insert_stmt->error);
-    }
-
-    sendJsonResponse(true, 'Compra agregada exitosamente');
-}
-
 // Si ninguna de las condiciones anteriores se cumple, enviar un error
-sendJsonResponse(false, 'Solicitud no válida o acción no reconocida');
+echo json_encode(['success' => false, 'message' => 'Solicitud no válida o acción no reconocida']);
 
 // Agregar un nuevo endpoint para obtener los insumos
 if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {
