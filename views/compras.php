@@ -322,8 +322,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                             document.getElementById('modalContent').innerHTML = data.detalles;
                             document.getElementById('detalleCompraModal').style.display = 'block';
                             document.getElementById('detalleCompraModal').classList.add('show');
-                            document.getElementById('detalleCompraModal').querySelector('.modal-content').classList.add(
-                                'show');
                         } else {
                             alert(data.message);
                         }
@@ -478,7 +476,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 .catch(error => console.error('Error:', error));
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener("DOMContentLoaded", function() {
             cargarProveedores();
         });
 
