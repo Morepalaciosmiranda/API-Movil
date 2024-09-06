@@ -483,20 +483,18 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         function cargarProveedores() {
             fetch('../controller/compras_controller.php?action=getProveedores')
                 .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById('id_proveedor');
-                    select.innerHTML = '';
-                    if (Array.isArray(data)) {
-                        data.forEach(proveedor => {
+                .then(result => {
+                    if (result.success) {
+                        const select = document.getElementById('id_proveedor');
+                        select.innerHTML = '';
+                        result.data.forEach(proveedor => {
                             const option = document.createElement('option');
                             option.value = proveedor.id_proveedor;
                             option.textContent = proveedor.nombre_proveedor;
                             select.appendChild(option);
                         });
-                    } else if (data.success === false) {
-                        console.error('Error al cargar proveedores:', data.message);
                     } else {
-                        console.error('Formato de datos inesperado:', data);
+                        console.error('Error al cargar proveedores:', result.message);
                     }
                 })
                 .catch(error => {

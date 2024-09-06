@@ -41,12 +41,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
     }
 
     sendJsonResponse(true, 'Compra agregada exitosamente');
-} else {
-    sendJsonResponse(false, 'Datos de formulario incompletos o método de solicitud incorrecto');
 }
 
+// Si ninguna de las condiciones anteriores se cumple, enviar un error
+sendJsonResponse(false, 'Solicitud no válida o acción no reconocida');
+
 // Agregar un nuevo endpoint para obtener los insumos
-if (isset($_GET['action']) && $_GET['action'] == 'getProveedores') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProveedores') {
     $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
     $result = $conn->query($sql);
     
