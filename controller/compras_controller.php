@@ -2,7 +2,8 @@
 header('Content-Type: application/json');
 include '../includes/conexion.php';
 
-function sendJsonResponse($success, $message) {
+function sendJsonResponse($success, $message)
+{
     echo json_encode(['success' => $success, 'message' => $message]);
     exit;
 }
@@ -51,19 +52,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     try {
         $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
         $result = $conn->query($sql);
-        
+
         if ($result === false) {
             throw new Exception("Error al ejecutar la consulta: " . $conn->error);
         }
-        
+
         $proveedores = [];
         while ($row = $result->fetch_assoc()) {
             $proveedores[] = $row;
         }
-        
-        sendJsonResponse(true, "Proveedores obtenidos con éxito", $proveedores);
+
+        echo json_encode(['success' => true, 'data' => $proveedores]);
+        exit;
     } catch (Exception $e) {
-        sendJsonResponse(false, $e->getMessage());
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit;
     }
 }
 
