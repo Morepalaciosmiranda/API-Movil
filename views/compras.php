@@ -376,36 +376,40 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         document.getElementById('formAgregarCompra').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
-            fetch('../controller/compras_controller.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire(
-                            'Agregado!',
-                            data.message,
-                            'success'
-                        ).then(() => {
-                            location.reload();
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Quieres agregar esta compra?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, agregar!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('../controller/compras_controller.php', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Agregado!',
+                                    data.message,
+                                    'success'
+                                ).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    data.message,
+                                    'error'
+                                );
+                            }
                         });
-                    } else {
-                        Swal.fire(
-                            'Error!',
-                            data.message,
-                            'error'
-                        );
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire(
-                        'Error!',
-                        'Hubo un problema al procesar la solicitud.',
-                        'error'
-                    );
-                });
+                }
+            });
         });
 
         document.getElementById('formEditarCompra').addEventListener('submit', function(event) {
