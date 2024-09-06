@@ -2,6 +2,11 @@
 header('Content-Type: application/json');
 include '../includes/conexion.php';
 
+function sendJsonResponse($success, $message) {
+    echo json_encode(['success' => $success, 'message' => $message]);
+    exit;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['nombre_insumo'], $_POST['marca'], $_POST['cantidad'], $_POST['fecha_compra'], $_POST['total_compra'])) {
     $id_proveedor = $_POST['id_proveedor'];
     $nombre_insumo = $_POST['nombre_insumo'];
@@ -13,23 +18,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
     $insert_sql = "INSERT INTO compras (id_proveedor, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?)";
     $insert_stmt = $conn->prepare($insert_sql);
     if (!$insert_stmt) {
-        echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta de inserción: ' . $conn->error]);
-        exit;
+        sendJsonResponse(false, 'Error al preparar la consulta de inserción: ' . $conn->error);
     }
 
     if (!$insert_stmt->bind_param("issids", $id_proveedor, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
-        echo json_encode(['success' => false, 'message' => 'Error al enlazar parámetros: ' . $insert_stmt->error]);
-        exit;
+        sendJsonResponse(false, 'Error al enlazar parámetros: ' . $insert_stmt->error);
     }
 
     if (!$insert_stmt->execute()) {
-        echo json_encode(['success' => false, 'message' => 'Error al ejecutar la consulta de inserción: ' . $insert_stmt->error]);
-        exit;
+        sendJsonResponse(false, 'Error al ejecutar la consulta de inserción: ' . $insert_stmt->error);
     }
 
-    echo json_encode(['success' => true, 'message' => 'Compra agregada exitosamente']);
-    exit;
+    sendJsonResponse(true, 'Compra agregada exitosamente');
 }
+
 // Agregar un nuevo endpoint para obtener los insumos
 if (isset($_GET['action']) && $_GET['action'] == 'getProveedores') {
     $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";

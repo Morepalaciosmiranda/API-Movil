@@ -382,19 +382,26 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire('Éxito', data.message, 'success').then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire('Error', data.message, 'error');
+                .then(response => response.text())
+                .then(text => {
+                    try {
+                        const data = JSON.parse(text);
+                        if (data.success) {
+                            Swal.fire('Éxito', data.message, 'success').then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error', data.message, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error parsing JSON:', error);
+                        console.error('Server response:', text);
+                        Swal.fire('Error', 'Hubo un problema al procesar la solicitud. Por favor, revisa la consola para más detalles.', 'error');
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire('Error', 'Hubo un problema al procesar la solicitud', 'error');
+                    console.error('Fetch error:', error);
+                    Swal.fire('Error', 'Hubo un problema al enviar la solicitud', 'error');
                 });
         });
 
@@ -438,29 +445,29 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         });
 
         document.addEventListener("DOMContentLoaded", function() {
-            cargarUsuarios();
+            // cargarUsuarios();
             cargarProveedores();
         });
 
-        function cargarUsuarios() {
-            fetch('../controller/usuarios_controller.php')
-                .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById('id_usuario');
-                    if (select) {
-                        select.innerHTML = '';
-                        data.forEach(usuario => {
-                            const option = document.createElement('option');
-                            option.value = usuario.id_usuario;
-                            option.textContent = usuario.nombre_usuario;
-                            select.appendChild(option);
-                        });
-                    } else {
-                        console.error('Elemento con id "id_usuario" no encontrado');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
+        // function cargarUsuarios() {
+        //     fetch('../controller/usuarios_controller.php')
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             const select = document.getElementById('id_usuario');
+        //             if (select) {
+        //                 select.innerHTML = '';
+        //                 data.forEach(usuario => {
+        //                     const option = document.createElement('option');
+        //                     option.value = usuario.id_usuario;
+        //                     option.textContent = usuario.nombre_usuario;
+        //                     select.appendChild(option);
+        //                 });
+        //             } else {
+        //                 console.error('Elemento con id "id_usuario" no encontrado');
+        //             }
+        //         })
+        //         .catch(error => console.error('Error:', error));
+        // }
 
         document.addEventListener("DOMContentLoaded", function() {
             cargarProveedores();
