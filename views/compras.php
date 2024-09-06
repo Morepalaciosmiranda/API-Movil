@@ -282,7 +282,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         const rolesModal = document.getElementById('modalEditarCompra');
 
         document.getElementById('btnAgregarCompra').onclick = function() {
-            cargarUsuarios();
             cargarProveedores();
             document.getElementById('modalAgregarCompra').style.display = 'block';
             document.getElementById('modalAgregarCompra').classList.add('show');
@@ -300,17 +299,17 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             }
         };
 
-        function abrirModalEditar(idCompra, idUsuario, idProveedor, fechaCompra, subtotal, totalCompra) {
+        function abrirModalEditar(idCompra, nombreProveedor, nombreInsumo, fechaCompra, totalCompra, marca, cantidad) {
             document.getElementById('edit_id_compra').value = idCompra;
-            document.getElementById('edit_id_usuario').value = idUsuario;
-            document.getElementById('edit_id_proveedor').value = idProveedor;
+            document.getElementById('edit_id_proveedor').value = nombreProveedor;
+            document.getElementById('edit_nombre_insumo').value = nombreInsumo;
             document.getElementById('edit_fecha_compra').value = fechaCompra;
-            document.getElementById('edit_subtotal').value = subtotal;
             document.getElementById('edit_total_compra').value = totalCompra;
+            document.getElementById('edit_marca').value = marca;
+            document.getElementById('edit_cantidad').value = cantidad;
             document.getElementById('modalEditarCompra').style.display = 'block';
             document.getElementById('modalEditarCompra').classList.add('show');
-            cargarUsuariosEditar(idUsuario);
-            cargarProveedoresEditar(idProveedor);
+            cargarProveedoresEditar(nombreProveedor);
         }
 
         function abrirModalDetalle(idCompra) {
@@ -484,19 +483,10 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         });
 
         function cargarProveedores() {
-            fetch('../controller/proveedores_controller.php?action=getProveedores')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
+            fetch('../controller/compras_controller.php?action=getProveedores')
+                .then(response => response.json())
                 .then(data => {
                     const select = document.getElementById('id_proveedor');
-                    if (!select) {
-                        console.error('Elemento con id "id_proveedor" no encontrado');
-                        return;
-                    }
                     select.innerHTML = '';
                     data.forEach(proveedor => {
                         const option = document.createElement('option');
@@ -505,10 +495,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                         select.appendChild(option);
                     });
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Hubo un error al cargar los proveedores. Por favor, intenta de nuevo.');
-                });
+                .catch(error => console.error('Error:', error));
         }
 
         function cargarUsuariosEditar(idUsuarioSeleccionado) {
