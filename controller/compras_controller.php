@@ -85,7 +85,6 @@ if (isset($_GET['eliminar'])) {
         $conn->rollback();
         echo json_encode(['success' => false, 'message' => "Error al eliminar la compra: " . $e->getMessage()]);
     }
-
     exit();
 }
 

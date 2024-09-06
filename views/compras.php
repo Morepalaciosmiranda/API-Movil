@@ -14,7 +14,6 @@ if ($_SESSION['rol'] === 'Usuario') {
 
 include_once('../includes/conexion.php');
 
-
 // Parámetros de paginación
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
@@ -474,7 +473,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                             select.appendChild(option);
                         });
                     } else {
-                        console.log('Elemento con id "id_usuario" no encontrado. Esto es normal si no se necesita en esta página.');
+                        console.error('Elemento con id "id_usuario" no encontrado');
                     }
                 })
                 .catch(error => console.error('Error:', error));
@@ -493,16 +492,13 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                     return response.json();
                 })
                 .then(data => {
-                    if (!data.success) {
-                        throw new Error(data.message || 'Error desconocido');
-                    }
                     const select = document.getElementById('id_proveedor');
                     if (!select) {
                         console.error('Elemento con id "id_proveedor" no encontrado');
                         return;
                     }
                     select.innerHTML = '';
-                    data.data.forEach(proveedor => {
+                    data.forEach(proveedor => {
                         const option = document.createElement('option');
                         option.value = proveedor.id_proveedor;
                         option.textContent = proveedor.nombre_proveedor;

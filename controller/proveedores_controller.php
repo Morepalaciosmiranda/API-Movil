@@ -19,6 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && !isset($_GET['eliminar'])) {
 }
 
 
+
 if (isset($_GET['eliminar'])) {
     $id_eliminar = $_GET['eliminar'];
 
