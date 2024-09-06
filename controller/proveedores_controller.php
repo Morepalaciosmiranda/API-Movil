@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: application/json');
 include '../includes/conexion.php';
 
 
@@ -17,7 +18,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && !isset($_GET['eliminar'])) {
     }
     exit();
 }
-
 
 
 if (isset($_GET['eliminar'])) {

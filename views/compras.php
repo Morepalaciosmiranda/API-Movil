@@ -279,9 +279,9 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
     </div>
 
     <script>
-         const modal = document.getElementById('modalAgregarCompra');
-         const rolesModal = document.getElementById('modalEditarCompra');
-         
+        const modal = document.getElementById('modalAgregarCompra');
+        const rolesModal = document.getElementById('modalEditarCompra');
+
         document.getElementById('btnAgregarCompra').onclick = function() {
             cargarUsuarios();
             cargarProveedores();
@@ -474,7 +474,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                             select.appendChild(option);
                         });
                     } else {
-                        console.error('Elemento con id "id_usuario" no encontrado');
+                        console.log('Elemento con id "id_usuario" no encontrado. Esto es normal si no se necesita en esta página.');
                     }
                 })
                 .catch(error => console.error('Error:', error));
@@ -493,13 +493,16 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                     return response.json();
                 })
                 .then(data => {
+                    if (!data.success) {
+                        throw new Error(data.message || 'Error desconocido');
+                    }
                     const select = document.getElementById('id_proveedor');
                     if (!select) {
                         console.error('Elemento con id "id_proveedor" no encontrado');
                         return;
                     }
                     select.innerHTML = '';
-                    data.forEach(proveedor => {
+                    data.data.forEach(proveedor => {
                         const option = document.createElement('option');
                         option.value = proveedor.id_proveedor;
                         option.textContent = proveedor.nombre_proveedor;
