@@ -486,14 +486,22 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 .then(data => {
                     const select = document.getElementById('id_proveedor');
                     select.innerHTML = '';
-                    data.forEach(proveedor => {
-                        const option = document.createElement('option');
-                        option.value = proveedor.id_proveedor;
-                        option.textContent = proveedor.nombre_proveedor;
-                        select.appendChild(option);
-                    });
+                    if (Array.isArray(data)) {
+                        data.forEach(proveedor => {
+                            const option = document.createElement('option');
+                            option.value = proveedor.id_proveedor;
+                            option.textContent = proveedor.nombre_proveedor;
+                            select.appendChild(option);
+                        });
+                    } else if (data.success === false) {
+                        console.error('Error al cargar proveedores:', data.message);
+                    } else {
+                        console.error('Formato de datos inesperado:', data);
+                    }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error al cargar proveedores:', error);
+                });
         }
 
         function cargarUsuariosEditar(idUsuarioSeleccionado) {

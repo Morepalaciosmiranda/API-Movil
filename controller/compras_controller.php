@@ -49,12 +49,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
 if (isset($_GET['action']) && $_GET['action'] == 'getProveedores') {
     $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
     $result = $conn->query($sql);
+    
+    if ($result === false) {
+        sendJsonResponse(false, "Error al ejecutar la consulta: " . $conn->error);
+    }
+    
     $proveedores = [];
     while ($row = $result->fetch_assoc()) {
         $proveedores[] = $row;
     }
-    echo json_encode($proveedores);
-    exit;
+    
+    sendJsonResponse(true, "Proveedores obtenidos con éxito", $proveedores);
 }
 
 if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {
