@@ -127,11 +127,14 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <label for="id_proveedor">Proveedor:</label>
                                 <select id="id_proveedor" name="id_proveedor" required></select><br><br>
 
-                                <label for="id_insumo">Insumo:</label>
-                                <select id="id_insumo" name="id_insumo" required></select><br><br>
+                                <label for="nombre_insumo">Nombre del Insumo:</label>
+                                <input type="text" id="nombre_insumo" name="nombre_insumo" required><br><br>
 
                                 <label for="marca">Marca:</label>
                                 <input type="text" id="marca" name="marca" required><br><br>
+
+                                <label for="cantidad">Cantidad:</label>
+                                <input type="number" id="cantidad" name="cantidad" required><br><br>
 
                                 <label for="fecha_compra">Fecha de Compra:</label>
                                 <input type="date" id="fecha_compra" name="fecha_compra" required><br><br>
@@ -139,13 +142,12 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <label for="total_compra">Total de Compra:</label>
                                 <input type="number" id="total_compra" name="total_compra" step="0.01" required><br><br>
 
-                                <label for="cantidad">Cantidad:</label>
-                                <input type="number" id="cantidad" name="cantidad" required><br><br>
-
                                 <input type="submit" value="Agregar Compra">
                             </form>
                         </div>
                     </div>
+
+                    
                     <div id="modalEditarCompra" class="modal">
                         <div class="modal-content">
                             <span class="close">&times;</span>
