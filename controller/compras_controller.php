@@ -21,52 +21,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
     $fecha_compra = $_POST['fecha_compra'];
     $total_compra = $_POST['total_compra'];
 
-    $conn->begin_transaction();
-
-    try {
-        // Primero, insertamos o actualizamos el insumo
-        $insert_insumo_sql = "INSERT INTO insumos (nombre_insumo, cantidad, id_proveedor) 
-                              VALUES (?, ?, ?) 
-                              ON DUPLICATE KEY UPDATE 
-                              cantidad = cantidad + VALUES(cantidad), 
-                              id_proveedor = VALUES(id_proveedor)";
-        $insert_insumo_stmt = $conn->prepare($insert_insumo_sql);
-        $insert_insumo_stmt->bind_param("sii", $nombre_insumo, $cantidad, $id_proveedor);
-        $insert_insumo_stmt->execute();
-        
-        $id_insumo = $conn->insert_id;
-        if ($id_insumo == 0) {
-            // Si no se insertó un nuevo insumo, obtenemos el id del insumo existente
-            $get_insumo_id_sql = "SELECT id_insumo FROM insumos WHERE nombre_insumo = ?";
-            $get_insumo_id_stmt = $conn->prepare($get_insumo_id_sql);
-            $get_insumo_id_stmt->bind_param("s", $nombre_insumo);
-            $get_insumo_id_stmt->execute();
-            $get_insumo_id_stmt->bind_result($id_insumo);
-            $get_insumo_id_stmt->fetch();
-            $get_insumo_id_stmt->close();
-        }
-
-        // Ahora insertamos la compra
-        $insert_compra_sql = "INSERT INTO compras (id_proveedor, id_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?)";
-        $insert_compra_stmt = $conn->prepare($insert_compra_sql);
-        $insert_compra_stmt->bind_param("iisids", $id_proveedor, $id_insumo, $marca, $cantidad, $fecha_compra, $total_compra);
-        $insert_compra_stmt->execute();
-        
-        $id_compra = $conn->insert_id;
-
-        // Actualizamos el id_compra en la tabla insumos
-        $update_insumo_sql = "UPDATE insumos SET id_compra = ? WHERE id_insumo = ?";
-        $update_insumo_stmt = $conn->prepare($update_insumo_sql);
-        $update_insumo_stmt->bind_param("ii", $id_compra, $id_insumo);
-        $update_insumo_stmt->execute();
-
-        $conn->commit();
-
-        echo json_encode(['success' => true, 'message' => 'Compra agregada exitosamente.']);
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo json_encode(['success' => false, 'message' => "Error al procesar la compra: " . $e->getMessage()]);
+    $insert_sql = "INSERT INTO compras (id_proveedor, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?)";
+    $insert_stmt = $conn->prepare($insert_sql);
+    if (!$insert_stmt) {
+        die("Error al preparar la consulta de inserción: " . $conn->error);
     }
+
+    if (!$insert_stmt->bind_param("issids", $id_proveedor, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
+        die("Error al enlazar parámetros: " . $insert_stmt->error);
+    }
+
+    if (!$insert_stmt->execute()) {
+        die("Error al ejecutar la consulta de inserción: " . $insert_stmt->error);
+    }
+
+    header('Location: ../views/compras.php');
     exit();
 }
 // Agregar un nuevo endpoint para obtener los insumos
@@ -80,7 +49,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'getProveedores') {
     echo json_encode($proveedores);
     exit;
 }
-        
+
 
 if (isset($_GET['eliminar'])) {
     $id_compra = $_GET['eliminar'];
@@ -175,16 +144,13 @@ ORDER BY c.fecha_compra DESC";
 $resultado_compras = $conn->query($consulta_compras);
 
 if ($resultado_compras->num_rows > 0) {
-$compras = array();
-while ($row = $resultado_compras->fetch_assoc()) {
-$compras[] = $row;
-}
-echo json_encode(['success' => true, 'compras' => $compras]);
+    $compras = array();
+    while ($row = $resultado_compras->fetch_assoc()) {
+        $compras[] = $row;
+    }
+    echo json_encode(['success' => true, 'compras' => $compras]);
 } else {
-echo json_encode(['success' => false, 'message' => 'No hay compras disponibles.']);
+    echo json_encode(['success' => false, 'message' => 'No hay compras disponibles.']);
 }
 
 $conn->close();
-?>
-
-

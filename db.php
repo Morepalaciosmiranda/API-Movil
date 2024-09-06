@@ -1,5 +1,5 @@
 <?php
-include './includes/conexion.php';
+include '../includes/conexion.php';
 
 // Función para ejecutar consultas y manejar errores
 function ejecutarConsulta($conn, $sql) {
@@ -18,11 +18,11 @@ function existeColumna($conn, $tabla, $columna) {
 }
 
 // Modificar la tabla compras
-if (!existeColumna($conn, 'compras', 'cantidad')) {
-    ejecutarConsulta($conn, "ALTER TABLE compras ADD COLUMN cantidad INT AFTER marca");
-    echo "Se ha añadido el campo 'cantidad' a la tabla 'compras'.<br>";
+if (!existeColumna($conn, 'compras', 'nombre_insumo')) {
+    ejecutarConsulta($conn, "ALTER TABLE compras ADD COLUMN nombre_insumo VARCHAR(100) AFTER id_insumo");
+    echo "Se ha añadido el campo 'nombre_insumo' a la tabla 'compras'.<br>";
 } else {
-    echo "El campo 'cantidad' ya existe en la tabla 'compras'.<br>";
+    echo "El campo 'nombre_insumo' ya existe en la tabla 'compras'.<br>";
 }
 
 echo "La tabla 'compras' se ha actualizado correctamente.";

@@ -191,6 +191,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                             <thead>
                                 <tr>
                                     <th>Proveedor</th>
+                                    <th>Nombre Insumo</th>
                                     <th>Fecha Compra</th>
                                     <th>Total Compra</th>
                                     <th>Marca</th>
@@ -202,16 +203,18 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <?php
                                 include '../includes/conexion.php';
 
-                                $sql = "SELECT c.id_compra, p.nombre_proveedor, c.fecha_compra, c.total_compra, c.marca, c.cantidad
-        FROM compras c
-        JOIN proveedores p ON c.id_proveedor = p.id_proveedor
-        LIMIT $items_por_pagina OFFSET $offset";
+                                $sql = "SELECT c.id_compra, p.nombre_proveedor, c.nombre_insumo, c.fecha_compra, c.total_compra, c.marca, c.cantidad
+                                FROM compras c
+                                JOIN proveedores p ON c.id_proveedor = p.id_proveedor
+                                ORDER BY c.fecha_compra DESC
+                                LIMIT $items_por_pagina OFFSET $offset";
                                 $resultado = $conn->query($sql);
 
                                 if ($resultado->num_rows > 0) {
                                     while ($row = $resultado->fetch_assoc()) {
                                         echo "<tr id='compra-" . $row['id_compra'] . "'>";
                                         echo "<td>" . $row['nombre_proveedor'] . "</td>";
+                                        echo "<td>" . $row['nombre_insumo'] . "</td>";
                                         echo "<td>" . $row['fecha_compra'] . "</td>";
                                         echo "<td>" . $row['total_compra'] . "</td>";
                                         echo "<td>" . $row['marca'] . "</td>";
