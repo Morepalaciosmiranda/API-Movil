@@ -94,6 +94,7 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
 
                             <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
                             <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required min="<?php echo date('Y-m-d'); ?>"><br>
+
                             <label for="cantidad">Cantidad:</label>
                             <input type="number" id="cantidad" name="cantidad" readonly><br><br>
 

@@ -20,33 +20,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
     $total_compra = $_POST['total_compra'];
     $cantidad = $_POST['cantidad'];
 
-    $conn->begin_transaction();
-
-    try {
-        $insert_compra_sql = "INSERT INTO compras (id_proveedor, id_insumo, marca, fecha_compra, total_compra, cantidad) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt_compra = $conn->prepare($insert_compra_sql);
-        if (!$stmt_compra) {
-            throw new Exception("Error al preparar la consulta de inserción en compras: " . $conn->error);
-        }
-
-        if (!$stmt_compra->bind_param("iissdi", $id_proveedor, $id_insumo, $marca, $fecha_compra, $total_compra, $cantidad)) {
-            throw new Exception("Error al enlazar parámetros: " . $stmt_compra->error);
-        }
-
-        if (!$stmt_compra->execute()) {
-            throw new Exception("Error al ejecutar la consulta de inserción en compras: " . $stmt_compra->error);
-        }
-
-        $conn->commit();
-
-        echo json_encode(['success' => true, 'message' => 'Compra agregada exitosamente.']);
-        exit();
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo json_encode(['success' => false, 'message' => "Error al procesar la compra: " . $e->getMessage()]);
-        exit();
+    $insert_sql = "INSERT INTO compras (id_proveedor, id_insumo, marca, fecha_compra, total_compra, cantidad) VALUES (?, ?, ?, ?, ?, ?)";
+    if (!$insert_stmt->bind_param("iissdi", $id_proveedor, $id_insumo, $marca, $fecha_compra, $total_compra, $cantidad)) {
+        die("Error al enlazar parámetros: " . $insert_stmt->error);
     }
+
+    if (!$insert_stmt->execute()) {
+        die("Error al ejecutar la consulta de inserción: " . $insert_stmt->error);
+    }
+
+    // Actualizar la cantidad en la tabla insumos
+    $update_insumo_sql = "UPDATE insumos SET cantidad = cantidad + ? WHERE id_insumo = ?";
+    $update_insumo_stmt = $conn->prepare($update_insumo_sql);
+    if (!$update_insumo_stmt) {
+        die("Error al preparar la consulta de actualización de insumo: " . $conn->error);
+    }
+
+    if (!$update_insumo_stmt->bind_param("ii", $cantidad, $id_insumo)) {
+        die("Error al enlazar parámetros para actualización de insumo: " . $update_insumo_stmt->error);
+    }
+
+    if (!$update_insumo_stmt->execute()) {
+        die("Error al ejecutar la consulta de actualización de insumo: " . $update_insumo_stmt->error);
+    }
+
+    header('Location: ../views/compras.php');
+    exit();
 }
+
+// Agregar un nuevo endpoint para obtener los insumos
+if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {
+    $sql = "SELECT DISTINCT id_insumo, nombre_insumo FROM compras";
+    $result = $conn->query($sql);
+    $insumos = [];
+    while ($row = $result->fetch_assoc()) {
+        $insumos[] = $row;
+    }
+    echo json_encode($insumos);
+    exit;
+}
+        
 
 if (isset($_GET['eliminar'])) {
     $id_compra = $_GET['eliminar'];
