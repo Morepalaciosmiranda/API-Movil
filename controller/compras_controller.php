@@ -48,19 +48,23 @@ sendJsonResponse(false, 'Solicitud no válida o acción no reconocida');
 
 // Agregar un nuevo endpoint para obtener los insumos
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProveedores') {
-    $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
-    $result = $conn->query($sql);
-    
-    if ($result === false) {
-        sendJsonResponse(false, "Error al ejecutar la consulta: " . $conn->error);
+    try {
+        $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
+        $result = $conn->query($sql);
+        
+        if ($result === false) {
+            throw new Exception("Error al ejecutar la consulta: " . $conn->error);
+        }
+        
+        $proveedores = [];
+        while ($row = $result->fetch_assoc()) {
+            $proveedores[] = $row;
+        }
+        
+        sendJsonResponse(true, "Proveedores obtenidos con éxito", $proveedores);
+    } catch (Exception $e) {
+        sendJsonResponse(false, $e->getMessage());
     }
-    
-    $proveedores = [];
-    while ($row = $result->fetch_assoc()) {
-        $proveedores[] = $row;
-    }
-    
-    sendJsonResponse(true, "Proveedores obtenidos con éxito", $proveedores);
 }
 
 if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {

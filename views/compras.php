@@ -451,10 +451,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function() {
-            // cargarUsuarios();
-            cargarProveedores();
-        });
+     
 
         // function cargarUsuarios() {
         //     fetch('../controller/usuarios_controller.php')
@@ -482,7 +479,12 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
 
         function cargarProveedores() {
             fetch('../controller/compras_controller.php?action=getProveedores')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(result => {
                     if (result.success) {
                         const select = document.getElementById('id_proveedor');
