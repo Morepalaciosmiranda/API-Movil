@@ -480,7 +480,12 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
 
         function cargarProveedores() {
             fetch('../controller/compras_controller.php?action=getProveedores')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(result => {
                     if (result.success) {
                         const select = document.getElementById('id_proveedor');
@@ -493,10 +498,12 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                         });
                     } else {
                         console.error('Error al cargar proveedores:', result.message);
+                        alert('Error al cargar proveedores: ' + result.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error al cargar proveedores:', error);
+                    alert('Error al cargar proveedores. Por favor, revisa la consola para más detalles.');
                 });
         }
 
@@ -519,27 +526,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 .catch(error => console.error('Error:', error));
         }
 
-        function cargarProveedores() {
-            fetch('../controller/compras_controller.php?action=getProveedores')
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        const select = document.getElementById('id_proveedor');
-                        select.innerHTML = '';
-                        result.data.forEach(proveedor => {
-                            const option = document.createElement('option');
-                            option.value = proveedor.id_proveedor;
-                            option.textContent = proveedor.nombre_proveedor;
-                            select.appendChild(option);
-                        });
-                    } else {
-                        console.error('Error al cargar proveedores:', result.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al cargar proveedores:', error);
-                });
-        }
 
         function openPermissionsModal(userId) {
             modal.style.display = "block";
