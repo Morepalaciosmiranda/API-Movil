@@ -312,6 +312,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             cargarProveedoresEditar(nombreProveedor);
         }
 
+
         function abrirModalDetalle(idCompra) {
             fetch(`../controller/obtener_detalles_compra.php?idCompra=${idCompra}`)
                 .then(response => response.text())
@@ -376,40 +377,25 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         document.getElementById('formAgregarCompra').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Quieres agregar esta compra?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, agregar!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch('../controller/compras_controller.php', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire(
-                                    'Agregado!',
-                                    data.message,
-                                    'success'
-                                ).then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire(
-                                    'Error!',
-                                    data.message,
-                                    'error'
-                                );
-                            }
+
+            fetch('../controller/compras_controller.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Éxito', data.message, 'success').then(() => {
+                            location.reload();
                         });
-                }
-            });
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Hubo un problema al procesar la solicitud', 'error');
+                });
         });
 
         document.getElementById('formEditarCompra').addEventListener('submit', function(event) {
@@ -516,7 +502,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         }
 
         function cargarProveedoresEditar(idProveedorSeleccionado) {
-            fetch('../controller/proveedores_controller.php')
+            fetch('../controller/compras_controller.php?action=getProveedores')
                 .then(response => response.json())
                 .then(data => {
                     const select = document.getElementById('edit_id_proveedor');
