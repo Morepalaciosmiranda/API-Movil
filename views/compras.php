@@ -14,6 +14,7 @@ if ($_SESSION['rol'] === 'Usuario') {
 
 include_once('../includes/conexion.php');
 
+
 // Parámetros de paginación
 $items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
@@ -278,9 +279,9 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
     </div>
 
     <script>
-        const modal = document.getElementById('modalAgregarCompra');
-        const rolesModal = document.getElementById('modalEditarCompra');
-        
+         const modal = document.getElementById('modalAgregarCompra');
+         const rolesModal = document.getElementById('modalEditarCompra');
+         
         document.getElementById('btnAgregarCompra').onclick = function() {
             cargarUsuarios();
             cargarProveedores();
@@ -485,9 +486,18 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
 
         function cargarProveedores() {
             fetch('../controller/proveedores_controller.php?action=getProveedores')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     const select = document.getElementById('id_proveedor');
+                    if (!select) {
+                        console.error('Elemento con id "id_proveedor" no encontrado');
+                        return;
+                    }
                     select.innerHTML = '';
                     data.forEach(proveedor => {
                         const option = document.createElement('option');
@@ -496,7 +506,10 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                         select.appendChild(option);
                     });
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un error al cargar los proveedores. Por favor, intenta de nuevo.');
+                });
         }
 
         function cargarUsuariosEditar(idUsuarioSeleccionado) {
