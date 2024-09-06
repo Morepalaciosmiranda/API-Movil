@@ -280,6 +280,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
     <script>
         const modal = document.getElementById('modalAgregarCompra');
         const rolesModal = document.getElementById('modalEditarCompra');
+        document.addEventListener('DOMContentLoaded', cargarProveedores);
 
         document.getElementById('btnAgregarCompra').onclick = function() {
             cargarProveedores();
@@ -507,24 +508,24 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 });
         }
 
-        function cargarUsuariosEditar(idUsuarioSeleccionado) {
-            fetch('../controller/usuarios_controller.php')
-                .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById('edit_id_usuario');
-                    select.innerHTML = '';
-                    data.forEach(usuario => {
-                        const option = document.createElement('option');
-                        option.value = usuario.id_usuario;
-                        option.textContent = usuario.nombre_usuario;
-                        if (usuario.id_usuario == idUsuarioSeleccionado) {
-                            option.selected = true;
-                        }
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-        }
+        // function cargarUsuariosEditar(idUsuarioSeleccionado) {
+        //     fetch('../controller/usuarios_controller.php')
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             const select = document.getElementById('edit_id_usuario');
+        //             select.innerHTML = '';
+        //             data.forEach(usuario => {
+        //                 const option = document.createElement('option');
+        //                 option.value = usuario.id_usuario;
+        //                 option.textContent = usuario.nombre_usuario;
+        //                 if (usuario.id_usuario == idUsuarioSeleccionado) {
+        //                     option.selected = true;
+        //                 }
+        //                 select.appendChild(option);
+        //             });
+        //         })
+        //         .catch(error => console.error('Error:', error));
+        // }
 
 
         function openPermissionsModal(userId) {
