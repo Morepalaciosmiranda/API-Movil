@@ -386,13 +386,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             event.preventDefault();
             const formData = new FormData(this);
 
-            // Validación de la fecha
-            const fechaCompra = formData.get('fecha_compra');
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaCompra)) {
-                Swal.fire('Error', 'El formato de la fecha debe ser YYYY-MM-DD', 'error');
-                return;
-            }
-
             fetch('../controller/compras_controller.php', {
                     method: 'POST',
                     body: formData

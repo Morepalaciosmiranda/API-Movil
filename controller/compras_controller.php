@@ -12,13 +12,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         $total_compra = $_POST['total_compra'];
 
         // Imprime los valores para verificar
-        echo "Valores a insertar: \n";
-        echo "id_proveedor: $id_proveedor\n";
-        echo "nombre_insumo: $nombre_insumo\n";
-        echo "marca: $marca\n";
-        echo "cantidad: $cantidad\n";
-        echo "fecha_compra: $fecha_compra\n";
-        echo "total_compra: $total_compra\n";
+        // echo "Valores a insertar: \n";
+        // echo "id_proveedor: $id_proveedor\n";
+        // echo "nombre_insumo: $nombre_insumo\n";
+        // echo "marca: $marca\n";
+        // echo "cantidad: $cantidad\n";
+        // echo "fecha_compra: $fecha_compra\n";
+        // echo "total_compra: $total_compra\n";
 
         // Validación de la fecha
         if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $fecha_compra)) {
