@@ -44,14 +44,14 @@ ejecutarConsulta($conn, $sql_drop);
 
 // SQL para crear la tabla compras
 $sql_create = "CREATE TABLE compras (
-    id_compra int NOT NULL AUTO_INCREMENT,
-    id_proveedor int,
-    id_insumo int,
-    nombre_insumo varchar(100),
-    marca varchar(100),
-    cantidad int,
-    fecha_compra date,
-    total_compra double,
+    id_compra INT NOT NULL AUTO_INCREMENT,
+    id_proveedor INT,
+    id_insumo INT,
+    nombre_insumo VARCHAR(100),
+    marca VARCHAR(100),
+    cantidad INT,
+    fecha_compra DATE,
+    total_compra DOUBLE,
     PRIMARY KEY (id_compra)
 )";
 ejecutarConsulta($conn, $sql_create);
