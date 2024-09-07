@@ -23,9 +23,16 @@ $offset = ($pagina_actual - 1) * $items_por_pagina;
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
 
 // Consulta SQL base para obtener las compras y su información relacionada
-$sql = "SELECT compras.id_compra, proveedores.nombre_proveedor, compras.fecha_compra, compras.total_compra 
+$sql = "SELECT compras.id_compra, 
+               proveedores.nombre_proveedor, 
+               compras.nombre_del_insumo, 
+               compras.fecha_compra, 
+               compras.total_compra,
+               compras.marca,
+               compras.cantidad
         FROM compras
-        JOIN proveedores ON compras.id_proveedor = proveedores.id_proveedor";
+        JOIN proveedores ON compras.id_proveedor = proveedores.id_proveedor
+        ORDER BY compras.fecha_compra DESC";
 
 // Capturar el valor de la fecha desde la solicitud GET
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : null;
