@@ -179,6 +179,11 @@ JOIN proveedores p ON c.id_proveedor = p.id_proveedor
 ORDER BY c.fecha_compra DESC";
 $resultado_compras = $conn->query($consulta_compras);
 
+if ($resultado_compras === false) {
+    echo json_encode(['success' => false, 'message' => 'Error en la consulta: ' . $conn->error]);
+    exit;
+}
+
 if ($resultado_compras->num_rows > 0) {
     $compras = array();
     while ($row = $resultado_compras->fetch_assoc()) {
@@ -187,11 +192,6 @@ if ($resultado_compras->num_rows > 0) {
     echo json_encode(['success' => true, 'compras' => $compras]);
 } else {
     echo json_encode(['success' => false, 'message' => 'No hay compras disponibles.']);
-}
-
-if ($conn->error) {
-    echo json_encode(['success' => false, 'message' => 'Error en la base de datos: ' . $conn->error]);
-    exit;
 }
 
 $conn->close();
