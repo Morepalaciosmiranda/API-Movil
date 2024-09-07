@@ -390,6 +390,15 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 });
         });
 
+        function actualizarTablaCompras() {
+            fetch('../controller/obtener_compras.php')
+                .then(response => response.text())
+                .then(html => {
+                    document.querySelector('table tbody').innerHTML = html;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
         document.getElementById('formEditarCompra').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
