@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         // Ahora insertamos la compra
         $insert_sql = "INSERT INTO compras (id_proveedor, id_insumo, nombre_del_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_sql);
-        $insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra);
+        $insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_del_insumo, $marca, $cantidad, $fecha_compra, $total_compra);
         if (!$insert_stmt) {
             throw new Exception('Error al preparar la consulta de inserción: ' . $conn->error);
         }
