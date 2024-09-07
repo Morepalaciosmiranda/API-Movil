@@ -450,20 +450,17 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         //         .catch(error => console.error('Error:', error));
         // }
 
-        function cargarProveedoresEditar(proveedorSeleccionado) {
+        function cargarProveedores() {
             fetch('../controller/proveedores_controller.php')
                 .then(response => response.json())
                 .then(data => {
-                    const select = document.getElementById('edit_id_proveedor');
-                    if (select) {
+                    const select = document.getElementById('id_proveedor');
+                    if (select) { // Verifica si el elemento existe
                         select.innerHTML = '';
                         data.forEach(proveedor => {
                             const option = document.createElement('option');
                             option.value = proveedor.id_proveedor;
                             option.textContent = proveedor.nombre_proveedor;
-                            if (proveedor.nombre_proveedor === proveedorSeleccionado) {
-                                option.selected = true;
-                            }
                             select.appendChild(option);
                         });
                     }
