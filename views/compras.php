@@ -203,7 +203,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <?php
                                 include '../includes/conexion.php';
 
-                                $sql = "SELECT c.id_compra, p.nombre_proveedor, c.nombre_del_insumo, c.fecha_compra, c.total_compra, c.marca, c.cantidad
+                                $sql = "SELECT c.id_compra, p.nombre_proveedor, c.fecha_compra, c.total_compra, c.marca, c.cantidad
                                 FROM compras c
                                 JOIN proveedores p ON c.id_proveedor = p.id_proveedor
                                 LEFT JOIN insumos i ON c.id_insumo = i.id_insumo
@@ -215,7 +215,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                     while ($row = $resultado->fetch_assoc()) {
                                         echo "<tr id='compra-" . $row['id_compra'] . "'>";
                                         echo "<td>" . $row['nombre_proveedor'] . "</td>";
-                                        echo "<td>" . $row['nombre_del_insumo'] . "</td>";
+                                        // echo "<td>" . $row['nombre_del_insumo'] . "</td>";
                                         echo "<td>" . $row['fecha_compra'] . "</td>";
                                         echo "<td>" . $row['total_compra'] . "</td>";
                                         echo "<td>" . $row['marca'] . "</td>";
@@ -304,7 +304,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         function abrirModalEditar(idCompra, nombreProveedor, nombreInsumo, fechaCompra, totalCompra, marca, cantidad) {
             document.getElementById('edit_id_compra').value = idCompra;
             document.getElementById('edit_id_proveedor').value = nombreProveedor;
-            document.getElementById('edit_nombre_insumo').value = nombreInsumo;
+            document.getElementById('edit_nombre_del_insumo').value = nombreInsumo;
             document.getElementById('edit_fecha_compra').value = fechaCompra;
             document.getElementById('edit_total_compra').value = totalCompra;
             document.getElementById('edit_marca').value = marca;
