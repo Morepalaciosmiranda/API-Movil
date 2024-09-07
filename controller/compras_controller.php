@@ -29,12 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         $conn->commit();
 
         echo json_encode(['success' => true, 'message' => 'Compra agregada exitosamente.']);
-        exit();
     } catch (Exception $e) {
         $conn->rollback();
         echo json_encode(['success' => false, 'message' => "Error al procesar la compra: " . $e->getMessage()]);
-        exit();
     }
+    exit();
 }
 
 if (isset($_GET['eliminar'])) {

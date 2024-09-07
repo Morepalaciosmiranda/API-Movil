@@ -377,16 +377,35 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert(data.message); // o usa SweetAlert2
-                        actualizarTablaCompras(); // Actualiza la tabla en lugar de recargar la página
-                        document.getElementById('modalAgregarCompra').style.display = 'none';
+                        Swal.fire({
+                            title: 'Éxito!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                actualizarTablaCompras();
+                                document.getElementById('modalAgregarCompra').style.display = 'none';
+                                this.reset(); // Limpia el formulario
+                            }
+                        });
                     } else {
-                        alert('Error: ' + data.message);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Ocurrió un error al procesar la solicitud.');
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Ocurrió un error al procesar la solicitud.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 });
         });
 
@@ -396,7 +415,10 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 .then(html => {
                     document.querySelector('table tbody').innerHTML = html;
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ocurrió un error al actualizar la tabla de compras.');
+                });
         }
 
         document.getElementById('formEditarCompra').addEventListener('submit', function(event) {
