@@ -182,12 +182,11 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                         <table>
                             <thead>
                                 <tr>
-                                    <!-- <th>ID Compra</th> -->
                                     <th>Proveedor</th>
                                     <th>Nombre Insumo</th>
                                     <th>Fecha Compra</th>
-                                    <th>Cantidad</th>
                                     <th>Total Compra</th>
+                                    <th>Cantidad</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
