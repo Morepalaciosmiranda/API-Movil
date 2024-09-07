@@ -12,7 +12,7 @@ if ($_SESSION['rol'] === 'Usuario') {
     exit();
 }
 
-include_once('./includes/conexion.php');
+include_once('../includes/conexion.php');
 
 // Parámetros de paginación
 $items_por_pagina = 10;
