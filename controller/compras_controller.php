@@ -45,30 +45,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         }
 
         // Primero, insertamos o actualizamos el insumo
-        $insert_insumo_sql = "INSERT INTO insumos (nombre_insumo) VALUES (?) ON DUPLICATE KEY UPDATE id_insumo = LAST_INSERT_ID(id_insumo)";
+        // Primero, insertamos o actualizamos el insumo
+        $insert_insumo_sql = "INSERT INTO insumos (nombre_insumo, cantidad) VALUES (?, ?) ON DUPLICATE KEY UPDATE id_insumo = LAST_INSERT_ID(id_insumo), cantidad = cantidad + VALUES(cantidad)";
         $insert_insumo_stmt = $conn->prepare($insert_insumo_sql);
         if (!$insert_insumo_stmt) {
             throw new Exception('Error al preparar la consulta de insumo: ' . $conn->error);
         }
-        $insert_insumo_stmt->bind_param("s", $nombre_insumo);
+        $insert_insumo_stmt->bind_param("si", $nombre_insumo, $cantidad);
         $insert_insumo_stmt->execute();
         $id_insumo = $insert_insumo_stmt->insert_id;
 
         // Ahora insertamos la compra
-        $insert_sql = "INSERT INTO compras (id_proveedor, id_insumo, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $insert_sql = "INSERT INTO compras (id_proveedor, id_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_sql);
         if (!$insert_stmt) {
             throw new Exception('Error al preparar la consulta de inserción: ' . $conn->error);
         }
-        
-        if (!$insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
+
+        if (!$insert_stmt->bind_param("iisids", $id_proveedor, $id_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
             throw new Exception('Error al enlazar parámetros: ' . $insert_stmt->error);
         }
-        
-        // Añade este código de depuración aquí
-        $debug_sql = "INSERT INTO compras (id_proveedor, id_insumo, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES ($id_proveedor, $id_insumo, '$nombre_insumo', '$marca', $cantidad, '$fecha_compra', $total_compra)";
-        error_log($debug_sql);
-        
+
         if (!$insert_stmt->execute()) {
             throw new Exception('Error al ejecutar la consulta de inserción: ' . $insert_stmt->error);
         }
@@ -143,12 +140,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_id_compra'])) {
     $conn->begin_transaction();
 
     try {
-        // Primero, actualizamos o insertamos el insumo
-        $insert_insumo_sql = "INSERT INTO insumos (nombre_insumo) VALUES (?) ON DUPLICATE KEY UPDATE id_insumo = LAST_INSERT_ID(id_insumo)";
-        $insert_insumo_stmt = $conn->prepare($insert_insumo_sql);
-        $insert_insumo_stmt->bind_param("s", $nombre_insumo);
-        $insert_insumo_stmt->execute();
-        $id_insumo = $insert_insumo_stmt->insert_id;
+        // Primero, actualizamos el insumo
+        $update_insumo_sql = "UPDATE insumos SET nombre_insumo = ? WHERE id_insumo = (SELECT id_insumo FROM compras WHERE id_compra = ?)";
+        $update_insumo_stmt = $conn->prepare($update_insumo_sql);
+        $update_insumo_stmt->bind_param("si", $nombre_insumo, $id_compra);
+        $update_insumo_stmt->execute();
 
         // Obtenemos la información de la compra original
         $select_compra_sql = "SELECT id_insumo, cantidad FROM compras WHERE id_compra = ?";
@@ -159,15 +155,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_id_compra'])) {
         $compra_original = $result->fetch_assoc();
 
         // Actualizamos la cantidad en la tabla insumos (restamos la cantidad original y sumamos la nueva)
-        $update_insumo_sql = "UPDATE insumos SET cantidad = cantidad - ? + ? WHERE id_insumo = ?";
-        $update_insumo_stmt = $conn->prepare($update_insumo_sql);
-        $update_insumo_stmt->bind_param("iii", $compra_original['cantidad'], $cantidad, $compra_original['id_insumo']);
-        $update_insumo_stmt->execute();
+        $update_insumo_cantidad_sql = "UPDATE insumos SET cantidad = cantidad - ? + ? WHERE id_insumo = ?";
+        $update_insumo_cantidad_stmt = $conn->prepare($update_insumo_cantidad_sql);
+        $update_insumo_cantidad_stmt->bind_param("iii", $compra_original['cantidad'], $cantidad, $compra_original['id_insumo']);
+        $update_insumo_cantidad_stmt->execute();
 
         // Actualizamos la compra
-        $update_compra_sql = "UPDATE compras SET id_proveedor = ?, id_insumo = ?, marca = ?, cantidad = ?, fecha_compra = ?, total_compra = ? WHERE id_compra = ?";
+        $update_compra_sql = "UPDATE compras SET id_proveedor = ?, marca = ?, cantidad = ?, fecha_compra = ?, total_compra = ? WHERE id_compra = ?";
         $update_compra_stmt = $conn->prepare($update_compra_sql);
-        $update_compra_stmt->bind_param("iisisdi", $id_proveedor, $id_insumo, $marca, $cantidad, $fecha_compra, $total_compra, $id_compra);
+        $update_compra_stmt->bind_param("isidsi", $id_proveedor, $marca, $cantidad, $fecha_compra, $total_compra, $id_compra);
         $update_compra_stmt->execute();
 
         $conn->commit();

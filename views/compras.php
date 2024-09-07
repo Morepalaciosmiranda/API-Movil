@@ -158,8 +158,8 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <label for="edit_id_proveedor">Proveedor:</label>
                                 <select id="edit_id_proveedor" name="edit_id_proveedor" required></select><br><br>
 
-                                <label for="edit_id_insumo">Insumo:</label>
-                                <select id="edit_id_insumo" name="edit_id_insumo" required></select><br><br>
+                                <label for="edit_nombre_insumo">Nombre del Insumo:</label>
+                                <input type="text" id="edit_nombre_insumo" name="edit_nombre_insumo" required><br><br>
 
                                 <label for="edit_marca">Marca:</label>
                                 <input type="text" id="edit_marca" name="edit_marca" required><br><br>
@@ -203,11 +203,12 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <?php
                                 include '../includes/conexion.php';
 
-                                $sql = "SELECT c.id_compra, p.nombre_proveedor, c.nombre_insumo, c.fecha_compra, c.total_compra, c.marca, c.cantidad
-                                FROM compras c
-                                JOIN proveedores p ON c.id_proveedor = p.id_proveedor
-                                ORDER BY c.fecha_compra DESC
-                                LIMIT $items_por_pagina OFFSET $offset";
+                                $sql = "SELECT c.id_compra, p.nombre_proveedor, i.nombre_insumo, c.fecha_compra, c.total_compra, c.marca, c.cantidad
+        FROM compras c
+        JOIN proveedores p ON c.id_proveedor = p.id_proveedor
+        JOIN insumos i ON c.id_insumo = i.id_insumo
+        ORDER BY c.fecha_compra DESC
+        LIMIT $items_por_pagina OFFSET $offset";
                                 $resultado = $conn->query($sql);
 
                                 if ($resultado->num_rows > 0) {
@@ -220,14 +221,14 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                         echo "<td>" . $row['marca'] . "</td>";
                                         echo "<td>" . $row['cantidad'] . "</td>";
                                         echo '<td class="actions">';
-                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . $row['nombre_proveedor'] . '\', \'' . $row['fecha_compra'] . '\', ' . $row['total_compra'] . ', \'' . $row['marca'] . '\', ' . $row['cantidad'] . ')"><i class="fa fa-edit"></i></button>';
+                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . $row['nombre_proveedor'] . '\', \'' . $row['nombre_insumo'] . '\', \'' . $row['fecha_compra'] . '\', ' . $row['total_compra'] . ', \'' . $row['marca'] . '\', ' . $row['cantidad'] . ')"><i class="fa fa-edit"></i></button>';
                                         echo '<button class="delete-btn" onclick="eliminarCompra(' . $row['id_compra'] . ')"><i class="fa fa-trash"></i></button>';
                                         echo '<button class="details-btn" onclick="abrirModalDetalle(' . $row['id_compra'] . ')"><i class="fa fa-eye"></i></button>';
                                         echo '</td>';
                                         echo "</tr>";
                                     }
                                 } else {
-                                    echo "<tr><td colspan='6'>No hay compras disponibles.</td></tr>";
+                                    echo "<tr><td colspan='7'>No hay compras disponibles.</td></tr>";
                                 }
                                 ?>
                             </tbody>
