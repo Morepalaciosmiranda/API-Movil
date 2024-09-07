@@ -217,13 +217,13 @@
                                 let redirectUrl = '';
                                 switch (data.role) {
                                     case 'Administrador':
-                                        redirectUrl = 'https://exterminio-ap2w.onrender.com/animacion.php';
+                                        redirectUrl = 'https://exterminiofastfood.onrender.com/animacion.php';
                                         break;
                                     case 'Usuario':
-                                        redirectUrl = 'https://exterminio-ap2w.onrender.com/index.php';
+                                        redirectUrl = 'https://exterminiofastfood.onrender.com/index.php';
                                         break;
                                     default:
-                                        redirectUrl = 'https://exterminio-ap2w.onrender.com/animacion.php';
+                                        redirectUrl = 'https://exterminiofastfood.onrender.com/animacion.php';
                                         break;
                                 }
                                 Swal.fire({
@@ -258,7 +258,7 @@
                         text: 'Por favor, complete todos los campos del formulario.',
                     });
                 } else {
-                    fetch('https://exterminio-ap2w.onrender.com/controller/send_verification_code.php', {
+                    fetch('https://exterminiofastfood.onrender.com/controller/send_verification_code.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -318,7 +318,7 @@
                     cancelButtonText: 'Cancelar',
                     showLoaderOnConfirm: true,
                     preConfirm: (code) => {
-                        return fetch('https://exterminio-ap2w.onrender.com/controller/register.php', {
+                        return fetch('https://exterminiofastfood.onrender.com/controller/register.php', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -377,7 +377,7 @@
             sendButton.innerHTML = '<span class="spinner" id="loading-spinner"></span>';
             spinner.style.display = 'inline-block';
 
-            fetch('https://exterminio-ap2w.onrender.com/controller/forgot_password.php', {
+            fetch('https://exterminiofastfood.onrender.comcontroller/forgot_password.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
