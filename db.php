@@ -10,22 +10,25 @@ function ejecutarConsulta($conn, $sql) {
     }
 }
 
-// Función para verificar si existe una columna
-function existeColumna($conn, $tabla, $columna) {
-    $sql = "SHOW COLUMNS FROM $tabla LIKE '$columna'";
-    $result = $conn->query($sql);
-    return $result->num_rows > 0;
-}
+// SQL para eliminar la tabla si existe
+$sql_drop = "DROP TABLE IF EXISTS compras";
+ejecutarConsulta($conn, $sql_drop);
 
-// Modificar la tabla compras
-if (!existeColumna($conn, 'compras', 'nombre_insumo')) {
-    ejecutarConsulta($conn, "ALTER TABLE compras ADD COLUMN nombre_insumo VARCHAR(100) AFTER id_insumo");
-    echo "Se ha añadido el campo 'nombre_insumo' a la tabla 'compras'.<br>";
-} else {
-    echo "El campo 'nombre_insumo' ya existe en la tabla 'compras'.<br>";
-}
+// SQL para crear la tabla compras
+$sql_create = "CREATE TABLE compras (
+    id_compra int NOT NULL AUTO_INCREMENT,
+    id_proveedor int,
+    id_insumo int,
+    nombre_insumo varchar(100),
+    marca varchar(100),
+    cantidad int,
+    fecha_compra date,
+    total_compra double,
+    PRIMARY KEY (id_compra)
+)";
+ejecutarConsulta($conn, $sql_create);
 
-echo "La tabla 'compras' se ha actualizado correctamente.";
+echo "La tabla 'compras' ha sido recreada correctamente.";
 
 $conn->close();
 ?>
