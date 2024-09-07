@@ -1,6 +1,13 @@
 <?php
 header('Content-Type: application/json');
 include '../includes/conexion.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Añade esto para ver todos los datos POST recibidos
+echo "Datos POST recibidos: ";
+print_r($_POST);
+echo "\n";
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProveedores') {
@@ -34,6 +41,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         $fecha_compra = $_POST['fecha_compra'];
         $total_compra = $_POST['total_compra'];
 
+        // Imprime los valores para verificar
+        echo "Valores a insertar: \n";
+        echo "id_proveedor: $id_proveedor\n";
+        echo "nombre_insumo: $nombre_insumo\n";
+        echo "marca: $marca\n";
+        echo "cantidad: $cantidad\n";
+        echo "fecha_compra: $fecha_compra\n";
+        echo "total_compra: $total_compra\n";
+
         // Validación de la fecha
         if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $fecha_compra)) {
             throw new Exception('El formato de la fecha debe ser YYYY-MM-DD');
@@ -52,17 +68,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
             throw new Exception('Error al preparar la consulta de insumo: ' . $conn->error);
         }
         $insert_insumo_stmt->bind_param("si", $nombre_insumo, $cantidad);
-        $insert_insumo_stmt->execute();
+        if (!$insert_insumo_stmt->execute()) {
+            throw new Exception('Error al ejecutar la consulta de insumo: ' . $insert_insumo_stmt->error);
+        }
         $id_insumo = $insert_insumo_stmt->insert_id;
+
+        echo "ID del insumo insertado/actualizado: $id_insumo\n";
 
         // Ahora insertamos la compra
         $insert_sql = "INSERT INTO compras (id_proveedor, id_insumo, nombre_del_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_sql);
-        $insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_del_insumo, $marca, $cantidad, $fecha_compra, $total_compra);
         if (!$insert_stmt) {
             throw new Exception('Error al preparar la consulta de inserción: ' . $conn->error);
         }
-
+        $insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra);
         if (!$insert_stmt->execute()) {
             throw new Exception('Error al ejecutar la consulta de inserción: ' . $insert_stmt->error);
         }
@@ -184,14 +203,17 @@ if ($resultado_compras === false) {
     exit;
 }
 
-if ($resultado_compras->num_rows > 0) {
-    $compras = array();
-    while ($row = $resultado_compras->fetch_assoc()) {
-        $compras[] = $row;
-    }
-    echo json_encode(['success' => true, 'compras' => $compras]);
-} else {
-    echo json_encode(['success' => false, 'message' => 'No hay compras disponibles.']);
+$compras = array();
+while ($row = $resultado_compras->fetch_assoc()) {
+    $compras[] = $row;
 }
+
+echo json_encode([
+    'success' => true,
+    'compras' => $compras,
+    'num_rows' => $resultado_compras->num_rows,
+    'query' => $consulta_compras
+]);
+exit;
 
 $conn->close();
