@@ -271,7 +271,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
 
     <script>
         document.getElementById('btnAgregarCompra').onclick = function() {
-            cargarUsuarios();
+            // cargarUsuarios();
             cargarProveedores();
             document.getElementById('modalAgregarCompra').style.display = 'block';
             document.getElementById('modalAgregarCompra').classList.add('show');
@@ -298,7 +298,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             document.getElementById('edit_total_compra').value = totalCompra;
             document.getElementById('modalEditarCompra').style.display = 'block';
             document.getElementById('modalEditarCompra').classList.add('show');
-            cargarUsuariosEditar(idUsuario);
+            // cargarUsuariosEditar(idUsuario);
             cargarProveedoresEditar(idProveedor);
         }
 
@@ -368,40 +368,23 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         document.getElementById('formAgregarCompra').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Quieres agregar esta compra?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, agregar!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch('../controller/compras_controller.php', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire(
-                                    'Agregado!',
-                                    data.message,
-                                    'success'
-                                ).then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire(
-                                    'Error!',
-                                    data.message,
-                                    'error'
-                                );
-                            }
-                        });
-                }
-            });
+            fetch('../controller/compras_controller.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message); // o usa SweetAlert2
+                        location.reload(); // Recarga la página para mostrar la nueva compra
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ocurrió un error al procesar la solicitud.');
+                });
         });
 
         document.getElementById('formEditarCompra').addEventListener('submit', function(event) {
@@ -444,60 +427,62 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         });
 
         document.addEventListener("DOMContentLoaded", function() {
-            cargarUsuarios();
+            // cargarUsuarios();
             cargarProveedores();
         });
 
-        function cargarUsuarios() {
-            fetch('../controller/usuarios_controller.php')
-                .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById('id_usuario');
-                    select.innerHTML = '';
-                    data.forEach(usuario => {
-                        const option = document.createElement('option');
-                        option.value = usuario.id_usuario;
-                        option.textContent = usuario.nombre_usuario;
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-        }
+        // function cargarUsuarios() {
+        //     fetch('../controller/usuarios_controller.php')
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             const select = document.getElementById('id_usuario');
+        //             select.innerHTML = '';
+        //             data.forEach(usuario => {
+        //                 const option = document.createElement('option');
+        //                 option.value = usuario.id_usuario;
+        //                 option.textContent = usuario.nombre_usuario;
+        //                 select.appendChild(option);
+        //             });
+        //         })
+        //         .catch(error => console.error('Error:', error));
+        // }
 
         function cargarProveedores() {
             fetch('../controller/proveedores_controller.php')
                 .then(response => response.json())
                 .then(data => {
                     const select = document.getElementById('id_proveedor');
-                    select.innerHTML = '';
-                    data.forEach(proveedor => {
-                        const option = document.createElement('option');
-                        option.value = proveedor.id_proveedor;
-                        option.textContent = proveedor.nombre_proveedor;
-                        select.appendChild(option);
-                    });
+                    if (select) { // Verifica si el elemento existe
+                        select.innerHTML = '';
+                        data.forEach(proveedor => {
+                            const option = document.createElement('option');
+                            option.value = proveedor.id_proveedor;
+                            option.textContent = proveedor.nombre_proveedor;
+                            select.appendChild(option);
+                        });
+                    }
                 })
                 .catch(error => console.error('Error:', error));
         }
 
-        function cargarUsuariosEditar(idUsuarioSeleccionado) {
-            fetch('../controller/usuarios_controller.php')
-                .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById('edit_id_usuario');
-                    select.innerHTML = '';
-                    data.forEach(usuario => {
-                        const option = document.createElement('option');
-                        option.value = usuario.id_usuario;
-                        option.textContent = usuario.nombre_usuario;
-                        if (usuario.id_usuario == idUsuarioSeleccionado) {
-                            option.selected = true;
-                        }
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-        }
+        // function cargarUsuariosEditar(idUsuarioSeleccionado) {
+        //     fetch('../controller/usuarios_controller.php')
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             const select = document.getElementById('edit_id_usuario');
+        //             select.innerHTML = '';
+        //             data.forEach(usuario => {
+        //                 const option = document.createElement('option');
+        //                 option.value = usuario.id_usuario;
+        //                 option.textContent = usuario.nombre_usuario;
+        //                 if (usuario.id_usuario == idUsuarioSeleccionado) {
+        //                     option.selected = true;
+        //                 }
+        //                 select.appendChild(option);
+        //             });
+        //         })
+        //         .catch(error => console.error('Error:', error));
+        // }
 
         function cargarProveedoresEditar(idProveedorSeleccionado) {
             fetch('../controller/proveedores_controller.php')
@@ -531,7 +516,10 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         }
 
         function cerrarModalDetalle() {
-            document.getElementById('detalleCompraModal').style.display = 'none';
+            var detalleModal = document.getElementById('detalleCompraModal');
+            if (detalleModal) {
+                detalleModal.style.display = 'none';
+            }
         }
 
 
@@ -545,11 +533,13 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         }
 
         window.onclick = function(event) {
+            var modal = document.getElementById('modalAgregarCompra');
+            var editModal = document.getElementById('modalEditarCompra');
             if (event.target == modal) {
-                closePermissionsModal();
+                modal.style.display = "none";
             }
-            if (event.target == rolesModal) {
-                closeRolesModal();
+            if (event.target == editModal) {
+                editModal.style.display = "none";
             }
         }
 
@@ -579,7 +569,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../js/validaciones.js"></script>
+    <!-- <script src="../js/validaciones.js"></script> -->
 </body>
 
 </html>
