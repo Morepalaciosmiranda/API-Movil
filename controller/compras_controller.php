@@ -11,17 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         $fecha_compra = $_POST['fecha_compra'];
         $total_compra = $_POST['total_compra'];
 
-        // Reemplaza los echos con esto:
-    error_log("Valores a insertar: id_proveedor: $id_proveedor, nombre_insumo: $nombre_insumo, marca: $marca, cantidad: $cantidad, fecha_compra: $fecha_compra, total_compra: $total_compra");
-        // Imprime los valores para verificar
-        // echo "Valores a insertar: \n";
-        // echo "id_proveedor: $id_proveedor\n";
-        // echo "nombre_insumo: $nombre_insumo\n";
-        // echo "marca: $marca\n";
-        // echo "cantidad: $cantidad\n";
-        // echo "fecha_compra: $fecha_compra\n";
-        // echo "total_compra: $total_compra\n";
-
         // Validación de la fecha
         if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $fecha_compra)) {
             throw new Exception('El formato de la fecha debe ser YYYY-MM-DD');
@@ -32,7 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         if (!$fecha_obj || $fecha_obj->format('Y-m-d') !== $fecha_compra) {
             throw new Exception('La fecha proporcionada no es válida');
         }
-
         // Primero, insertamos o actualizamos el insumo
         $insert_insumo_sql = "INSERT INTO insumos (nombre_del_insumo, cantidad) VALUES (?, ?) ON DUPLICATE KEY UPDATE id_insumo = LAST_INSERT_ID(id_insumo), cantidad = cantidad + VALUES(cantidad)";
         $insert_insumo_stmt = $conn->prepare($insert_insumo_sql);
@@ -87,21 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         exit;
     }
 }
-
-// Si ninguna de las condiciones anteriores se cumple, enviar un error
-
-
-// Agregar un nuevo endpoint para obtener los insumos
-// if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {
-//     $sql = "SELECT DISTINCT id_insumo, nombre_del_insumo, cantidad FROM compras";
-//     $result = $conn->query($sql);
-//     $insumos = [];
-//     while ($row = $result->fetch_assoc()) {
-//         $insumos[] = $row;
-//     }
-//     echo json_encode($insumos);
-//     exit;
-// }
 
 if (isset($_GET['eliminar'])) {
     $id_compra = $_GET['eliminar'];
