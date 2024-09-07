@@ -115,5 +115,6 @@ if ($resultado_compras->num_rows > 0) {
 }
 
 
+
 $conn->close();
 ?>

@@ -460,7 +460,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         });
 
         document.addEventListener("DOMContentLoaded", function() {
-            // cargarUsuarios();
+            actualizarTablaCompras();
             cargarProveedores();
         });
 
