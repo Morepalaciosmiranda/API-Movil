@@ -134,8 +134,8 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <label for="id_proveedor">Proveedor:</label>
                                 <select id="id_proveedor" name="id_proveedor" required></select><br><br>
 
-                                <label for="nombre_del_insumo">Nombre del Insumo:</label>
-                                <input type="text" id="nombre_del_insumo" name="nombre_del_insumo" required>
+                                <!-- <label for="nombre_del_insumo">Nombre del Insumo:</label>
+                                <input type="text" id="nombre_del_insumo" name="nombre_del_insumo" required> -->
 
                                 <label for="marca">Marca:</label>
                                 <input type="text" id="marca" name="marca" required><br><br>
@@ -210,7 +210,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <?php
                                 include '../includes/conexion.php';
 
-                                $sql = "SELECT c.id_compra, p.nombre_proveedor, c.nombre_del_insumo, c.fecha_compra, c.total_compra, c.marca, c.cantidad
+                                $sql = "SELECT c.id_compra, p.nombre_proveedor, c.fecha_compra, c.total_compra, c.marca, c.cantidad
                                 FROM compras c
                                 JOIN proveedores p ON c.id_proveedor = p.id_proveedor
                                 LEFT JOIN insumos i ON c.id_insumo = i.id_insumo
@@ -221,7 +221,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                     while ($row = $resultado->fetch_assoc()) {
                                         echo "<tr id='compra-" . $row['id_compra'] . "'>";
                                         echo "<td>" . $row['nombre_proveedor'] . "</td>";
-                                        echo "<td>" . $row['nombre_del_insumo'] . "</td>";
+                                        // echo "<td>" . $row['nombre_del_insumo'] . "</td>";
                                         echo "<td>" . $row['fecha_compra'] . "</td>";
                                         echo "<td>" . $row['total_compra'] . "</td>";
                                         echo "<td>" . $row['marca'] . "</td>";
