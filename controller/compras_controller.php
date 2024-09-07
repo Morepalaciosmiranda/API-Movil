@@ -1,6 +1,27 @@
 <?php
 header('Content-Type: application/json');
 include '../includes/conexion.php';
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProveedores') {
+    try {
+        $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
+        $result = $conn->query($sql);
+
+        if ($result === false) {
+            throw new Exception("Error al ejecutar la consulta: " . $conn->error);
+        }
+
+        $proveedores = [];
+        while ($row = $result->fetch_assoc()) {
+            $proveedores[] = $row;
+        }
+
+        echo json_encode(['success' => true, 'data' => $proveedores]);
+        exit;
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit;
+    }
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['nombre_del_insumo'], $_POST['marca'], $_POST['cantidad'], $_POST['fecha_compra'], $_POST['total_compra'])) {
     try {
@@ -54,27 +75,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
 }
 echo json_encode(['success' => false, 'message' => 'Solicitud no válida o acción no reconocida']);
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProveedores') {
-    try {
-        $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
-        $result = $conn->query($sql);
-
-        if ($result === false) {
-            throw new Exception("Error al ejecutar la consulta: " . $conn->error);
-        }
-
-        $proveedores = [];
-        while ($row = $result->fetch_assoc()) {
-            $proveedores[] = $row;
-        }
-
-        echo json_encode(['success' => true, 'data' => $proveedores]);
-        exit;
-    } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-        exit;
-    }
-}
 
 if (isset($_GET['eliminar'])) {
     $id_compra = $_GET['eliminar'];

@@ -480,6 +480,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                     alert('Error al cargar proveedores. Por favor, revisa la consola para más detalles.');
                 });
         }
+
         function openPermissionsModal(userId) {
             modal.style.display = "block";
         }
