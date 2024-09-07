@@ -25,10 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['nombre_insumo'], $_POST['marca'], $_POST['cantidad'], $_POST['fecha_compra'], $_POST['total_compra'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['nombre_del_insumo'], $_POST['marca'], $_POST['cantidad'], $_POST['fecha_compra'], $_POST['total_compra'])) {
     try {
         $id_proveedor = $_POST['id_proveedor'];
-        $nombre_insumo = $_POST['nombre_insumo'];
+        $nombre_insumo = $_POST['nombre_del_insumo'];
         $marca = $_POST['marca'];
         $cantidad = $_POST['cantidad'];
         $fecha_compra = $_POST['fecha_compra'];
@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         }
 
         // Primero, insertamos o actualizamos el insumo
-        $insert_insumo_sql = "INSERT INTO insumos (nombre_insumo, cantidad) VALUES (?, ?) ON DUPLICATE KEY UPDATE id_insumo = LAST_INSERT_ID(id_insumo), cantidad = cantidad + VALUES(cantidad)";
+        $insert_insumo_sql = "INSERT INTO insumos (nombre_del_insumo, cantidad) VALUES (?, ?) ON DUPLICATE KEY UPDATE id_insumo = LAST_INSERT_ID(id_insumo), cantidad = cantidad + VALUES(cantidad)";
         $insert_insumo_stmt = $conn->prepare($insert_insumo_sql);
         if (!$insert_insumo_stmt) {
             throw new Exception('Error al preparar la consulta de insumo: ' . $conn->error);
@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         $id_insumo = $insert_insumo_stmt->insert_id;
 
         // Ahora insertamos la compra
-        $insert_sql = "INSERT INTO comprass (id_proveedor, id_insumo, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $insert_sql = "INSERT INTO compras (id_proveedor, id_insumo, nombre_del_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_sql);
         $insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra);
         if (!$insert_stmt) {
@@ -79,7 +79,7 @@ echo json_encode(['success' => false, 'message' => 'Solicitud no válida o acci�
 
 // Agregar un nuevo endpoint para obtener los insumos
 if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {
-    $sql = "SELECT DISTINCT id_insumo, nombre_insumo, cantidad FROM comprass";
+    $sql = "SELECT DISTINCT id_insumo, nombre_del_insumo, cantidad FROM compras";
     $result = $conn->query($sql);
     $insumos = [];
     while ($row = $result->fetch_assoc()) {
@@ -96,7 +96,7 @@ if (isset($_GET['eliminar'])) {
 
     try {
         // Primero, obtenemos la información de la compra
-        $select_compra_sql = "SELECT id_insumo, cantidad FROM comprass WHERE id_compra = ?";
+        $select_compra_sql = "SELECT id_insumo, cantidad FROM compras WHERE id_compra = ?";
         $select_compra_stmt = $conn->prepare($select_compra_sql);
         $select_compra_stmt->bind_param("i", $id_compra);
         $select_compra_stmt->execute();
@@ -110,7 +110,7 @@ if (isset($_GET['eliminar'])) {
         $update_insumo_stmt->execute();
 
         // Eliminamos la compra
-        $eliminar_sql = "DELETE FROM comprass WHERE id_compra = ?";
+        $eliminar_sql = "DELETE FROM compras WHERE id_compra = ?";
         $eliminar_stmt = $conn->prepare($eliminar_sql);
         $eliminar_stmt->bind_param("i", $id_compra);
         $eliminar_stmt->execute();
@@ -138,13 +138,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_id_compra'])) {
 
     try {
         // Primero, actualizamos el insumo
-        $update_insumo_sql = "UPDATE insumos SET nombre_insumo = ? WHERE id_insumo = (SELECT id_insumo FROM comprass WHERE id_compra = ?)";
+        $update_insumo_sql = "UPDATE insumos SET nombre_del_insumo = ? WHERE id_insumo = (SELECT id_insumo FROM compras WHERE id_compra = ?)";
         $update_insumo_stmt = $conn->prepare($update_insumo_sql);
         $update_insumo_stmt->bind_param("si", $nombre_insumo, $id_compra);
         $update_insumo_stmt->execute();
 
         // Obtenemos la información de la compra original
-        $select_compra_sql = "SELECT id_insumo, cantidad FROM comprass WHERE id_compra = ?";
+        $select_compra_sql = "SELECT id_insumo, cantidad FROM compras WHERE id_compra = ?";
         $select_compra_stmt = $conn->prepare($select_compra_sql);
         $select_compra_stmt->bind_param("i", $id_compra);
         $select_compra_stmt->execute();
@@ -158,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_id_compra'])) {
         $update_insumo_cantidad_stmt->execute();
 
         // Actualizamos la compra
-        $update_compra_sql = "UPDATE comprass SET id_proveedor = ?, marca = ?, cantidad = ?, fecha_compra = ?, total_compra = ? WHERE id_compra = ?";
+        $update_compra_sql = "UPDATE compras SET id_proveedor = ?, marca = ?, cantidad = ?, fecha_compra = ?, total_compra = ? WHERE id_compra = ?";
         $update_compra_stmt = $conn->prepare($update_compra_sql);
         $update_compra_stmt->bind_param("isidsi", $id_proveedor, $marca, $cantidad, $fecha_compra, $total_compra, $id_compra);
         $update_compra_stmt->execute();
@@ -173,8 +173,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_id_compra'])) {
     exit();
 }
 
-$consulta_compras = "SELECT c.id_compra, p.nombre_proveedor, i.nombre_insumo, c.marca, c.cantidad, c.fecha_compra, c.total_compra 
-FROM comprass c
+$consulta_compras = "SELECT c.id_compra, p.nombre_proveedor, c.nombre_del_insumo, c.marca, c.cantidad, c.fecha_compra, c.total_compra 
+FROM compras c
 JOIN proveedores p ON c.id_proveedor = p.id_proveedor
 JOIN insumos i ON c.id_insumo = i.id_insumo
 ORDER BY c.fecha_compra DESC";

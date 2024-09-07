@@ -24,7 +24,7 @@ if (isset($_GET['eliminar'])) {
     $id_eliminar = $_GET['eliminar'];
 
 
-    $sql_verificar_compras = "SELECT COUNT(*) AS total_compras FROM comprass WHERE id_proveedor = ?";
+    $sql_verificar_compras = "SELECT COUNT(*) AS total_compras FROM compras WHERE id_proveedor = ?";
     $stmt = $conn->prepare($sql_verificar_compras);
 
     if ($stmt) {

@@ -23,23 +23,23 @@ $offset = ($pagina_actual - 1) * $items_por_pagina;
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
 
 // Consulta SQL base para obtener las compras y su información relacionada
-$sql = "SELECT comprass.id_compra, proveedores.nombre_proveedor, comprass.fecha_compra, comprass.total_compra 
-        FROM comprass
-        JOIN proveedores ON comprass.id_proveedor = proveedores.id_proveedor";
+$sql = "SELECT compras.id_compra, proveedores.nombre_proveedor, compras.fecha_compra, compras.total_compra 
+        FROM compras
+        JOIN proveedores ON compras.id_proveedor = proveedores.id_proveedor";
 
 // Capturar el valor de la fecha desde la solicitud GET
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : null;
 
 // Consulta SQL inicial
-$sql = "SELECT * FROM comprass";
+$sql = "SELECT * FROM compras";
 
 // Si se ha seleccionado una fecha, agrega la condición a la consulta
 if (!empty($fecha_filtro)) {
-    $sql .= " WHERE DATE(comprass.fecha_compra) = '$fecha_filtro'";
+    $sql .= " WHERE DATE(compras.fecha_compra) = '$fecha_filtro'";
 }
 
 // Agregar una cláusula ORDER BY antes del LIMIT
-$sql .= " ORDER BY comprass.fecha_compra DESC LIMIT $items_por_pagina OFFSET $offset";
+$sql .= " ORDER BY compras.fecha_compra DESC LIMIT $items_por_pagina OFFSET $offset";
 
 // Ejecutar la consulta
 $result = mysqli_query($conn, $sql);
@@ -50,7 +50,7 @@ if (!$result) {
 }
 
 // Consulta SQL para obtener el número total de compras (con o sin filtro)
-$sql_total = "SELECT COUNT(*) as total FROM comprass";
+$sql_total = "SELECT COUNT(*) as total FROM compras";
 if (!empty($fecha_filtro)) {
     $sql_total .= " WHERE DATE(fecha_compra) = '$fecha_filtro'";
 }
@@ -127,8 +127,8 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <label for="id_proveedor">Proveedor:</label>
                                 <select id="id_proveedor" name="id_proveedor" required></select><br><br>
 
-                                <label for="nombre_insumo">Nombre del Insumo:</label>
-                                <input type="text" id="nombre_insumo" name="nombre_insumo" required>
+                                <label for="nombre_del_insumo">Nombre del Insumo:</label>
+                                <input type="text" id="nombre_del_insumo" name="nombre_del_insumo" required>
 
                                 <label for="marca">Marca:</label>
                                 <input type="text" id="marca" name="marca" required><br><br>
@@ -159,7 +159,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <select id="edit_id_proveedor" name="edit_id_proveedor" required></select><br><br>
 
                                 <label for="edit_nombre_insumo">Nombre del Insumo:</label>
-                                <input type="text" id="edit_nombre_insumo" name="edit_nombre_insumo" required><br><br>
+                                <input type="text" id="nombre_del_insumo" name="nombre_del_insumo" required><br><br>
 
                                 <label for="edit_marca">Marca:</label>
                                 <input type="text" id="edit_marca" name="edit_marca" required><br><br>
@@ -203,8 +203,8 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <?php
                                 include '../includes/conexion.php';
 
-                                $sql = "SELECT c.id_compra, p.nombre_proveedor, c.nombre_insumo, c.fecha_compra, c.total_compra, c.marca, c.cantidad
-                                FROM comprass c
+                                $sql = "SELECT c.id_compra, p.nombre_proveedor, c.nombre_del_insumo, c.fecha_compra, c.total_compra, c.marca, c.cantidad
+                                FROM compras c
                                 JOIN proveedores p ON c.id_proveedor = p.id_proveedor
                                 LEFT JOIN insumos i ON c.id_insumo = i.id_insumo
                                 ORDER BY c.fecha_compra DESC
@@ -215,13 +215,13 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                     while ($row = $resultado->fetch_assoc()) {
                                         echo "<tr id='compra-" . $row['id_compra'] . "'>";
                                         echo "<td>" . $row['nombre_proveedor'] . "</td>";
-                                        echo "<td>" . $row['nombre_insumo'] . "</td>";
+                                        echo "<td>" . $row['nombre_del_insumo'] . "</td>";
                                         echo "<td>" . $row['fecha_compra'] . "</td>";
                                         echo "<td>" . $row['total_compra'] . "</td>";
                                         echo "<td>" . $row['marca'] . "</td>";
                                         echo "<td>" . $row['cantidad'] . "</td>";
                                         echo '<td class="actions">';
-                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . $row['nombre_proveedor'] . '\', \'' . $row['nombre_insumo'] . '\', \'' . $row['fecha_compra'] . '\', ' . $row['total_compra'] . ', \'' . $row['marca'] . '\', ' . $row['cantidad'] . ')"><i class="fa fa-edit"></i></button>';
+                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . $row['nombre_proveedor'] . '\', \'' . $row['nombre_del_insumo'] . '\', \'' . $row['fecha_compra'] . '\', ' . $row['total_compra'] . ', \'' . $row['marca'] . '\', ' . $row['cantidad'] . ')"><i class="fa fa-edit"></i></button>';
                                         echo '<button class="delete-btn" onclick="eliminarCompra(' . $row['id_compra'] . ')"><i class="fa fa-trash"></i></button>';
                                         echo '<button class="details-btn" onclick="abrirModalDetalle(' . $row['id_compra'] . ')"><i class="fa fa-eye"></i></button>';
                                         echo '</td>';
