@@ -16,13 +16,13 @@ $resultado = $conn->query($sql);
 if ($resultado->num_rows > 0) {
     while ($row = $resultado->fetch_assoc()) {
         echo "<tr id='compra-" . $row['id_compra'] . "'>";
-        echo "<td>" . htmlspecialchars($row['nombre_proveedor']) . "</td>";
-        echo "<td>" . htmlspecialchars($row['nombre_insumos']) . "</td>";
-        echo "<td>" . htmlspecialchars($row['fecha_compra']) . "</td>";
-        echo "<td>" . htmlspecialchars($row['total_compra']) . "</td>";
-        echo "<td>" . htmlspecialchars($row['cantidad']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['nombre_proveedor'] ?? '') . "</td>";
+        echo "<td>" . htmlspecialchars($row['nombre_insumos'] ?? '') . "</td>";
+        echo "<td>" . htmlspecialchars($row['fecha_compra'] ?? '') . "</td>";
+        echo "<td>" . htmlspecialchars($row['total_compra'] ?? '') . "</td>";
+        echo "<td>" . htmlspecialchars($row['cantidad'] ?? '') . "</td>";
         echo '<td class="actions">';
-        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . htmlspecialchars($row['nombre_proveedor'], ENT_QUOTES) . '\', \'' . htmlspecialchars($row['nombre_insumos'], ENT_QUOTES) . '\', \'' . $row['fecha_compra'] . '\', ' . $row['total_compra'] . ', ' . $row['cantidad'] . ')"><i class="fa fa-edit"></i></button>';
+        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . htmlspecialchars($row['nombre_proveedor'] ?? '', ENT_QUOTES) . '\', \'' . htmlspecialchars($row['nombre_insumos'] ?? '', ENT_QUOTES) . '\', \'' . ($row['fecha_compra'] ?? '') . '\', ' . ($row['total_compra'] ?? 0) . ', ' . ($row['cantidad'] ?? 0) . ')"><i class="fa fa-edit"></i></button>';
         echo '<button class="delete-btn" onclick="eliminarCompra(' . $row['id_compra'] . ')"><i class="fa fa-trash"></i></button>';
         echo '<button class="details-btn" onclick="abrirModalDetalle(' . $row['id_compra'] . ')"><i class="fa fa-eye"></i></button>';
         echo '</td>';
