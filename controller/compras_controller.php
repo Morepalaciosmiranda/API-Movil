@@ -2,16 +2,6 @@
 header('Content-Type: application/json');
 include '../includes/conexion.php';
 
-$sql = "DESCRIBE compras";
-$result = $conn->query($sql);
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        echo "Campo: " . $row['Field'] . ", Tipo: " . $row['Type'] . "<br>";
-    }
-} else {
-    echo "Error al obtener la estructura de la tabla: " . $conn->error;
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProveedores') {
     try {
         $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
@@ -43,14 +33,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         $fecha_compra = $_POST['fecha_compra'];
         $total_compra = $_POST['total_compra'];
 
-        // Aquí debería estar la consulta de inserción
-        $insert_sql = "INSERT INTO compras (id_proveedor, nombre_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?)";
+        // Validación de la fecha
+        if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $fecha_compra)) {
+            throw new Exception('El formato de la fecha debe ser YYYY-MM-DD');
+        }
+
+        // Convertir la fecha a un objeto DateTime para asegurar que es válida
+        $fecha_obj = DateTime::createFromFormat('Y-m-d', $fecha_compra);
+        if (!$fecha_obj || $fecha_obj->format('Y-m-d') !== $fecha_compra) {
+            throw new Exception('La fecha proporcionada no es válida');
+        }
+
+        // Primero, insertamos o actualizamos el insumo
+        $insert_insumo_sql = "INSERT INTO insumos (nombre_insumo, cantidad) VALUES (?, ?) ON DUPLICATE KEY UPDATE id_insumo = LAST_INSERT_ID(id_insumo), cantidad = cantidad + VALUES(cantidad)";
+        $insert_insumo_stmt = $conn->prepare($insert_insumo_sql);
+        if (!$insert_insumo_stmt) {
+            throw new Exception('Error al preparar la consulta de insumo: ' . $conn->error);
+        }
+        $insert_insumo_stmt->bind_param("si", $nombre_insumo, $cantidad);
+        $insert_insumo_stmt->execute();
+        $id_insumo = $insert_insumo_stmt->insert_id;
+
+        // Ahora insertamos la compra
+        $insert_sql = "INSERT INTO compras (id_proveedor, id_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_sql);
         if (!$insert_stmt) {
             throw new Exception('Error al preparar la consulta de inserción: ' . $conn->error);
         }
 
-        if (!$insert_stmt->bind_param("issids", $id_proveedor, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
+        if (!$insert_stmt->bind_param("iisids", $id_proveedor, $id_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
             throw new Exception('Error al enlazar parámetros: ' . $insert_stmt->error);
         }
 
