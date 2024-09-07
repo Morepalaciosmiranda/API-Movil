@@ -10,6 +10,22 @@ function ejecutarConsulta($conn, $sql) {
     }
 }
 
+// Función para verificar si existe una clave foránea
+function existeClaveForanea($conn, $tabla, $nombreClave) {
+    $sql = "SELECT * FROM information_schema.TABLE_CONSTRAINTS 
+            WHERE CONSTRAINT_SCHEMA = DATABASE() 
+            AND CONSTRAINT_NAME = '$nombreClave' 
+            AND CONSTRAINT_TYPE = 'FOREIGN KEY' 
+            AND TABLE_NAME = '$tabla'";
+    $result = $conn->query($sql);
+    return $result->num_rows > 0;
+}
+
+// Eliminar la clave foránea si existe
+if (existeClaveForanea($conn, 'detalle_compras', 'detalle_compras_ibfk_1')) {
+    ejecutarConsulta($conn, "ALTER TABLE detalle_compras DROP FOREIGN KEY detalle_compras_ibfk_1");
+}
+
 // SQL para eliminar la tabla si existe
 $sql_drop = "DROP TABLE IF EXISTS compras";
 ejecutarConsulta($conn, $sql_drop);
@@ -28,7 +44,13 @@ $sql_create = "CREATE TABLE compras (
 )";
 ejecutarConsulta($conn, $sql_create);
 
-echo "La tabla 'compras' ha sido recreada correctamente.";
+// Volver a añadir la clave foránea
+$sql_add_fk = "ALTER TABLE detalle_compras 
+               ADD CONSTRAINT detalle_compras_ibfk_1 
+               FOREIGN KEY (id_compra) REFERENCES compras(id_compra)";
+ejecutarConsulta($conn, $sql_add_fk);
+
+echo "La tabla 'compras' ha sido recreada correctamente y la clave foránea ha sido restaurada.";
 
 $conn->close();
 ?>
