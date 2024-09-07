@@ -210,7 +210,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 ORDER BY c.fecha_compra DESC
                                 LIMIT $items_por_pagina OFFSET $offset";
                                 $resultado = $conn->query($sql);
-                                echo($resultado);
                                 if ($resultado->num_rows > 0) {
                                     while ($row = $resultado->fetch_assoc()) {
                                         echo "<tr id='compra-" . $row['id_compra'] . "'>";
