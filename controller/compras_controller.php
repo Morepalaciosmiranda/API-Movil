@@ -1,6 +1,11 @@
 <?php
 header('Content-Type: application/json');
-include '../includes/conexion.php';
+include './includes/conexion.php';
+echo "Base de datos actual: " . $conn->query("SELECT DATABASE()")->fetch_array()[0] . "\n";
+$result = $conn->query("DESCRIBE compras");
+while ($row = $result->fetch_assoc()) {
+    echo $row['Field'] . " - " . $row['Type'] . "\n";
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProveedores') {
     try {
@@ -60,10 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         $insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra);
         if (!$insert_stmt) {
             throw new Exception('Error al preparar la consulta de inserción: ' . $conn->error);
-        }
-
-        if (!$insert_stmt->bind_param("iisids", $id_proveedor, $id_insumo, $marca, $cantidad, $fecha_compra, $total_compra)) {
-            throw new Exception('Error al enlazar parámetros: ' . $insert_stmt->error);
         }
 
         if (!$insert_stmt->execute()) {
