@@ -128,7 +128,7 @@ if (isset($_GET['eliminar'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_id_compra'])) {
     $id_compra = $_POST['edit_id_compra'];
     $id_proveedor = $_POST['edit_id_proveedor'];
-    $nombre_insumo = $_POST['edit_nombre_insumo'];
+    $nombre_insumo = $_POST['edit_nombre_del_insumo'];
     $marca = $_POST['edit_marca'];
     $cantidad = $_POST['edit_cantidad'];
     $fecha_compra = $_POST['edit_fecha_compra'];

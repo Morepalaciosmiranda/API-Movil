@@ -158,7 +158,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 <label for="edit_id_proveedor">Proveedor:</label>
                                 <select id="edit_id_proveedor" name="edit_id_proveedor" required></select><br><br>
 
-                                <label for="edit_nombre_insumo">Nombre del Insumo:</label>
+                                <label for="edit_nombre_del_insumo">Nombre del Insumo:</label>
                                 <input type="text" id="nombre_del_insumo" name="nombre_del_insumo" required><br><br>
 
                                 <label for="edit_marca">Marca:</label>
