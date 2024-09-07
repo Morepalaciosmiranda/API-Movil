@@ -11,6 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         $fecha_compra = $_POST['fecha_compra'];
         $total_compra = $_POST['total_compra'];
 
+        // Reemplaza los echos con esto:
+    error_log("Valores a insertar: id_proveedor: $id_proveedor, nombre_insumo: $nombre_insumo, marca: $marca, cantidad: $cantidad, fecha_compra: $fecha_compra, total_compra: $total_compra");
         // Imprime los valores para verificar
         // echo "Valores a insertar: \n";
         // echo "id_proveedor: $id_proveedor\n";
@@ -62,6 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
     }
     exit;
 }
+echo json_encode(['success' => false, 'message' => 'Solicitud no válida o acción no reconocida']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProveedores') {
     try {
@@ -86,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 }
 
 // Si ninguna de las condiciones anteriores se cumple, enviar un error
-echo json_encode(['success' => false, 'message' => 'Solicitud no válida o acción no reconocida']);
+
 
 // Agregar un nuevo endpoint para obtener los insumos
 // if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {
