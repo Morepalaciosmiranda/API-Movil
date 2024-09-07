@@ -199,12 +199,13 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 FROM compras c
                                 JOIN usuarios u ON c.id_usuario = u.id_usuario
                                 JOIN proveedores p ON c.id_proveedor = p.id_proveedor
+                                ORDER BY c.fecha_compra DESC
                                 LIMIT $items_por_pagina OFFSET $offset";
                                 $resultado = $conn->query($sql);
 
                                 if ($resultado->num_rows > 0) {
                                     while ($row = $resultado->fetch_assoc()) {
-                                        // echo "<tr id='compra-" . $row['id_compra'] . "'>";
+                                        echo "<tr id='compra-" . $row['id_compra'] . "'>";
                                         echo "<td>" . $row['nombre_usuario'] . "</td>";
                                         echo "<td>" . $row['nombre_proveedor'] . "</td>";
                                         echo "<td>" . $row['nombre_insumos'] . "</td>";
@@ -212,7 +213,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                         echo "<td>" . $row['total_compra'] . "</td>";
                                         echo "<td>" . $row['cantidad'] . "</td>";
                                         echo '<td class="actions">';
-                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . $row['nombre_usuario'] . '\', \'' . $row['nombre_proveedor'] . '\', \'' . $row['fecha_compra'] . '\', ' . $row['subtotal'] . ', ' . $row['total_compra'] . ')"><i class="fa fa-edit"></i></button>';
+                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . $row['nombre_usuario'] . '\', \'' . $row['nombre_proveedor'] . '\', \'' . $row['nombre_insumos'] . '\', \'' . $row['fecha_compra'] . '\', ' . $row['total_compra'] . ', ' . $row['cantidad'] . ')"><i class="fa fa-edit"></i></button>';
                                         echo '<button class="delete-btn" onclick="eliminarCompra(' . $row['id_compra'] . ')"><i class="fa fa-trash"></i></button>';
                                         echo '<button class="details-btn" onclick="abrirModalDetalle(' . $row['id_compra'] . ')"><i class="fa fa-eye"></i></button>';
                                         echo '</td>';
@@ -289,17 +290,18 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             }
         };
 
-        function abrirModalEditar(idCompra, idUsuario, idProveedor, fechaCompra, subtotal, totalCompra) {
+        function abrirModalEditar(idCompra, nombreUsuario, nombreProveedor, nombreInsumos, fechaCompra, totalCompra, cantidad) {
             document.getElementById('edit_id_compra').value = idCompra;
-            document.getElementById('edit_id_usuario').value = idUsuario;
-            document.getElementById('edit_id_proveedor').value = idProveedor;
+            document.getElementById('edit_nombre_insumos').value = nombreInsumos;
             document.getElementById('edit_fecha_compra').value = fechaCompra;
-            document.getElementById('edit_subtotal').value = subtotal;
             document.getElementById('edit_total_compra').value = totalCompra;
+            document.getElementById('edit_cantidad').value = cantidad;
+
+            // Cargar y seleccionar el proveedor correcto
+            cargarProveedoresEditar(nombreProveedor);
+
             document.getElementById('modalEditarCompra').style.display = 'block';
             document.getElementById('modalEditarCompra').classList.add('show');
-            // cargarUsuariosEditar(idUsuario);
-            cargarProveedoresEditar(idProveedor);
         }
 
         function abrirModalDetalle(idCompra) {
@@ -376,7 +378,8 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 .then(data => {
                     if (data.success) {
                         alert(data.message); // o usa SweetAlert2
-                        location.reload(); // Recarga la página para mostrar la nueva compra
+                        actualizarTablaCompras(); // Actualiza la tabla en lugar de recargar la página
+                        document.getElementById('modalAgregarCompra').style.display = 'none';
                     } else {
                         alert('Error: ' + data.message);
                     }
@@ -447,23 +450,28 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         //         .catch(error => console.error('Error:', error));
         // }
 
-        function cargarProveedores() {
+        function cargarProveedoresEditar(proveedorSeleccionado) {
             fetch('../controller/proveedores_controller.php')
                 .then(response => response.json())
                 .then(data => {
-                    const select = document.getElementById('id_proveedor');
-                    if (select) { // Verifica si el elemento existe
+                    const select = document.getElementById('edit_id_proveedor');
+                    if (select) {
                         select.innerHTML = '';
                         data.forEach(proveedor => {
                             const option = document.createElement('option');
                             option.value = proveedor.id_proveedor;
                             option.textContent = proveedor.nombre_proveedor;
+                            if (proveedor.nombre_proveedor === proveedorSeleccionado) {
+                                option.selected = true;
+                            }
                             select.appendChild(option);
                         });
                     }
                 })
                 .catch(error => console.error('Error:', error));
         }
+
+
 
         // function cargarUsuariosEditar(idUsuarioSeleccionado) {
         //     fetch('../controller/usuarios_controller.php')
