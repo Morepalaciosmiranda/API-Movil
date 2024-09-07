@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include './includes/conexion.php';
+include '../includes/conexion.php';
 echo "Base de datos actual: " . $conn->query("SELECT DATABASE()")->fetch_array()[0] . "\n";
 $result = $conn->query("DESCRIBE compras");
 while ($row = $result->fetch_assoc()) {
