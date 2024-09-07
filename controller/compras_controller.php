@@ -1,80 +1,59 @@
 <?php
-header('Content-Type: application/json');
 include '../includes/conexion.php';
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProveedores') {
-    try {
-        $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
-        $result = $conn->query($sql);
 
-        if ($result === false) {
-            throw new Exception("Error al ejecutar la consulta: " . $conn->error);
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_usuario'], $_POST['id_proveedor'], $_POST['fecha_compra'], $_POST['subtotal'], $_POST['total_compra'], $_POST['cantidad'], $_POST['valor_unitario'])) {
+    $id_usuario = $_POST['id_usuario'];
+    $id_proveedor = $_POST['id_proveedor'];
+    $fecha_compra = $_POST['fecha_compra'];
+    $subtotal = $_POST['subtotal'];
+    $total_compra = $_POST['total_compra'];
+
+    $conn->begin_transaction();
+
+    try {
+        $insert_compra_sql = "INSERT INTO compras (id_usuario, id_proveedor, fecha_compra, subtotal, total_compra) VALUES (?, ?, ?, ?, ?)";
+        $stmt_compra = $conn->prepare($insert_compra_sql);
+        if (!$stmt_compra) {
+            throw new Exception("Error al preparar la consulta de inserción en compras: " . $conn->error);
         }
 
-        $proveedores = [];
-        while ($row = $result->fetch_assoc()) {
-            $proveedores[] = $row;
+        if (!$stmt_compra->bind_param("iissd", $id_usuario, $id_proveedor, $fecha_compra, $subtotal, $total_compra)) {
+            throw new Exception("Error al enlazar parámetros: " . $stmt_compra->error);
         }
 
-        echo json_encode(['success' => true, 'data' => $proveedores]);
-        exit;
-    } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-        exit;
-    }
-}
+        if (!$stmt_compra->execute()) {
+            throw new Exception("Error al ejecutar la consulta de inserción en compras: " . $stmt_compra->error);
+        }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['nombre_del_insumo'], $_POST['marca'], $_POST['cantidad'], $_POST['fecha_compra'], $_POST['total_compra'])) {
-    try {
-        $id_proveedor = $_POST['id_proveedor'];
-        $nombre_insumo = $_POST['nombre_del_insumo'];
-        $marca = $_POST['marca'];
+        $id_compra = $conn->insert_id;
+
         $cantidad = $_POST['cantidad'];
-        $fecha_compra = $_POST['fecha_compra'];
-        $total_compra = $_POST['total_compra'];
+        $valor_unitario = $_POST['valor_unitario'];
 
-        // Validación de la fecha
-        if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $fecha_compra)) {
-            throw new Exception('El formato de la fecha debe ser YYYY-MM-DD');
-        }
-
-        // Convertir la fecha a un objeto DateTime para asegurar que es válida
-        $fecha_obj = DateTime::createFromFormat('Y-m-d', $fecha_compra);
-        if (!$fecha_obj || $fecha_obj->format('Y-m-d') !== $fecha_compra) {
-            throw new Exception('La fecha proporcionada no es válida');
-        }
-        // Primero, insertamos o actualizamos el insumo
-        $insert_insumo_sql = "INSERT INTO insumos (nombre_del_insumo, cantidad) VALUES (?, ?) ON DUPLICATE KEY UPDATE id_insumo = LAST_INSERT_ID(id_insumo), cantidad = cantidad + VALUES(cantidad)";
-        $insert_insumo_stmt = $conn->prepare($insert_insumo_sql);
-        if (!$insert_insumo_stmt) {
-            throw new Exception('Error al preparar la consulta de insumo: ' . $conn->error);
-        }
-        $insert_insumo_stmt->bind_param("si", $nombre_insumo, $cantidad);
-        if (!$insert_insumo_stmt->execute()) {
-            throw new Exception('Error al ejecutar la consulta de insumo: ' . $insert_insumo_stmt->error);
-        }
-        $id_insumo = $insert_insumo_stmt->insert_id;
-
-        echo "ID del insumo insertado/actualizado: $id_insumo\n";
-
-        // Ahora insertamos la compra
-        $insert_sql = "INSERT INTO compras (id_proveedor, id_insumo, nombre_del_insumo, marca, cantidad, fecha_compra, total_compra) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $insert_stmt = $conn->prepare($insert_sql);
-        if (!$insert_stmt) {
-            throw new Exception('Error al preparar la consulta de inserción: ' . $conn->error);
-        }
-        $insert_stmt->bind_param("iissids", $id_proveedor, $id_insumo, $nombre_insumo, $marca, $cantidad, $fecha_compra, $total_compra);
-        if (!$insert_stmt->execute()) {
-            throw new Exception('Error al ejecutar la consulta de inserción: ' . $insert_stmt->error);
+        $insert_detalle_sql = "INSERT INTO detalle_compras (id_compra, cantidad, valor_unitario) VALUES (?, ?, ?)";
+        $stmt_detalle = $conn->prepare($insert_detalle_sql);
+        if (!$stmt_detalle) {
+            throw new Exception("Error al preparar la consulta de inserción en detalle_compras: " . $conn->error);
         }
 
-        echo json_encode(['success' => true, 'message' => 'Compra agregada exitosamente']);
+        if (!$stmt_detalle->bind_param("iid", $id_compra, $cantidad, $valor_unitario)) {
+            throw new Exception("Error al enlazar parámetros: " . $stmt_detalle->error);
+        }
+
+        if (!$stmt_detalle->execute()) {
+            throw new Exception("Error al ejecutar la consulta de inserción en detalle_compras: " . $stmt_detalle->error);
+        }
+
+        $conn->commit();
+
+        echo json_encode(['success' => true, 'message' => 'Compra agregada exitosamente.']);
+        exit();
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        $conn->rollback();
+        echo json_encode(['success' => false, 'message' => "Error al procesar la compra: " . $e->getMessage()]);
+        exit();
     }
-    exit;
 }
-echo json_encode(['success' => false, 'message' => 'Solicitud no válida o acción no reconocida']);
-
 
 if (isset($_GET['eliminar'])) {
     $id_compra = $_GET['eliminar'];
@@ -82,106 +61,90 @@ if (isset($_GET['eliminar'])) {
     $conn->begin_transaction();
 
     try {
-        // Primero, obtenemos la información de la compra
-        $select_compra_sql = "SELECT id_insumo, cantidad FROM compras WHERE id_compra = ?";
-        $select_compra_stmt = $conn->prepare($select_compra_sql);
-        $select_compra_stmt->bind_param("i", $id_compra);
-        $select_compra_stmt->execute();
-        $result = $select_compra_stmt->get_result();
-        $compra = $result->fetch_assoc();
+        $eliminar_detalles_sql = "DELETE FROM detalle_compras WHERE id_compra = ?";
+        $eliminar_detalles_stmt = $conn->prepare($eliminar_detalles_sql);
+        if (!$eliminar_detalles_stmt) {
+            throw new Exception("Error al preparar la consulta de eliminación de detalles: " . $conn->error);
+        }
+        if (!$eliminar_detalles_stmt->bind_param("i", $id_compra)) {
+            throw new Exception("Error al enlazar parámetros: " . $eliminar_detalles_stmt->error);
+        }
+        if (!$eliminar_detalles_stmt->execute()) {
+            throw new Exception("Error al ejecutar la consulta de eliminación de detalles: " . $eliminar_detalles_stmt->error);
+        }
+        $eliminar_detalles_stmt->close();
 
-        // Actualizamos la cantidad en la tabla insumos
-        $update_insumo_sql = "UPDATE insumos SET cantidad = cantidad - ? WHERE id_insumo = ?";
-        $update_insumo_stmt = $conn->prepare($update_insumo_sql);
-        $update_insumo_stmt->bind_param("ii", $compra['cantidad'], $compra['id_insumo']);
-        $update_insumo_stmt->execute();
-
-        // Eliminamos la compra
         $eliminar_sql = "DELETE FROM compras WHERE id_compra = ?";
         $eliminar_stmt = $conn->prepare($eliminar_sql);
-        $eliminar_stmt->bind_param("i", $id_compra);
-        $eliminar_stmt->execute();
+        if (!$eliminar_stmt) {
+            throw new Exception("Error al preparar la consulta de eliminación: " . $conn->error);
+        }
+        if (!$eliminar_stmt->bind_param("i", $id_compra)) {
+            throw new Exception("Error al enlazar parámetros: " . $eliminar_stmt->error);
+        }
+        if (!$eliminar_stmt->execute()) {
+            throw new Exception("Error al ejecutar la consulta de eliminación: " . $eliminar_stmt->error);
+        }
+        $eliminar_stmt->close();
 
         $conn->commit();
 
         echo json_encode(['success' => true, 'message' => 'Compra eliminada exitosamente.']);
+        exit();
     } catch (Exception $e) {
         $conn->rollback();
         echo json_encode(['success' => false, 'message' => "Error al eliminar la compra: " . $e->getMessage()]);
+        exit();
     }
-    exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_id_compra'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_id_compra'], $_POST['edit_id_usuario'], $_POST['edit_id_proveedor'], $_POST['edit_fecha_compra'], $_POST['edit_subtotal'], $_POST['edit_total_compra'])) {
     $id_compra = $_POST['edit_id_compra'];
+    $id_usuario = $_POST['edit_id_usuario'];
     $id_proveedor = $_POST['edit_id_proveedor'];
-    $nombre_insumo = $_POST['edit_nombre_del_insumo'];
-    $marca = $_POST['edit_marca'];
-    $cantidad = $_POST['edit_cantidad'];
     $fecha_compra = $_POST['edit_fecha_compra'];
+    $subtotal = $_POST['edit_subtotal'];
     $total_compra = $_POST['edit_total_compra'];
 
     $conn->begin_transaction();
 
     try {
-        // Primero, actualizamos el insumo
-        $update_insumo_sql = "UPDATE insumos SET nombre_del_insumo = ? WHERE id_insumo = (SELECT id_insumo FROM compras WHERE id_compra = ?)";
-        $update_insumo_stmt = $conn->prepare($update_insumo_sql);
-        $update_insumo_stmt->bind_param("si", $nombre_insumo, $id_compra);
-        $update_insumo_stmt->execute();
+        $update_compra_sql = "UPDATE compras SET id_usuario = ?, id_proveedor = ?, fecha_compra = ?, subtotal = ?, total_compra = ? WHERE id_compra = ?";
+        $stmt_compra = $conn->prepare($update_compra_sql);
+        if (!$stmt_compra) {
+            throw new Exception("Error al preparar la consulta de actualización en compras: " . $conn->error);
+        }
 
-        // Obtenemos la información de la compra original
-        $select_compra_sql = "SELECT id_insumo, cantidad FROM compras WHERE id_compra = ?";
-        $select_compra_stmt = $conn->prepare($select_compra_sql);
-        $select_compra_stmt->bind_param("i", $id_compra);
-        $select_compra_stmt->execute();
-        $result = $select_compra_stmt->get_result();
-        $compra_original = $result->fetch_assoc();
+        if (!$stmt_compra->bind_param("iissdi", $id_usuario, $id_proveedor, $fecha_compra, $subtotal, $total_compra, $id_compra)) {
+            throw new Exception("Error al enlazar parámetros: " . $stmt_compra->error);
+        }
 
-        // Actualizamos la cantidad en la tabla insumos (restamos la cantidad original y sumamos la nueva)
-        $update_insumo_cantidad_sql = "UPDATE insumos SET cantidad = cantidad - ? + ? WHERE id_insumo = ?";
-        $update_insumo_cantidad_stmt = $conn->prepare($update_insumo_cantidad_sql);
-        $update_insumo_cantidad_stmt->bind_param("iii", $compra_original['cantidad'], $cantidad, $compra_original['id_insumo']);
-        $update_insumo_cantidad_stmt->execute();
-
-        // Actualizamos la compra
-        $update_compra_sql = "UPDATE compras SET id_proveedor = ?, marca = ?, cantidad = ?, fecha_compra = ?, total_compra = ? WHERE id_compra = ?";
-        $update_compra_stmt = $conn->prepare($update_compra_sql);
-        $update_compra_stmt->bind_param("isidsi", $id_proveedor, $marca, $cantidad, $fecha_compra, $total_compra, $id_compra);
-        $update_compra_stmt->execute();
+        if (!$stmt_compra->execute()) {
+            throw new Exception("Error al ejecutar la consulta de actualización en compras: " . $stmt_compra->error);
+        }
 
         $conn->commit();
 
         echo json_encode(['success' => true, 'message' => 'Compra actualizada exitosamente.']);
+        exit();
     } catch (Exception $e) {
         $conn->rollback();
         echo json_encode(['success' => false, 'message' => "Error al actualizar la compra: " . $e->getMessage()]);
+        exit();
     }
-    exit();
 }
 
-$consulta_compras = "SELECT c.id_compra, p.nombre_proveedor, c.nombre_del_insumo, c.marca, c.cantidad, c.fecha_compra, c.total_compra 
-FROM compras c
-JOIN proveedores p ON c.id_proveedor = p.id_proveedor
-ORDER BY c.fecha_compra DESC";
+$consulta_compras = "SELECT * FROM compras";
 $resultado_compras = $conn->query($consulta_compras);
 
-if ($resultado_compras === false) {
-    echo json_encode(['success' => false, 'message' => 'Error en la consulta: ' . $conn->error]);
-    exit;
+if ($resultado_compras->num_rows > 0) {
+    $compras = array();
+    while ($row = $resultado_compras->fetch_assoc()) {
+        $compras[] = $row;
+    }
+} else {
+    $compras = array();
 }
-
-$compras = array();
-while ($row = $resultado_compras->fetch_assoc()) {
-    $compras[] = $row;
-}
-
-echo json_encode([
-    'success' => true,
-    'compras' => $compras,
-    'num_rows' => $resultado_compras->num_rows,
-    'query' => $consulta_compras
-]);
-exit;
 
 $conn->close();
+?>
