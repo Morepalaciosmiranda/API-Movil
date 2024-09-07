@@ -21,6 +21,9 @@ function existeClaveForanea($conn, $tabla, $nombreClave) {
     return $result->num_rows > 0;
 }
 
+// Desactivar verificación de claves foráneas
+ejecutarConsulta($conn, "SET FOREIGN_KEY_CHECKS = 0");
+
 // Eliminar la clave foránea en la tabla 'insumos' si existe
 if (existeClaveForanea($conn, 'insumos', 'fk_insumos_compras')) {
     ejecutarConsulta($conn, "ALTER TABLE insumos DROP FOREIGN KEY fk_insumos_compras");
@@ -30,6 +33,10 @@ if (existeClaveForanea($conn, 'insumos', 'fk_insumos_compras')) {
 if (existeClaveForanea($conn, 'detalle_compras', 'detalle_compras_ibfk_1')) {
     ejecutarConsulta($conn, "ALTER TABLE detalle_compras DROP FOREIGN KEY detalle_compras_ibfk_1");
 }
+
+// Guardar datos existentes de la tabla compras
+$result = $conn->query("SELECT * FROM compras");
+$compras_data = $result->fetch_all(MYSQLI_ASSOC);
 
 // SQL para eliminar la tabla si existe
 $sql_drop = "DROP TABLE IF EXISTS compras";
@@ -49,6 +56,13 @@ $sql_create = "CREATE TABLE compras (
 )";
 ejecutarConsulta($conn, $sql_create);
 
+// Reinsertar los datos guardados
+foreach ($compras_data as $row) {
+    $sql_insert = "INSERT INTO compras (id_compra, id_proveedor, id_insumo, nombre_insumo, marca, cantidad, fecha_compra, total_compra) 
+                   VALUES ({$row['id_compra']}, {$row['id_proveedor']}, {$row['id_insumo']}, '{$row['nombre_insumo']}', '{$row['marca']}', {$row['cantidad']}, '{$row['fecha_compra']}', {$row['total_compra']})";
+    ejecutarConsulta($conn, $sql_insert);
+}
+
 // Volver a añadir la clave foránea en la tabla 'detalle_compras'
 $sql_add_fk_detalle = "ALTER TABLE detalle_compras 
                        ADD CONSTRAINT detalle_compras_ibfk_1 
@@ -61,7 +75,10 @@ $sql_add_fk_insumos = "ALTER TABLE insumos
                        FOREIGN KEY (id_compra) REFERENCES compras(id_compra)";
 ejecutarConsulta($conn, $sql_add_fk_insumos);
 
-echo "La tabla 'compras' ha sido recreada correctamente y las claves foráneas han sido restauradas.";
+// Reactivar verificación de claves foráneas
+ejecutarConsulta($conn, "SET FOREIGN_KEY_CHECKS = 1");
+
+echo "La tabla 'compras' ha sido recreada correctamente, los datos han sido reinsertados y las claves foráneas han sido restauradas.";
 
 $conn->close();
 ?>
