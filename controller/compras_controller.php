@@ -1,36 +1,6 @@
 <?php
 header('Content-Type: application/json');
 include '../includes/conexion.php';
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Añade esto para ver todos los datos POST recibidos
-echo "Datos POST recibidos: ";
-print_r($_POST);
-echo "\n";
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProveedores') {
-    try {
-        $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
-        $result = $conn->query($sql);
-
-        if ($result === false) {
-            throw new Exception("Error al ejecutar la consulta: " . $conn->error);
-        }
-
-        $proveedores = [];
-        while ($row = $result->fetch_assoc()) {
-            $proveedores[] = $row;
-        }
-
-        echo json_encode(['success' => true, 'data' => $proveedores]);
-        exit;
-    } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-        exit;
-    }
-}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST['nombre_del_insumo'], $_POST['marca'], $_POST['cantidad'], $_POST['fecha_compra'], $_POST['total_compra'])) {
     try {
@@ -91,6 +61,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
     exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProveedores') {
+    try {
+        $sql = "SELECT id_proveedor, nombre_proveedor FROM proveedores";
+        $result = $conn->query($sql);
+
+        if ($result === false) {
+            throw new Exception("Error al ejecutar la consulta: " . $conn->error);
+        }
+
+        $proveedores = [];
+        while ($row = $result->fetch_assoc()) {
+            $proveedores[] = $row;
+        }
+
+        echo json_encode(['success' => true, 'data' => $proveedores]);
+        exit;
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit;
+    }
 }
 
 // Si ninguna de las condiciones anteriores se cumple, enviar un error
