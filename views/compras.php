@@ -23,23 +23,23 @@ $offset = ($pagina_actual - 1) * $items_por_pagina;
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
 
 // Consulta SQL base para obtener las compras y su información relacionada
-$sql = "SELECT compras.id_compra, proveedores.nombre_proveedor, compras.fecha_compra, compras.total_compra 
-        FROM compras
-        JOIN proveedores ON compras.id_proveedor = proveedores.id_proveedor";
+$sql = "SELECT comprass.id_compra, proveedores.nombre_proveedor, comprass.fecha_compra, comprass.total_compra 
+        FROM comprass
+        JOIN proveedores ON comprass.id_proveedor = proveedores.id_proveedor";
 
 // Capturar el valor de la fecha desde la solicitud GET
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : null;
 
 // Consulta SQL inicial
-$sql = "SELECT * FROM compras";
+$sql = "SELECT * FROM comprass";
 
 // Si se ha seleccionado una fecha, agrega la condición a la consulta
 if (!empty($fecha_filtro)) {
-    $sql .= " WHERE DATE(compras.fecha_compra) = '$fecha_filtro'";
+    $sql .= " WHERE DATE(comprass.fecha_compra) = '$fecha_filtro'";
 }
 
 // Agregar una cláusula ORDER BY antes del LIMIT
-$sql .= " ORDER BY compras.fecha_compra DESC LIMIT $items_por_pagina OFFSET $offset";
+$sql .= " ORDER BY comprass.fecha_compra DESC LIMIT $items_por_pagina OFFSET $offset";
 
 // Ejecutar la consulta
 $result = mysqli_query($conn, $sql);
@@ -50,7 +50,7 @@ if (!$result) {
 }
 
 // Consulta SQL para obtener el número total de compras (con o sin filtro)
-$sql_total = "SELECT COUNT(*) as total FROM compras";
+$sql_total = "SELECT COUNT(*) as total FROM comprass";
 if (!empty($fecha_filtro)) {
     $sql_total .= " WHERE DATE(fecha_compra) = '$fecha_filtro'";
 }
@@ -204,7 +204,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                 include '../includes/conexion.php';
 
                                 $sql = "SELECT c.id_compra, p.nombre_proveedor, c.nombre_insumo, c.fecha_compra, c.total_compra, c.marca, c.cantidad
-                                FROM compras c
+                                FROM comprass c
                                 JOIN proveedores p ON c.id_proveedor = p.id_proveedor
                                 LEFT JOIN insumos i ON c.id_insumo = i.id_insumo
                                 ORDER BY c.fecha_compra DESC
