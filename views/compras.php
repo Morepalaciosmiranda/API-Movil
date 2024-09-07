@@ -590,7 +590,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../js/validaciones.js"></script>
+    <!-- <script src="../js/validaciones.js"></script> -->
 </body>
 
 </html>
