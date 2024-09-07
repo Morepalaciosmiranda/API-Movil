@@ -23,16 +23,16 @@ $offset = ($pagina_actual - 1) * $items_por_pagina;
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
 
 // Consulta SQL base para obtener las compras y su información relacionada
-$sql = "SELECT compras.id_compra, 
-               proveedores.nombre_proveedor, 
-               compras.nombre_del_insumo, 
-               compras.fecha_compra, 
-               compras.total_compra,
-               compras.marca,
-               compras.cantidad
-        FROM compras
-        JOIN proveedores ON compras.id_proveedor = proveedores.id_proveedor
-        ORDER BY compras.fecha_compra DESC";
+// $sql = "SELECT compras.id_compra, 
+//                proveedores.nombre_proveedor, 
+//                compras.nombre_del_insumo, 
+//                compras.fecha_compra, 
+//                compras.total_compra,
+//                compras.marca,
+//                compras.cantidad
+//         FROM compras
+//         JOIN proveedores ON compras.id_proveedor = proveedores.id_proveedor
+//         ORDER BY compras.fecha_compra DESC";
 
 // Capturar el valor de la fecha desde la solicitud GET
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : null;
@@ -452,33 +452,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             });
         });
 
-
-
-        // function cargarUsuarios() {
-        //     fetch('../controller/usuarios_controller.php')
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             const select = document.getElementById('id_usuario');
-        //             if (select) {
-        //                 select.innerHTML = '';
-        //                 data.forEach(usuario => {
-        //                     const option = document.createElement('option');
-        //                     option.value = usuario.id_usuario;
-        //                     option.textContent = usuario.nombre_usuario;
-        //                     select.appendChild(option);
-        //                 });
-        //             } else {
-        //                 console.error('Elemento con id "id_usuario" no encontrado');
-        //             }
-        //         })
-        //         .catch(error => console.error('Error:', error));
-        // }
-
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     cargarProveedores();
-        // });
-
-
         function cargarProveedores() {
             fetch('../controller/compras_controller.php?action=getProveedores')
                 .then(response => {
@@ -507,27 +480,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                     alert('Error al cargar proveedores. Por favor, revisa la consola para más detalles.');
                 });
         }
-
-        // function cargarUsuariosEditar(idUsuarioSeleccionado) {
-        //     fetch('../controller/usuarios_controller.php')
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             const select = document.getElementById('edit_id_usuario');
-        //             select.innerHTML = '';
-        //             data.forEach(usuario => {
-        //                 const option = document.createElement('option');
-        //                 option.value = usuario.id_usuario;
-        //                 option.textContent = usuario.nombre_usuario;
-        //                 if (usuario.id_usuario == idUsuarioSeleccionado) {
-        //                     option.selected = true;
-        //                 }
-        //                 select.appendChild(option);
-        //             });
-        //         })
-        //         .catch(error => console.error('Error:', error));
-        // }
-
-
         function openPermissionsModal(userId) {
             modal.style.display = "block";
         }
