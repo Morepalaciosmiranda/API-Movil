@@ -78,16 +78,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_proveedor'], $_POST
 echo json_encode(['success' => false, 'message' => 'Solicitud no válida o acción no reconocida']);
 
 // Agregar un nuevo endpoint para obtener los insumos
-if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {
-    $sql = "SELECT DISTINCT id_insumo, nombre_del_insumo, cantidad FROM compras";
-    $result = $conn->query($sql);
-    $insumos = [];
-    while ($row = $result->fetch_assoc()) {
-        $insumos[] = $row;
-    }
-    echo json_encode($insumos);
-    exit;
-}
+// if (isset($_GET['action']) && $_GET['action'] == 'getInsumos') {
+//     $sql = "SELECT DISTINCT id_insumo, nombre_del_insumo, cantidad FROM compras";
+//     $result = $conn->query($sql);
+//     $insumos = [];
+//     while ($row = $result->fetch_assoc()) {
+//         $insumos[] = $row;
+//     }
+//     echo json_encode($insumos);
+//     exit;
+// }
 
 if (isset($_GET['eliminar'])) {
     $id_compra = $_GET['eliminar'];
