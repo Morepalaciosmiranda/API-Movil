@@ -220,28 +220,10 @@ function mostrarAlerta(mensaje) {
 /* ALERTAS INSUMOS */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Validación de nombre del insumo
+    // Validación de nombre del insumo (select)
     const nombreInsumoInput = document.getElementById('nombre_insumo');
-    nombreInsumoInput.addEventListener('blur', function() {
+    nombreInsumoInput.addEventListener('change', function() {
         validarNombreInsumo(this);
-    });
-
-    // Validación de proveedor
-    const proveedorInput = document.getElementById('id_proveedor');
-    proveedorInput.addEventListener('change', function() {
-        validarProveedor(this);
-    });
-
-    // Validación de precio
-    const precioInput = document.getElementById('precio');
-    precioInput.addEventListener('blur', function() {
-        validarPrecio(this);
-    });
-
-    // Validación de fecha de vencimiento
-    const fechaVencimientoInput = document.getElementById('fecha_vencimiento');
-    fechaVencimientoInput.addEventListener('change', function() {
-        validarFechaVencimiento(this);
     });
 
     // Validación de marca
@@ -250,57 +232,45 @@ document.addEventListener('DOMContentLoaded', function() {
         validarMarca(this);
     });
 
-    // Validación de cantidad
-    const cantidadInput = document.getElementById('cantidad');
-    cantidadInput.addEventListener('blur', function() {
-        validarCantidad(this);
+    // Validación de fecha de vencimiento
+    const fechaVencimientoInput = document.getElementById('fecha_vencimiento');
+    fechaVencimientoInput.addEventListener('change', function() {
+        validarFechaVencimiento(this);
     });
 
-    // Validación de estado del insumo
+    // Validación de estado del insumo (select)
     const estadoInsumoInput = document.getElementById('estado_insumo');
     estadoInsumoInput.addEventListener('change', function() {
         validarEstadoInsumo(this);
     });
 });
 
+// Validar nombre del insumo (select)
 function validarNombreInsumo(input) {
-    const nombre = input.value;
-    const regex = /^[a-zA-Z0-9\s]{3,25}$/;
-
-    if (nombre.length < 3) {
-        mostrarAlerta('El nombre del insumo debe tener al menos 5 caracteres.');
-    } else if (nombre.length > 25) {
-        mostrarAlerta('El nombre del insumo no puede exceder los 50 caracteres.');
-    } else if (/[^a-zA-Z0-9\s]/.test(nombre)) {
-        mostrarAlerta('El nombre del insumo solo puede contener caracteres alfanuméricos.');
-    } else if (nombre.trim() === '') {
-        mostrarAlerta('El nombre del insumo no puede estar vacío.');
-    } else if (/[\W_]/.test(nombre)) {
-        mostrarAlerta('El nombre del insumo no puede contener caracteres especiales.');
-    }
-}
-
-function validarProveedor(input) {
     if (input.value === '') {
-        mostrarAlerta('Debe seleccionar un proveedor.');
+        mostrarAlerta('Debe seleccionar un insumo.');
     }
 }
 
-function validarPrecio(input) {
-    const precio = input.value;
-    const regexPrecio = /^\d+(\.\d{1,2})?$/;
+// Validar marca
+function validarMarca(input) {
+    const marca = input.value;
+    const regex = /^[a-zA-Z0-9,\.\s]{3,25}$/;
 
-    if (precio === '') {
-        mostrarAlerta('El campo de precio no puede estar vacío.');
-    } else if (parseFloat(precio) === 0) {
-        mostrarAlerta('El valor del precio debe ser mayor a 0.');
-    } else if (parseFloat(precio) < 0) {
-        mostrarAlerta('El precio no puede ser un número negativo.');
-    } else if (!regexPrecio.test(precio)) {
-        mostrarAlerta('El precio debe ser un número positivo con hasta dos decimales.');
+    if (marca.trim() === '') {
+        mostrarAlerta('El campo de marca no puede estar vacío.');
+    } else if (marca.length < 3) {
+        mostrarAlerta('La marca debe tener al menos 3 caracteres.');
+    } else if (marca.length > 25) {
+        mostrarAlerta('La marca no puede exceder los 25 caracteres.');
+    } else if (/^[\W]+$/.test(marca)) {
+        mostrarAlerta('La marca no puede contener solo caracteres especiales.');
+    } else if (/^\d+$/.test(marca)) {
+        mostrarAlerta('La marca no puede contener solo números.');
     }
 }
 
+// Validar fecha de vencimiento
 function validarFechaVencimiento(input) {
     const fecha = new Date(input.value);
     const hoy = new Date();
@@ -314,44 +284,14 @@ function validarFechaVencimiento(input) {
     }
 }
 
-function validarMarca(input) {
-    const marca = input.value;
-    const regex = /^[a-zA-Z0-9,\.\s]{3,25}$/;
-
-    if (marca.trim() === '') {
-        mostrarAlerta('El campo de marca no puede estar vacío.');
-    } else if (marca.length < 3) {
-        mostrarAlerta('La marca debe tener al menos 10 caracteres.');
-    } else if (marca.length > 25) {
-        mostrarAlerta('La marca no puede exceder los 25 caracteres.');
-    } else if (/^[\W]+$/.test(marca)) {
-        mostrarAlerta('La marca no puede contener solo caracteres especiales.');
-    } else if (/^\d+$/.test(marca)) {
-        mostrarAlerta('La marca no puede contener solo números.');
-    }
-}
-
-function validarCantidad(input) {
-    const cantidad = input.value;
-    const regexCantidad = /^\d+$/;
-
-    if (cantidad === '') {
-        mostrarAlerta('El campo de cantidad no puede estar vacío.');
-    } else if (parseInt(cantidad) <= 0) {
-        mostrarAlerta('La cantidad debe ser un número positivo mayor a 0.');
-    } else if (parseInt(cantidad) > 99) {
-        mostrarAlerta('La cantidad no puede ser mayor a 99.');
-    } else if (!regexCantidad.test(cantidad)) {
-        mostrarAlerta('La cantidad debe ser un número entero.');
-    }
-}
-
+// Validar estado del insumo (select)
 function validarEstadoInsumo(input) {
     if (input.value === '') {
         mostrarAlerta('Debe seleccionar un estado para el insumo.');
     }
 }
 
+// Función genérica para mostrar alertas
 function mostrarAlerta(mensaje) {
     Swal.fire({
         icon: 'error',
@@ -359,6 +299,7 @@ function mostrarAlerta(mensaje) {
         text: mensaje,
     });
 }
+
 
 
 /* ALERTAS COMPRAS */

@@ -449,7 +449,7 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
                         });
                     }
     </script>
-    <!-- <script src="../js/validaciones.js"></script> -->
+    <script src="../js/validaciones.js"></script> 
 </body>
 
 </html>
