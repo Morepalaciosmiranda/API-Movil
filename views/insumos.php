@@ -39,9 +39,7 @@ if (isset($_POST['buscar_nombre'])) {
 }
 
 $total_insumos = count($insumos);
-$total_pag = ceil($total_insumos / $items_por_pagina);
-
-;
+$total_pag = ceil($total_insumos / $items_por_pagina);;
 ?>
 <!DOCTYPE html>
 <html>
@@ -133,9 +131,7 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Proveedor</th>
                                 <th>Nombre</th>
-                                <th>Precio</th>
                                 <th>Fecha de Vencimiento</th>
                                 <th>Marca</th>
                                 <th>Cantidad</th>
@@ -148,13 +144,11 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                             if (isset($insumos) && is_array($insumos)) {
                                 foreach ($insumos as $insumo) {
                                     echo "<tr>";
-                                    echo "<td>" . $insumo['nombre_proveedor'] . "</td>"; // Cambiado de id_proveedor a nombre_proveedor
-                                    echo "<td>" . $insumo['nombre_insumo'] . "</td>";
-                                    echo "<td>" . $insumo['precio'] . "</td>";
-                                    echo "<td>" . $insumo['fecha_vencimiento'] . "</td>";
-                                    echo "<td>" . $insumo['marca'] . "</td>";
-                                    echo "<td>" . $insumo['cantidad'] . "</td>";
-                                    echo "<td>" . $insumo['estado_insumo'] . "</td>";
+                                    echo "<td>" . htmlspecialchars($insumo['nombre_insumo']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($insumo['fecha_vencimiento']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($insumo['marca']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($insumo['cantidad']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($insumo['estado_insumo']) . "</td>";
                                     echo '<td class="actions">';
                                     echo '<button class="edit-btn" onclick="openEditModal(' . htmlspecialchars(json_encode($insumo), ENT_QUOTES, 'UTF-8') . ')"><i class="fa fa-edit"></i></button>';
                                     echo '<button class="delete-btn" onclick="confirmarEliminacion(' . $insumo['id_insumo'] . ')"><i class="fa fa-trash"></i></button>';
@@ -162,7 +156,7 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
                                     echo "</tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='9'>No hay insumos disponibles.</td></tr>";
+                                echo "<tr><td colspan='6'>No hay insumos disponibles.</td></tr>";
                             }
                             ?>
                     </table>
