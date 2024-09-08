@@ -11,7 +11,7 @@ try {
 
     $nombre_insumo = $_GET['nombre_insumo'];
     
-    $query = "SELECT marca, cantidad FROM compras WHERE nombre_insumos = ? ORDER BY fecha_compra DESC LIMIT 1";
+    $query = "SELECT cantidad FROM compras WHERE nombre_insumos = ? ORDER BY fecha_compra DESC LIMIT 1";
     $stmt = $conn->prepare($query);
     if (!$stmt) {
         throw new Exception("Error al preparar la consulta: " . $conn->error);
@@ -27,12 +27,9 @@ try {
     if ($row = $result->fetch_assoc()) {
         // Asegúrate de que la cantidad sea un número
         $cantidad = is_numeric($row['cantidad']) ? floatval($row['cantidad']) : null;
-        echo json_encode([
-            "marca" => $row['marca'],
-            "cantidad" => $cantidad
-        ]);
+        echo json_encode(["cantidad" => $cantidad]);
     } else {
-        echo json_encode(["marca" => "", "cantidad" => null]);
+        echo json_encode(["cantidad" => null]);
     }
 
 } catch (Exception $e) {

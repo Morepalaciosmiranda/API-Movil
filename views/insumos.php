@@ -107,7 +107,7 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
                             </select><br><br>
 
                             <label for="marca">Marca:</label>
-                            <input type="text" id="marca" name="marca" required readonly><br><br>
+                            <input type="text" id="marca" name="marca" required><br><br>
 
                             <label for="cantidad">Cantidad:</label>
                             <input type="number" id="cantidad" name="cantidad" required readonly><br><br>
@@ -376,8 +376,6 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
                         try {
                             var datos = JSON.parse(this.responseText);
                             console.log("Datos recibidos:", datos);
-
-                            document.getElementById('marca').value = datos.marca || '';
 
                             if (datos.cantidad !== undefined && datos.cantidad !== null) {
                                 document.getElementById('cantidad').value = datos.cantidad;
