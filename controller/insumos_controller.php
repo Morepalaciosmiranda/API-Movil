@@ -1,6 +1,22 @@
 <?php
 include '../includes/conexion.php';
 
+
+function getValidConnection() {
+    global $conn, $servername, $username, $password, $dbname;
+    
+    if (!$conn || $conn->ping() === false) {
+        $conn->close(); // Cerrar la conexión existente si está en un estado inválido
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            die("Reconnection failed: " . $conn->connect_error);
+        }
+    }
+    return $conn;
+}
+
+$conn = getValidConnection();
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombre_insumo'], $_POST['marca'], $_POST['cantidad'], $_POST['fecha_vencimiento'], $_POST['estado_insumo'])) {
     $nombre_insumo = $_POST['nombre_insumo'];
     $marca = $_POST['marca'];
@@ -111,6 +127,7 @@ if ($resultado_insumos->num_rows > 0) {
 
 function obtenerInsumos() {
     global $conn;
+    $conn = getValidConnection();
     $insumos = array();
 
     $consulta = "SELECT * FROM insumos";
@@ -127,6 +144,7 @@ function obtenerInsumos() {
 
 function buscarInsumosPorNombre($nombre) {
     global $conn;
+    $conn = getValidConnection();
     $insumos = array();
 
     $consulta = "SELECT * FROM insumos WHERE nombre_insumo LIKE '%$nombre%'";

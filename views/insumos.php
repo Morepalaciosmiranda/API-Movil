@@ -15,10 +15,22 @@ if ($_SESSION['rol'] === 'Usuario') {
 include_once('../includes/conexion.php');
 include_once('../controller/insumos_controller.php');
 
-// Verifica si la conexión está abierta
-if ($conn->connect_error) {
-    die("La conexión falló: " . $conn->connect_error);
+// Función para obtener una conexión válida
+function getValidConnection() {
+    global $conn, $servername, $username, $password, $dbname;
+    
+    if (!$conn || $conn->ping() === false) {
+        $conn->close(); // Cerrar la conexión existente si está en un estado inválido
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            die("Reconnection failed: " . $conn->connect_error);
+        }
+    }
+    return $conn;
 }
+
+// Usar la función para obtener una conexión válida
+$conn = getValidConnection();
 
 // Obtener los insumos de la tabla compras
 $consulta_compras = "SELECT DISTINCT nombre_insumos FROM compras";
@@ -44,7 +56,6 @@ if (isset($_POST['buscar_nombre'])) {
 
 $total_insumos = count($insumos);
 $total_pag = ceil($total_insumos / $items_por_pagina);
-
 ?>
 <!DOCTYPE html>
 <html>
