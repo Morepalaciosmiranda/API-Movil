@@ -1,27 +1,45 @@
 /* ALERTAS PROVEEDORES */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Validación de nombre
+    // Validaciones para el formulario de creación
     const nombreInput = document.getElementById('nombre');
     nombreInput.addEventListener('blur', function() {
         validarNombre(this);
     });
 
-    // Validación de correo electrónico
     const correoInput = document.getElementById('correo');
     correoInput.addEventListener('blur', function() {
         validarCorreo(this);
     });
 
-    // Validación de celular
     const celularInput = document.getElementById('celular');
     celularInput.addEventListener('blur', function() {
         validarCelular(this);
     });
 
-    // Validación de contacto
     const contactoInput = document.getElementById('contacto');
     contactoInput.addEventListener('blur', function() {
+        validarContacto(this);
+    });
+
+    // Validaciones para el formulario de edición
+    const editNombreInput = document.getElementById('edit-nombre');
+    editNombreInput.addEventListener('blur', function() {
+        validarNombre(this);
+    });
+
+    const editCorreoInput = document.getElementById('edit-correo');
+    editCorreoInput.addEventListener('blur', function() {
+        validarCorreo(this);
+    });
+
+    const editCelularInput = document.getElementById('edit-celular');
+    editCelularInput.addEventListener('blur', function() {
+        validarCelular(this);
+    });
+
+    const editContactoInput = document.getElementById('edit-contacto');
+    editContactoInput.addEventListener('blur', function() {
         validarContacto(this);
     });
 });
@@ -70,7 +88,6 @@ function validarCelular(input) {
     }
 }
 
-
 function validarContacto(input) {
     const contacto = input.value;
     const regex = /^[a-zA-Z0-9\s]{1,25}$/;
@@ -87,6 +104,7 @@ function mostrarAlerta(mensaje) {
         text: mensaje,
     });
 }
+
 
 
 /* ALERTAS PRODUCTOS */
