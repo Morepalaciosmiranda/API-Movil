@@ -470,21 +470,22 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             cargarProveedores();
         });
 
-        // function cargarUsuarios() {
-        //     fetch('../controller/usuarios_controller.php')
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             const select = document.getElementById('id_usuario');
-        //             select.innerHTML = '';
-        //             data.forEach(usuario => {
-        //                 const option = document.createElement('option');
-        //                 option.value = usuario.id_usuario;
-        //                 option.textContent = usuario.nombre_usuario;
-        //                 select.appendChild(option);
-        //             });
-        //         })
-        //         .catch(error => console.error('Error:', error));
-        // }
+        function cargarProveedores() {
+            fetch('../controller/proveedores_controller.php')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('id_proveedor');
+                    select.innerHTML = '';
+                    data.forEach(proveedor => {
+                        const option = document.createElement('option');
+                        option.value = proveedor.id_proveedor;
+                        option.textContent = proveedor.nombre_proveedor;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
 
         function cargarProveedoresEditar(nombreProveedorSeleccionado) {
             fetch('../controller/proveedores_controller.php')
@@ -506,43 +507,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         }
 
 
-        // function cargarUsuariosEditar(idUsuarioSeleccionado) {
-        //     fetch('../controller/usuarios_controller.php')
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             const select = document.getElementById('edit_id_usuario');
-        //             select.innerHTML = '';
-        //             data.forEach(usuario => {
-        //                 const option = document.createElement('option');
-        //                 option.value = usuario.id_usuario;
-        //                 option.textContent = usuario.nombre_usuario;
-        //                 if (usuario.id_usuario == idUsuarioSeleccionado) {
-        //                     option.selected = true;
-        //                 }
-        //                 select.appendChild(option);
-        //             });
-        //         })
-        //         .catch(error => console.error('Error:', error));
-        // }
-
-        function cargarProveedoresEditar(idProveedorSeleccionado) {
-            fetch('../controller/proveedores_controller.php')
-                .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById('edit_id_proveedor');
-                    select.innerHTML = '';
-                    data.forEach(proveedor => {
-                        const option = document.createElement('option');
-                        option.value = proveedor.id_proveedor;
-                        option.textContent = proveedor.nombre_proveedor;
-                        if (proveedor.id_proveedor == idProveedorSeleccionado) {
-                            option.selected = true;
-                        }
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-        }
 
         function openPermissionsModal(userId) {
             modal.style.display = "block";
