@@ -417,43 +417,53 @@ function mostrarAlerta(mensaje) {
 /* ALERTAS PEDIDOS */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Validación del nombre del cliente
+    const form = document.getElementById('formNuevoPedido');
+
+    form.addEventListener('submit', function(event) {
+        // Llamamos a las funciones de validación y detenemos el envío si hay algún error
+        if (!validarNombreCliente(document.getElementById('nombreCliente')) ||
+            !validarProducto(document.getElementById('producto')) ||
+            !validarCantidad(document.getElementById('cantidad')) ||
+            !validarDireccion(document.getElementById('calle')) ||
+            !validarInterior(document.getElementById('interior')) ||
+            !validarBarrio(document.getElementById('barrio_cliente')) ||
+            !validarTelefono(document.getElementById('telefono_cliente'))) {
+            
+            event.preventDefault(); // Detenemos el envío
+        }
+    });
+
+    // Validaciones individuales
     const nombreClienteInput = document.getElementById('nombreCliente');
     nombreClienteInput.addEventListener('blur', function() {
         validarNombreCliente(this);
     });
 
-    // Validación del producto
     const productoInput = document.getElementById('producto');
     productoInput.addEventListener('change', function() {
         validarProducto(this);
     });
 
-    // Validación de cantidad
     const cantidadInput = document.getElementById('cantidad');
     cantidadInput.addEventListener('blur', function() {
         validarCantidad(this);
     });
 
-    // Validación de la dirección
     const direccionInput = document.getElementById('calle');
     direccionInput.addEventListener('blur', function() {
         validarDireccion(this);
     });
 
-    // Validación del interior
     const interiorInput = document.getElementById('interior');
     interiorInput.addEventListener('blur', function() {
         validarInterior(this);
     });
 
-    // Validación del barrio
     const barrioInput = document.getElementById('barrio_cliente');
     barrioInput.addEventListener('change', function() {
         validarBarrio(this);
     });
 
-    // Validación del teléfono
     const telefonoInput = document.getElementById('telefono_cliente');
     telefonoInput.addEventListener('blur', function() {
         validarTelefono(this);
@@ -464,37 +474,50 @@ function validarNombreCliente(input) {
     const valor = input.value.trim();
     if (valor === '') {
         mostrarAlerta('El nombre del cliente no puede estar vacío.');
+        return false;
     } else if (valor.length < 2 || valor.length > 12) {
         mostrarAlerta('El nombre del cliente debe tener entre 2 y 12 caracteres.');
+        return false;
     } else if (/^[0-9]+$/.test(valor)) {
         mostrarAlerta('El nombre del cliente no puede contener solo números.');
+        return false;
     }
+    return true;
 }
 
 function validarProducto(input) {
     if (input.value === '') {
         mostrarAlerta('Debe seleccionar un producto.');
+        return false;
     }
+    return true;
 }
 
 function validarCantidad(input) {
     const cantidad = parseInt(input.value, 10);
     if (isNaN(cantidad)) {
         mostrarAlerta('La cantidad debe ser un número entero.');
+        return false;
     } else if (cantidad <= 0) {
         mostrarAlerta('La cantidad debe ser mayor a 0.');
+        return false;
     } else if (cantidad > 100) {
         mostrarAlerta('La cantidad no puede ser mayor a 100.');
+        return false;
     }
+    return true;
 }
 
 function validarDireccion(input) {
     const valor = input.value.trim();
     if (valor === '') {
         mostrarAlerta('La dirección no puede estar vacía.');
+        return false;
     } else if (valor.length < 5 || valor.length > 50) {
         mostrarAlerta('La dirección debe tener entre 5 y 50 caracteres.');
+        return false;
     }
+    return true;
 }
 
 function validarInterior(input) {
@@ -502,28 +525,38 @@ function validarInterior(input) {
     const numero = parseInt(valor, 10);
     if (valor === '') {
         mostrarAlerta('El interior no puede estar vacío.');
+        return false;
     } else if (isNaN(numero)) {
         mostrarAlerta('El interior debe ser un número entero.');
+        return false;
     } else if (numero <= 0) {
         mostrarAlerta('El interior debe ser mayor a 0.');
+        return false;
     } else if (numero > 100) {
         mostrarAlerta('El interior no puede ser mayor a 100.');
+        return false;
     }
+    return true;
 }
 
 function validarBarrio(input) {
     if (input.value === '') {
         mostrarAlerta('Debe seleccionar un barrio.');
+        return false;
     }
+    return true;
 }
 
 function validarTelefono(input) {
     const valor = input.value.trim();
     if (valor === '') {
         mostrarAlerta('El teléfono no puede estar vacío.');
+        return false;
     } else if (!/^\d{10}$/.test(valor)) {
         mostrarAlerta('El teléfono debe tener 10 dígitos y solo contener números.');
+        return false;
     }
+    return true;
 }
 
 // Función para mostrar alertas
