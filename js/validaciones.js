@@ -417,59 +417,64 @@ function mostrarAlerta(mensaje) {
 /* ALERTAS PEDIDOS */
 
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('formNuevoPedido');
-
-    form.addEventListener('submit', function(event) {
-        // Llamamos a las funciones de validación y detenemos el envío si hay algún error
-        if (!validarNombreCliente(document.getElementById('nombreCliente')) ||
-            !validarProducto(document.getElementById('producto')) ||
-            !validarCantidad(document.getElementById('cantidad')) ||
-            !validarDireccion(document.getElementById('calle')) ||
-            !validarInterior(document.getElementById('interior')) ||
-            !validarBarrio(document.getElementById('barrio_cliente')) ||
-            !validarTelefono(document.getElementById('telefono_cliente'))) {
-            
-            event.preventDefault(); // Detenemos el envío
-        }
-    });
-
-    // Validaciones individuales
+    // Validación de nombre del cliente
     const nombreClienteInput = document.getElementById('nombreCliente');
     nombreClienteInput.addEventListener('blur', function() {
         validarNombreCliente(this);
     });
 
+    // Validación de producto (select)
     const productoInput = document.getElementById('producto');
     productoInput.addEventListener('change', function() {
         validarProducto(this);
     });
 
+    // Validación de cantidad
     const cantidadInput = document.getElementById('cantidad');
     cantidadInput.addEventListener('blur', function() {
         validarCantidad(this);
     });
 
+    // Validación de dirección
     const direccionInput = document.getElementById('calle');
     direccionInput.addEventListener('blur', function() {
         validarDireccion(this);
     });
 
+    // Validación de interior
     const interiorInput = document.getElementById('interior');
     interiorInput.addEventListener('blur', function() {
         validarInterior(this);
     });
 
+    // Validación de barrio
     const barrioInput = document.getElementById('barrio_cliente');
-    barrioInput.addEventListener('change', function() {
+    barrioInput.addEventListener('blur', function() {
         validarBarrio(this);
     });
 
+    // Validación de teléfono
     const telefonoInput = document.getElementById('telefono_cliente');
     telefonoInput.addEventListener('blur', function() {
         validarTelefono(this);
     });
+
+    // Validación al enviar el formulario
+    const form = document.getElementById('formNuevoPedido');
+    form.addEventListener('submit', function(event) {
+        if (!validarNombreCliente(nombreClienteInput) ||
+            !validarProducto(productoInput) ||
+            !validarCantidad(cantidadInput) ||
+            !validarDireccion(direccionInput) ||
+            !validarInterior(interiorInput) ||
+            !validarBarrio(barrioInput) ||
+            !validarTelefono(telefonoInput)) {
+            event.preventDefault(); // Detener el envío si hay errores
+        }
+    });
 });
 
+// Validar nombre del cliente
 function validarNombreCliente(input) {
     const valor = input.value.trim();
     if (valor === '') {
@@ -485,6 +490,7 @@ function validarNombreCliente(input) {
     return true;
 }
 
+// Validar producto (select)
 function validarProducto(input) {
     if (input.value === '') {
         mostrarAlerta('Debe seleccionar un producto.');
@@ -493,6 +499,7 @@ function validarProducto(input) {
     return true;
 }
 
+// Validar cantidad
 function validarCantidad(input) {
     const cantidad = parseInt(input.value, 10);
     if (isNaN(cantidad)) {
@@ -508,6 +515,7 @@ function validarCantidad(input) {
     return true;
 }
 
+// Validar dirección
 function validarDireccion(input) {
     const valor = input.value.trim();
     if (valor === '') {
@@ -520,6 +528,7 @@ function validarDireccion(input) {
     return true;
 }
 
+// Validar interior
 function validarInterior(input) {
     const valor = input.value.trim();
     const numero = parseInt(valor, 10);
@@ -539,6 +548,7 @@ function validarInterior(input) {
     return true;
 }
 
+// Validar barrio
 function validarBarrio(input) {
     if (input.value === '') {
         mostrarAlerta('Debe seleccionar un barrio.');
@@ -547,6 +557,7 @@ function validarBarrio(input) {
     return true;
 }
 
+// Validar teléfono
 function validarTelefono(input) {
     const valor = input.value.trim();
     if (valor === '') {

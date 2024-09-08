@@ -181,15 +181,15 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 </div>
                 <div class="form-group">
                     <label for="calle">Dirección:</label>
-                    <input type="text" id="calle" name="calle">
+                    <input type="text" id="calle" name="calle" required>
                 </div>
                 <div class="form-group">
                     <label for="interior">Interior:</label>
-                    <input type="text" id="interior" name="interior">
+                    <input type="text" id="interior" name="interior" required>
                 </div>
                 <div class="form-group">
                     <label for="barrio_cliente">Barrio:</label>
-                    <input type="text" id="barrio_cliente" name="barrio_cliente" list="barrios">
+                    <input type="text" id="barrio_cliente" name="barrio_cliente" list="barrios" required>
                     <datalist id="barrios">
                         <option value="Amazonas">
                         <option value="Araucarias">
@@ -203,8 +203,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 </div>
                 <div class="form-group">
                     <label for="telefono_cliente">Teléfono:</label>
-                    <input type="text" id="telefono_cliente" name="telefono_cliente" pattern="\d{10}"
-                        title="El número de teléfono debe tener 10 dígitos y solo contener números">
+                    <input type="text" id="telefono_cliente" name="telefono_cliente" required>
                 </div>
                 <button type="submit" class="btnGuardar">Guardar</button>
             </form>
