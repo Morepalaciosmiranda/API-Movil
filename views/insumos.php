@@ -12,10 +12,20 @@ if ($_SESSION['rol'] === 'Usuario') {
     exit();
 }
 
+include_once('../includes/conexion.php');
 include_once('../controller/insumos_controller.php');
 
+// Verifica si la conexión está abierta
+if ($conn->connect_error) {
+    die("La conexión falló: " . $conn->connect_error);
+}
+
+// Obtener los insumos de la tabla compras
 $consulta_compras = "SELECT DISTINCT nombre_insumos FROM compras";
 $resultado_compras = $conn->query($consulta_compras);
+if (!$resultado_compras) {
+    die("Error en la consulta: " . $conn->error);
+}
 $insumos_compras = [];
 while ($row = $resultado_compras->fetch_assoc()) {
     $insumos_compras[] = $row['nombre_insumos'];
@@ -370,7 +380,6 @@ $total_pag = ceil($total_insumos / $items_por_pagina);
         function autocompletarDatos() {
             var nombreInsumo = document.getElementById('nombre_insumo').value;
             if (nombreInsumo) {
-                // Realizar una solicitud AJAX para obtener los datos de la compra
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
