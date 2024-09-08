@@ -1,5 +1,7 @@
 <?php
 session_start();
+include_once('../includes/conexion.php');
+include_once('../includes/db_utils.php');
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
     header('Location: ../loginRegister.php');
@@ -12,8 +14,7 @@ if ($_SESSION['rol'] === 'Usuario') {
     exit();
 }
 
-include_once('../includes/conexion.php');
-include_once('../includes/db_utils.php');
+
 include_once('../controller/insumos_controller.php');
 
 // Usar la función para obtener una conexión válida
