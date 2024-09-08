@@ -1,20 +1,18 @@
 <?php
 session_start();
-include_once('../includes/conexion.php');
-include_once('../includes/db_utils.php');
-$conn = getValidConnection();
+require_once('../includes/db_utils.php');
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
     header('Location: ../loginRegister.php');
     exit();
 }
 
-// Excluir específicamente el rol "Usuario"
 if ($_SESSION['rol'] === 'Usuario') {
     header('Location: ../no_autorizado.php');
     exit();
 }
 
+$conn = getValidConnection();
 
 include_once('../controller/insumos_controller.php');
 

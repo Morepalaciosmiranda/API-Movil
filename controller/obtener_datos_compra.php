@@ -1,6 +1,5 @@
 <?php
-include_once('../includes/conexion.php');
-include_once('../includes/db_utils.php');
+require_once('../includes/db_utils.php');
 
 $conn = getValidConnection();
 
@@ -21,6 +20,4 @@ if (isset($_GET['nombre_insumo'])) {
 } else {
     echo json_encode(["error" => "Nombre de insumo no proporcionado"]);
 }
-
-closeConnection($conn);
 ?>

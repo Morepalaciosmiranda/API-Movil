@@ -146,5 +146,4 @@ function buscarInsumosPorNombre($nombre) {
     return $insumos;
 }
 
-$conn->close();
 ?>
