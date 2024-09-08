@@ -45,7 +45,7 @@ try {
                     $mail->isHTML(true);
                     $mail->Subject = '=?UTF-8?B?'.base64_encode('Recuperación de contraseña - Exterminio').'?=';
 
-                    $reset_link = "https://api-movil-tj84.onrender.com/reset_password.php?token=" . $token;
+                    $reset_link = "https://exterminiofastfood.onrender.com/reset_password.php?token=" . $token;
                     
                     $mail->Body = "
                     <html>
@@ -64,7 +64,7 @@ try {
                     <body>
                         <div class='container'>
                             <div class='header'>
-                                <img src='https://exterminio-ap2w.onrender.com/img/LogoExterminio.png' alt='Logo de Exterminio' style='max-width: 200px;'>
+                                <img src='https://exterminiofastfood.onrender.com/img/LogoExterminio.png' alt='Logo de Exterminio' style='max-width: 200px;'>
                             </div>
                             <div class='content'>
                                 <h2>Recuperación de contraseña</h2>
