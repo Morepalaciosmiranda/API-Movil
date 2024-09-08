@@ -1,18 +1,6 @@
 <?php
 include_once('../includes/conexion.php');
-
-function getValidConnection() {
-    global $conn, $servername, $username, $password, $dbname;
-    
-    if (!$conn || $conn->ping() === false) {
-        $conn->close(); // Cerrar la conexión existente si está en un estado inválido
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        if ($conn->connect_error) {
-            die("Reconnection failed: " . $conn->connect_error);
-        }
-    }
-    return $conn;
-}
+include_once('../includes/db_utils.php');
 
 $conn = getValidConnection();
 
@@ -33,3 +21,4 @@ if (isset($_GET['nombre_insumo'])) {
 } else {
     echo json_encode(["error" => "Nombre de insumo no proporcionado"]);
 }
+?>

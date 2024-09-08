@@ -13,21 +13,8 @@ if ($_SESSION['rol'] === 'Usuario') {
 }
 
 include_once('../includes/conexion.php');
+include_once('../includes/db_utils.php');
 include_once('../controller/insumos_controller.php');
-
-// Función para obtener una conexión válida
-function getValidConnection() {
-    global $conn, $servername, $username, $password, $dbname;
-    
-    if (!$conn || $conn->ping() === false) {
-        $conn->close(); // Cerrar la conexión existente si está en un estado inválido
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        if ($conn->connect_error) {
-            die("Reconnection failed: " . $conn->connect_error);
-        }
-    }
-    return $conn;
-}
 
 // Usar la función para obtener una conexión válida
 $conn = getValidConnection();
