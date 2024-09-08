@@ -249,13 +249,12 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
                 event.preventDefault();
 
                 var nombreInsumo = document.getElementById('nombre_insumo').value;
-                var precio = document.getElementById('precio').value;
-                var fechaVencimiento = document.getElementById('fecha_vencimiento').value;
                 var marca = document.getElementById('marca').value;
                 var cantidad = document.getElementById('cantidad').value;
+                var fechaVencimiento = document.getElementById('fecha_vencimiento').value;
                 var estadoInsumo = document.getElementById('estado_insumo').value;
 
-                if (nombreInsumo && precio && fechaVencimiento && marca && cantidad && estadoInsumo) {
+                if (nombreInsumo && marca && cantidad && fechaVencimiento && estadoInsumo) {
                     Swal.fire({
                         title: '¿Estás seguro?',
                         text: "¿Deseas agregar este insumo?",
