@@ -21,4 +21,6 @@ if (isset($_GET['nombre_insumo'])) {
 } else {
     echo json_encode(["error" => "Nombre de insumo no proporcionado"]);
 }
+
+closeConnection($conn);
 ?>

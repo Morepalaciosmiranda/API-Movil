@@ -19,6 +19,7 @@ include_once('../controller/insumos_controller.php');
 // Usar la función para obtener una conexión válida
 $conn = getValidConnection();
 
+
 // Obtener los insumos de la tabla compras
 $consulta_compras = "SELECT DISTINCT nombre_insumos FROM compras";
 $resultado_compras = $conn->query($consulta_compras);
@@ -43,6 +44,8 @@ if (isset($_POST['buscar_nombre'])) {
 
 $total_insumos = count($insumos);
 $total_pag = ceil($total_insumos / $items_por_pagina);
+
+closeConnection($conn);
 ?>
 <!DOCTYPE html>
 <html>

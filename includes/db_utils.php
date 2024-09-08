@@ -13,4 +13,10 @@ function getValidConnection() {
     }
     return $conn;
 }
+
+function closeConnection($conn) {
+    if ($conn && $conn->ping()) {
+        $conn->close();
+    }
+}
 ?>
