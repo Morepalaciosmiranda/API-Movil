@@ -364,81 +364,92 @@ function mostrarAlerta(mensaje) {
 /* ALERTAS COMPRAS */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Validación de usuario
-    const usuarioInput = document.getElementById('id_usuario');
-    usuarioInput.addEventListener('change', function() {
-        validarUsuario(this);
-    });
-
-    // Validación de proveedor
+    // Validación de proveedor (mantiene)
     const proveedorInput = document.getElementById('id_proveedor');
     proveedorInput.addEventListener('change', function() {
         validarProveedor(this);
     });
 
-    // Validación de fecha de compra
+    // Validación de nombre de insumo (nuevo campo)
+    const nombreInsumoInput = document.getElementById('nombre_insumos');
+    nombreInsumoInput.addEventListener('blur', function() {
+        validarNombreInsumo(this);
+    });
+
+    // Validación de fecha de compra (actualizada)
     const fechaCompraInput = document.getElementById('fecha_compra');
     fechaCompraInput.addEventListener('change', function() {
         validarFechaCompra(this);
     });
 
-    // Validación de subtotal
-    const subtotalInput = document.getElementById('subtotal');
-    subtotalInput.addEventListener('blur', function() {
-        validarSubtotal(this);
+    // Validación de total de compra (campo actualizado de subtotal a total_compra)
+    const totalCompraInput = document.getElementById('total_compra');
+    totalCompraInput.addEventListener('blur', function() {
+        validarTotalCompra(this);
     });
 
-    // Validación de cantidad
+    // Validación de cantidad (nuevo límite de 100)
     const cantidadInput = document.getElementById('cantidad');
     cantidadInput.addEventListener('blur', function() {
         validarCantidad(this);
     });
-
-    // Validación de valor unitario
-    const valorUnitarioInput = document.getElementById('valor_unitario');
-    valorUnitarioInput.addEventListener('blur', function() {
-        validarValorUnitario(this);
-    });
 });
 
-function validarUsuario(input) {
-    if (input.value === '') {
-        mostrarAlerta('Debe seleccionar un usuario.');
-    }
-}
-
+// Validación del proveedor
 function validarProveedor(input) {
     if (input.value === '') {
         mostrarAlerta('Debe seleccionar un proveedor.');
     }
 }
 
+// Validación del nombre de insumo (nuevo campo)
+function validarNombreInsumo(input) {
+    const nombre = input.value;
+    const regex = /^[a-zA-Z0-9\s]{3,25}$/;
+
+    if (nombre.length < 3) {
+        mostrarAlerta('El nombre del insumo debe tener al menos 3 caracteres.');
+    } else if (nombre.length > 25) {
+        mostrarAlerta('El nombre del insumo no puede exceder los 25 caracteres.');
+    } else if (regex.test(nombre) === false) {
+        mostrarAlerta('El nombre del insumo solo puede contener caracteres alfanuméricos y espacios.');
+    } else if (nombre.trim() === '') {
+        mostrarAlerta('El nombre del insumo no puede estar vacío.');
+    }
+}
+
+// Validación de la fecha de compra (actualizada)
 function validarFechaCompra(input) {
     const fecha = new Date(input.value);
     const hoy = new Date();
     const dosMesesDesdeHoy = new Date();
     dosMesesDesdeHoy.setMonth(hoy.getMonth() + 2);
+    
+    const cincoDiasAntes = new Date();
+    cincoDiasAntes.setDate(hoy.getDate() - 5);
 
-    if (fecha < hoy) {
-        mostrarAlerta('La fecha de compra debe ser posterior a 5 días.');
+    if (fecha < cincoDiasAntes) {
+        mostrarAlerta('La fecha de compra no puede ser anterior a 5 días.');
     } else if (fecha > dosMesesDesdeHoy) {
         mostrarAlerta('La fecha de compra no puede ser mayor a dos meses desde hoy.');
     }
 }
 
-function validarSubtotal(input) {
-    const subtotal = input.value;
-    if (subtotal === '') {
-        mostrarAlerta('El campo de subtotal no puede estar vacío.');
-    } else if (parseFloat(subtotal) < 0) {
-        mostrarAlerta('El subtotal no puede ser un número negativo.');
-    } else if (/[^0-9.]/.test(subtotal)) {
-        mostrarAlerta('El subtotal solo puede contener caracteres numéricos.');
-    } else if (subtotal.length > 15) {
-        mostrarAlerta('El subtotal no puede tener más de 15 caracteres.');
-    } 
+// Validación del total de compra (actualización de subtotal)
+function validarTotalCompra(input) {
+    const totalCompra = input.value;
+    if (totalCompra === '') {
+        mostrarAlerta('El campo de total de compra no puede estar vacío.');
+    } else if (parseFloat(totalCompra) < 0) {
+        mostrarAlerta('El total de compra no puede ser un número negativo.');
+    } else if (/[^0-9.]/.test(totalCompra)) {
+        mostrarAlerta('El total de compra solo puede contener caracteres numéricos.');
+    } else if (totalCompra.length > 25) {
+        mostrarAlerta('El total de compra no puede tener más de 25 caracteres.');
+    }
 }
 
+// Validación de cantidad (límite de 100)
 function validarCantidad(input) {
     const cantidad = input.value;
     if (cantidad === '') {
@@ -447,21 +458,12 @@ function validarCantidad(input) {
         mostrarAlerta('La cantidad debe ser un número positivo mayor a 0.');
     } else if (!/^\d+$/.test(cantidad)) {
         mostrarAlerta('La cantidad debe ser un número entero.');
+    } else if (parseInt(cantidad) > 100) {
+        mostrarAlerta('La cantidad no puede ser mayor a 100.');
     }
 }
 
-function validarValorUnitario(input) {
-    const valor = parseFloat(input.value);
-
-    if (isNaN(valor)) {
-        mostrarAlerta('El valor unitario debe ser un número.');
-    } else if (valor <= 0) {
-        mostrarAlerta('El valor unitario debe ser un número positivo.');
-    } else if (!Number.isInteger(valor) && valor.toFixed(2).length > valor.toString().length) {
-        mostrarAlerta('El valor unitario no puede tener más de dos decimales.');
-    }
-}
-
+// Función para mostrar alertas con SweetAlert
 function mostrarAlerta(mensaje) {
     Swal.fire({
         icon: 'error',
