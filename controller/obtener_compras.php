@@ -2,7 +2,7 @@
 include '../includes/conexion.php';
 
 // Asegúrate de que estás usando la paginación correctamente
-$items_por_pagina = 10; // o el número que prefieras
+$items_por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $offset = ($pagina_actual - 1) * $items_por_pagina;
 
@@ -12,6 +12,7 @@ $sql = "SELECT c.id_compra, p.nombre_proveedor, c.nombre_insumos, c.fecha_compra
         ORDER BY c.fecha_compra DESC
         LIMIT $items_por_pagina OFFSET $offset";
 $resultado = $conn->query($sql);
+
 
 if ($resultado->num_rows > 0) {
     while ($row = $resultado->fetch_assoc()) {

@@ -23,9 +23,12 @@ $offset = ($pagina_actual - 1) * $items_por_pagina;
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : '';
 
 // Consulta SQL base para obtener las compras y su información relacionada
-$sql = "SELECT compras.id_compra, proveedores.nombre_proveedor, compras.fecha_compra, compras.total_compra 
-        FROM compras
-        JOIN proveedores ON compras.id_proveedor = proveedores.id_proveedor";
+$sql = "SELECT c.id_compra, u.nombre_usuario, p.nombre_proveedor, c.nombre_insumos, c.fecha_compra, c.total_compra, c.cantidad
+        FROM compras c
+        JOIN usuarios u ON c.id_usuario = u.id_usuario
+        JOIN proveedores p ON c.id_proveedor = p.id_proveedor
+        ORDER BY c.fecha_compra DESC
+        LIMIT $items_por_pagina OFFSET $offset";
 
 // Capturar el valor de la fecha desde la solicitud GET
 $fecha_filtro = isset($_GET['fecha']) ? $_GET['fecha'] : null;
@@ -51,9 +54,6 @@ if (!$result) {
 
 // Consulta SQL para obtener el número total de compras (con o sin filtro)
 $sql_total = "SELECT COUNT(*) as total FROM compras";
-if (!empty($fecha_filtro)) {
-    $sql_total .= " WHERE DATE(fecha_compra) = '$fecha_filtro'";
-}
 $result_total = $conn->query($sql_total);
 $total_compras = $result_total->fetch_assoc()['total'];
 $total_paginas = ceil($total_compras / $items_por_pagina);
@@ -232,9 +232,9 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                         if ($total_paginas > 0) {
                             for ($i = 1; $i <= $total_paginas; $i++) {
                                 if ($i == $pagina_actual) {
-                                    echo "<a href='compras.php?pagina=$i&fecha=$fecha_filtro' class='active'>$i</a>";
+                                    echo "<a href='#' onclick='actualizarTablaCompras($i); return false;' class='active'>$i</a>";
                                 } else {
-                                    echo "<a href='compras.php?pagina=$i&fecha=$fecha_filtro'>$i</a>";
+                                    echo "<a href='#' onclick='actualizarTablaCompras($i); return false;'>$i</a>";
                                 }
                             }
                         }
@@ -408,8 +408,8 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                 });
         });
 
-        function actualizarTablaCompras() {
-            fetch('../controller/obtener_compras.php')
+        function actualizarTablaCompras(pagina = 1) {
+            fetch(`../controller/obtener_compras.php?pagina=${pagina}`)
                 .then(response => response.text())
                 .then(html => {
                     document.querySelector('table tbody').innerHTML = html;
@@ -604,7 +604,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../js/validaciones.js"></script> 
+    <script src="../js/validaciones.js"></script>
 </body>
 
 </html>
