@@ -117,8 +117,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Validación de nombre del insumo
-    const nombreInsumoInput = document.getElementById('insumo-1');
-    nombreInsumoInput.addEventListener('blur', function() {
+    const nombreInsumoInput = document.getElementById('insumo_1');
+    nombreInsumoInput.addEventListener('change', function() {
         validarNombreInsumo(this);
     });
 
@@ -126,6 +126,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const cantidadInsumoInput = document.getElementById('cantidad_insumo_1');
     cantidadInsumoInput.addEventListener('blur', function() {
         validarCantidadInsumo(this);
+    });
+
+    // Validación al enviar el formulario
+    const form = document.getElementById('formAgregarProducto');
+    form.addEventListener('submit', function(event) {
+        if (!validarNombreProducto(nombreProductoInput) ||
+            !validarFoto(fotoInput) ||
+            !validarDescripcionProducto(descripcionProductoInput) ||
+            !validarValorUnitario(valorUnitarioInput) ||
+            !validarNombreInsumo(nombreInsumoInput) ||
+            !validarCantidadInsumo(cantidadInsumoInput)) {
+            event.preventDefault(); // Detener el envío si hay errores
+        }
     });
 });
 
@@ -135,29 +148,38 @@ function validarNombreProducto(input) {
 
     if (nombre.length === 0) {
         mostrarAlerta('El campo de nombre del producto no puede estar vacío.');
+        return false;
     } else if (nombre.length > 30) {
         mostrarAlerta('El nombre del producto no puede tener más de 30 caracteres.');
-    } else if (nombre.length <= 3) {
-        mostrarAlerta('El nombre del producto debe tener más de 3 caracteres.');
-    } else if (!/^[a-zA-Z0-9\s]+$/.test(nombre)) {
+        return false;
+    } else if (nombre.length < 3) {
+        mostrarAlerta('El nombre del producto debe tener al menos 3 caracteres.');
+        return false;
+    } else if (!regex.test(nombre)) {
         mostrarAlerta('El nombre del producto no puede contener caracteres especiales.');
+        return false;
     }
+    return true;
 }
 
 function validarFoto(input) {
     const file = input.files[0];
     if (!file) {
         mostrarAlerta('Debe seleccionar una foto.');
+        return false;
     } else {
         const validFormats = ['image/jpeg', 'image/png', 'image/gif'];
         const maxSize = 5 * 1024 * 1024; // 5MB
 
         if (!validFormats.includes(file.type)) {
             mostrarAlerta('Formato de archivo no válido. Solo se permiten JPEG, PNG y GIF.');
+            return false;
         } else if (file.size > maxSize) {
             mostrarAlerta('El tamaño de la foto debe ser menor a 5MB.');
+            return false;
         }
     }
+    return true;
 }
 
 function validarDescripcionProducto(input) {
@@ -166,13 +188,18 @@ function validarDescripcionProducto(input) {
 
     if (descripcion.length === 0) {
         mostrarAlerta('El campo de descripción del producto no puede estar vacío.');
+        return false;
     } else if (descripcion.length < 5 || descripcion.length > 300) {
-        mostrarAlerta('La descripción debe tener entre 10 y 300 caracteres.');
-    } else if (!regexEspeciales.test(descripcion) && descripcion.length > 0) {
+        mostrarAlerta('La descripción debe tener entre 5 y 300 caracteres.');
+        return false;
+    } else if (!regexEspeciales.test(descripcion)) {
         mostrarAlerta('La descripción no puede contener caracteres especiales.');
+        return false;
     } else if (/^\d+$/.test(descripcion)) {
         mostrarAlerta('La descripción no puede contener solo números.');
+        return false;
     }
+    return true;
 }
 
 function validarValorUnitario(input) {
@@ -180,17 +207,23 @@ function validarValorUnitario(input) {
 
     if (isNaN(valor)) {
         mostrarAlerta('El valor unitario debe ser un número.');
+        return false;
     } else if (valor <= 0) {
         mostrarAlerta('El valor unitario debe ser un número positivo.');
-    } else if (!Number.isInteger(valor) && valor.toFixed(2).length > valor.toString().length) {
+        return false;
+    } else if (valor.toFixed(2).length > valor.toString().length) {
         mostrarAlerta('El valor unitario no puede tener más de dos decimales.');
+        return false;
     }
+    return true;
 }
 
 function validarNombreInsumo(input) {
     if (input.value.trim() === '') {
         mostrarAlerta('Debe seleccionar un insumo.');
+        return false;
     }
+    return true;
 }
 
 function validarCantidadInsumo(input) {
@@ -198,13 +231,18 @@ function validarCantidadInsumo(input) {
 
     if (isNaN(cantidad)) {
         mostrarAlerta('La cantidad de insumo debe ser un número.');
+        return false;
     } else if (cantidad <= 0) {
         mostrarAlerta('La cantidad de insumo debe ser mayor a 0.');
+        return false;
     } else if (cantidad > 15) {
         mostrarAlerta('La cantidad de insumo no puede ser mayor a 15.');
+        return false;
     } else if (!Number.isInteger(cantidad)) {
         mostrarAlerta('La cantidad de insumo debe ser un número entero.');
+        return false;
     }
+    return true;
 }
 
 function mostrarAlerta(mensaje) {
@@ -214,6 +252,7 @@ function mostrarAlerta(mensaje) {
         text: mensaje,
     });
 }
+
 
 
 
