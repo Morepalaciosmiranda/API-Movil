@@ -2,6 +2,7 @@
 session_start();
 include_once('../includes/conexion.php');
 include_once('../includes/db_utils.php');
+$conn = getValidConnection();
 
 if (!isset($_SESSION['correo_electronico']) || !isset($_SESSION['rol'])) {
     header('Location: ../loginRegister.php');
@@ -16,10 +17,6 @@ if ($_SESSION['rol'] === 'Usuario') {
 
 
 include_once('../controller/insumos_controller.php');
-
-// Usar la función para obtener una conexión válida
-$conn = getValidConnection();
-
 
 // Obtener los insumos de la tabla compras
 $consulta_compras = "SELECT DISTINCT nombre_insumos FROM compras";
@@ -46,7 +43,7 @@ if (isset($_POST['buscar_nombre'])) {
 $total_insumos = count($insumos);
 $total_pag = ceil($total_insumos / $items_por_pagina);
 
-closeConnection($conn);
+;
 ?>
 <!DOCTYPE html>
 <html>

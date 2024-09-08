@@ -15,8 +15,8 @@ function getValidConnection() {
 }
 
 function closeConnection(&$conn) {
-    if (isset($conn) && $conn instanceof mysqli) {
-        @$conn->close();
+    if (isset($conn) && $conn instanceof mysqli && !$conn->connect_errno) {
+        $conn->close();
         $conn = null; // Asegurarse de que la variable de conexión se establezca a null después de cerrarla
     }
 }
