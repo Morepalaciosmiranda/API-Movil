@@ -25,9 +25,14 @@ try {
     $result = $stmt->get_result();
     
     if ($row = $result->fetch_assoc()) {
-        echo json_encode($row);
+        // Asegúrate de que la cantidad sea un número
+        $cantidad = is_numeric($row['cantidad']) ? floatval($row['cantidad']) : null;
+        echo json_encode([
+            "marca" => $row['marca'],
+            "cantidad" => $cantidad
+        ]);
     } else {
-        echo json_encode(["marca" => "", "cantidad" => ""]);
+        echo json_encode(["marca" => "", "cantidad" => null]);
     }
 
 } catch (Exception $e) {

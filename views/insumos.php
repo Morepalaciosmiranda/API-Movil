@@ -372,21 +372,22 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
             if (nombreInsumo) {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
-                    if (this.readyState == 4) {
-                        if (this.status == 200) {
-                            try {
-                                var datos = JSON.parse(this.responseText);
-                                document.getElementById('marca').value = datos.marca;
+                    if (this.readyState == 4 && this.status == 200) {
+                        try {
+                            var datos = JSON.parse(this.responseText);
+                            console.log("Datos recibidos:", datos);
+
+                            document.getElementById('marca').value = datos.marca || '';
+
+                            if (datos.cantidad !== undefined && datos.cantidad !== null) {
                                 document.getElementById('cantidad').value = datos.cantidad;
-                            } catch (e) {
-                                console.error("Error al parsear JSON:", e);
-                                console.log("Respuesta del servidor:", this.responseText);
-                                alert("Hubo un error al obtener los datos del insumo. Por favor, revisa la consola para más detalles.");
+                            } else {
+                                document.getElementById('cantidad').value = '';
+                                console.warn("La cantidad es undefined o null");
                             }
-                        } else {
-                            console.error("Error en la solicitud. Estado:", this.status);
+                        } catch (e) {
+                            console.error("Error al parsear JSON:", e);
                             console.log("Respuesta del servidor:", this.responseText);
-                            alert("Hubo un error al obtener los datos del insumo. Por favor, revisa la consola para más detalles.");
                         }
                     }
                 };
