@@ -123,7 +123,6 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
 
                             <input type="submit" value="Agregar Insumo">
                         </form>
-
                     </div>
                 </div>
 
