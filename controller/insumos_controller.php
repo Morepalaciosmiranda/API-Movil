@@ -34,27 +34,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombre_insumo'], $_POS
 }
 
 
-if (isset($_POST['id_editar'], $_POST['nombre_editar'], $_POST['id_proveedor_editar'], $_POST['precio_editar'], $_POST['fecha_vencimiento_editar'], $_POST['marca_editar'], $_POST['cantidad_editar'], $_POST['estado_insumo_editar'])) {
+if (isset($_POST['id_editar'], $_POST['nombre_insumo_editar'], $_POST['marca_editar'], $_POST['cantidad_editar'], $_POST['fecha_vencimiento_editar'], $_POST['estado_insumo_editar'])) {
     $id_editar = $_POST['id_editar'];
-    $nombre_editar = $_POST['nombre_editar'];
-    $id_proveedor_editar = $_POST['id_proveedor_editar'];
-    $precio_editar = $_POST['precio_editar'];
-    $fecha_vencimiento_editar = $_POST['fecha_vencimiento_editar'];
+    $nombre_insumo_editar = $_POST['nombre_insumo_editar'];
     $marca_editar = $_POST['marca_editar'];
     $cantidad_editar = $_POST['cantidad_editar'];
+    $fecha_vencimiento_editar = $_POST['fecha_vencimiento_editar'];
     $estado_insumo_editar = $_POST['estado_insumo_editar'];
 
     if (strtotime($fecha_vencimiento_editar) < strtotime(date('Y-m-d'))) {
         die("Error: La fecha de vencimiento no puede ser una fecha pasada.");
     }
 
-    $actualizar_sql = "UPDATE insumos SET nombre_insumo = ?, id_proveedor = ?, precio = ?, fecha_vencimiento = ?, marca = ?, cantidad = ?, estado_insumo = ? WHERE id_insumo = ?";
+    $actualizar_sql = "UPDATE insumos SET nombre_insumo = ?, marca = ?, cantidad = ?, fecha_vencimiento = ?, estado_insumo = ? WHERE id_insumo = ?";
     $actualizar_stmt = $conn->prepare($actualizar_sql);
     if (!$actualizar_stmt) {
         die("Error al preparar la consulta de actualización: " . $conn->error);
     }
 
-    if (!$actualizar_stmt->bind_param("sisssisi", $nombre_editar, $id_proveedor_editar, $precio_editar, $fecha_vencimiento_editar, $marca_editar, $cantidad_editar, $estado_insumo_editar, $id_editar)) {
+    if (!$actualizar_stmt->bind_param("ssissi", $nombre_insumo_editar, $marca_editar, $cantidad_editar, $fecha_vencimiento_editar, $estado_insumo_editar, $id_editar)) {
         die("Error al enlazar parámetros: " . $actualizar_stmt->error);
     }
 
@@ -112,7 +110,8 @@ if ($resultado_insumos->num_rows > 0) {
     $insumos = array();
 }
 
-function obtenerInsumos() {
+function obtenerInsumos()
+{
     global $conn;
     $conn = getValidConnection();
     $insumos = array();
@@ -129,7 +128,8 @@ function obtenerInsumos() {
     return $insumos;
 }
 
-function buscarInsumosPorNombre($nombre) {
+function buscarInsumosPorNombre($nombre)
+{
     global $conn;
     $conn = getValidConnection();
     $insumos = array();
@@ -145,5 +145,3 @@ function buscarInsumosPorNombre($nombre) {
 
     return $insumos;
 }
-
-?>

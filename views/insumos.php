@@ -185,33 +185,30 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
             <h2>Editar Insumo</h2>
             <form id="formEditarInsumo" action="../controller/insumos_controller.php" method="post">
                 <input type="hidden" id="edit-id" name="id_editar">
-                <label for="edit-nombre">Nombre del Insumo:</label>
-                <input type="text" id="edit-nombre" name="nombre_editar" required><br><br>
-                <label for="edit-proveedor">Proveedor:</label>
-                <select id="edit-proveedor" name="id_proveedor_editar" required>
-                    <?php
-                    $consulta_proveedores = "SELECT * FROM proveedores";
-                    $resultado_proveedores = $conn->query($consulta_proveedores);
-                    if ($resultado_proveedores->num_rows > 0) {
-                        while ($row = $resultado_proveedores->fetch_assoc()) {
-                            echo "<option value='" . $row['id_proveedor'] . "'>" . $row['nombre_proveedor'] . "</option>";
-                        }
-                    }
-                    ?>
+
+                <label for="edit-nombre_insumo">Nombre del Insumo:</label>
+                <select id="edit-nombre_insumo" name="nombre_insumo_editar" required onchange="autocompletarDatosEdicion()">
+                    <option value="">Seleccione un insumo</option>
+                    <?php foreach ($insumos_compras as $insumo): ?>
+                        <option value="<?php echo htmlspecialchars($insumo); ?>"><?php echo htmlspecialchars($insumo); ?></option>
+                    <?php endforeach; ?>
                 </select><br><br>
-                <label for="edit-precio">Precio:</label>
-                <input type="number" id="edit-precio" name="precio_editar" required><br><br>
-                <label for="edit-fecha">Fecha de Vencimiento:</label>
-                <input type="date" id="edit-fecha" name="fecha_vencimiento_editar" required><br><br>
+
                 <label for="edit-marca">Marca:</label>
                 <input type="text" id="edit-marca" name="marca_editar" required><br><br>
+
                 <label for="edit-cantidad">Cantidad:</label>
                 <input type="number" id="edit-cantidad" name="cantidad_editar" required><br><br>
-                <label for="edit-estado">Estado del Insumo:</label>
-                <select id="edit-estado" name="estado_insumo_editar" required>
+
+                <label for="edit-fecha_vencimiento">Fecha de Vencimiento:</label>
+                <input type="date" id="edit-fecha_vencimiento" name="fecha_vencimiento_editar" required><br><br>
+
+                <label for="edit-estado_insumo">Estado del Insumo:</label>
+                <select id="edit-estado_insumo" name="estado_insumo_editar" required>
                     <option value="Buen Estado">Buen Estado</option>
                     <option value="Mal Estado">Mal Estado</option>
                 </select><br><br>
+
                 <input type="submit" value="Guardar Cambios">
             </form>
         </div>
@@ -317,13 +314,11 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
         function openEditModal(insumo) {
             var modalEditar = document.getElementById("modalEditarInsumo");
             document.getElementById("edit-id").value = insumo.id_insumo;
-            document.getElementById("edit-nombre").value = insumo.nombre_insumo;
-            document.getElementById("edit-proveedor").value = insumo.id_proveedor;
-            document.getElementById("edit-precio").value = insumo.precio;
-            document.getElementById("edit-fecha").value = insumo.fecha_vencimiento;
+            document.getElementById("edit-nombre_insumo").value = insumo.nombre_insumo;
             document.getElementById("edit-marca").value = insumo.marca;
             document.getElementById("edit-cantidad").value = insumo.cantidad;
-            document.getElementById("edit-estado").value = insumo.estado_insumo;
+            document.getElementById("edit-fecha_vencimiento").value = insumo.fecha_vencimiento;
+            document.getElementById("edit-estado_insumo").value = insumo.estado_insumo;
 
             modalEditar.style.display = "block";
         }
@@ -393,6 +388,24 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
             }
         }
 
+        function autocompletarDatosEdicion() {
+            var nombreInsumo = document.getElementById('edit-nombre_insumo').value;
+            if (nombreInsumo) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var datos = JSON.parse(this.responseText);
+                        if (datos.cantidad !== undefined && datos.cantidad !== null) {
+                            document.getElementById('edit-cantidad').value = datos.cantidad;
+                        } else {
+                            document.getElementById('edit-cantidad').value = '';
+                        }
+                    }
+                };
+                xhr.open("GET", "../controller/obtener_datos_compra.php?nombre_insumo=" + encodeURIComponent(nombreInsumo), true);
+                xhr.send();
+            }
+        }
 
         function buscarInsumo() {
             const input = document.getElementById('searchInsumos').value.toLowerCase();
