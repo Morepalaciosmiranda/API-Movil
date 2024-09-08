@@ -277,29 +277,63 @@ function mostrarAlerta(mensaje) {
 /* ALERTAS INSUMOS */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Validación de nombre del insumo (select)
+    // Validaciones en creación
     const nombreInsumoInput = document.getElementById('nombre_insumo');
-    nombreInsumoInput.addEventListener('change', function() {
-        validarNombreInsumo(this);
-    });
+    if (nombreInsumoInput) {
+        nombreInsumoInput.addEventListener('change', function() {
+            validarNombreInsumo(this);
+        });
+    }
 
-    // Validación de marca
     const marcaInput = document.getElementById('marca');
-    marcaInput.addEventListener('blur', function() {
-        validarMarca(this);
-    });
+    if (marcaInput) {
+        marcaInput.addEventListener('blur', function() {
+            validarMarca(this);
+        });
+    }
 
-    // Validación de fecha de vencimiento
     const fechaVencimientoInput = document.getElementById('fecha_vencimiento');
-    fechaVencimientoInput.addEventListener('change', function() {
-        validarFechaVencimiento(this);
-    });
+    if (fechaVencimientoInput) {
+        fechaVencimientoInput.addEventListener('change', function() {
+            validarFechaVencimiento(this);
+        });
+    }
 
-    // Validación de estado del insumo (select)
     const estadoInsumoInput = document.getElementById('estado_insumo');
-    estadoInsumoInput.addEventListener('change', function() {
-        validarEstadoInsumo(this);
-    });
+    if (estadoInsumoInput) {
+        estadoInsumoInput.addEventListener('change', function() {
+            validarEstadoInsumo(this);
+        });
+    }
+
+    // Validaciones en edición
+    const editNombreInsumoInput = document.getElementById('edit-nombre_insumo');
+    if (editNombreInsumoInput) {
+        editNombreInsumoInput.addEventListener('change', function() {
+            validarNombreInsumo(this);
+        });
+    }
+
+    const editMarcaInput = document.getElementById('edit-marca');
+    if (editMarcaInput) {
+        editMarcaInput.addEventListener('blur', function() {
+            validarMarca(this);
+        });
+    }
+
+    const editFechaVencimientoInput = document.getElementById('edit-fecha_vencimiento');
+    if (editFechaVencimientoInput) {
+        editFechaVencimientoInput.addEventListener('change', function() {
+            validarFechaVencimiento(this);
+        });
+    }
+
+    const editEstadoInsumoInput = document.getElementById('edit-estado_insumo');
+    if (editEstadoInsumoInput) {
+        editEstadoInsumoInput.addEventListener('change', function() {
+            validarEstadoInsumo(this);
+        });
+    }
 });
 
 // Validar nombre del insumo (select)
@@ -358,39 +392,83 @@ function mostrarAlerta(mensaje) {
 }
 
 
-
 /* ALERTAS COMPRAS */
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Validación de proveedor (mantiene)
+    // Validación de proveedor en creación
     const proveedorInput = document.getElementById('id_proveedor');
-    proveedorInput.addEventListener('change', function() {
-        validarProveedor(this);
-    });
+    if (proveedorInput) {
+        proveedorInput.addEventListener('change', function() {
+            validarProveedor(this);
+        });
+    }
 
-    // Validación de nombre de insumo (nuevo campo)
+    // Validación de nombre de insumo en creación
     const nombreInsumoInput = document.getElementById('nombre_insumos');
-    nombreInsumoInput.addEventListener('blur', function() {
-        validarNombreInsumo(this);
-    });
+    if (nombreInsumoInput) {
+        nombreInsumoInput.addEventListener('blur', function() {
+            validarNombreInsumo(this);
+        });
+    }
 
-    // Validación de fecha de compra (actualizada)
+    // Validación de fecha de compra en creación
     const fechaCompraInput = document.getElementById('fecha_compra');
-    fechaCompraInput.addEventListener('change', function() {
-        validarFechaCompra(this);
-    });
+    if (fechaCompraInput) {
+        fechaCompraInput.addEventListener('change', function() {
+            validarFechaCompra(this);
+        });
+    }
 
-    // Validación de total de compra (campo actualizado de subtotal a total_compra)
+    // Validación de total de compra en creación
     const totalCompraInput = document.getElementById('total_compra');
-    totalCompraInput.addEventListener('blur', function() {
-        validarTotalCompra(this);
-    });
+    if (totalCompraInput) {
+        totalCompraInput.addEventListener('blur', function() {
+            validarTotalCompra(this);
+        });
+    }
 
-    // Validación de cantidad (nuevo límite de 100)
+    // Validación de cantidad en creación
     const cantidadInput = document.getElementById('cantidad');
-    cantidadInput.addEventListener('blur', function() {
-        validarCantidad(this);
-    });
+    if (cantidadInput) {
+        cantidadInput.addEventListener('blur', function() {
+            validarCantidad(this);
+        });
+    }
+
+    // Validaciones en edición
+    const editProveedorInput = document.getElementById('edit_id_proveedor');
+    if (editProveedorInput) {
+        editProveedorInput.addEventListener('change', function() {
+            validarProveedor(this);
+        });
+    }
+
+    const editNombreInsumoInput = document.getElementById('edit_nombre_insumos');
+    if (editNombreInsumoInput) {
+        editNombreInsumoInput.addEventListener('blur', function() {
+            validarNombreInsumo(this);
+        });
+    }
+
+    const editFechaCompraInput = document.getElementById('edit_fecha_compra');
+    if (editFechaCompraInput) {
+        editFechaCompraInput.addEventListener('change', function() {
+            validarFechaCompra(this);
+        });
+    }
+
+    const editTotalCompraInput = document.getElementById('edit_total_compra');
+    if (editTotalCompraInput) {
+        editTotalCompraInput.addEventListener('blur', function() {
+            validarTotalCompra(this);
+        });
+    }
+
+    const editCantidadInput = document.getElementById('edit_cantidad');
+    if (editCantidadInput) {
+        editCantidadInput.addEventListener('blur', function() {
+            validarCantidad(this);
+        });
+    }
 });
 
 // Validación del proveedor
@@ -400,7 +478,7 @@ function validarProveedor(input) {
     }
 }
 
-// Validación del nombre de insumo (nuevo campo)
+// Validación del nombre de insumo
 function validarNombreInsumo(input) {
     const nombre = input.value;
     const regex = /^[a-zA-Z0-9\s]{3,25}$/;
@@ -416,7 +494,7 @@ function validarNombreInsumo(input) {
     }
 }
 
-// Validación de la fecha de compra (actualizada)
+// Validación de la fecha de compra
 function validarFechaCompra(input) {
     const fecha = new Date(input.value);
     const hoy = new Date();
@@ -433,7 +511,7 @@ function validarFechaCompra(input) {
     }
 }
 
-// Validación del total de compra (actualización de subtotal)
+// Validación del total de compra
 function validarTotalCompra(input) {
     const totalCompra = input.value;
     if (totalCompra === '') {
@@ -447,7 +525,7 @@ function validarTotalCompra(input) {
     }
 }
 
-// Validación de cantidad (límite de 100)
+// Validación de cantidad
 function validarCantidad(input) {
     const cantidad = input.value;
     if (cantidad === '') {
@@ -469,6 +547,7 @@ function mostrarAlerta(mensaje) {
         text: mensaje,
     });
 }
+
 
 
 /* ALERTAS PEDIDOS */
