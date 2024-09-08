@@ -372,10 +372,22 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
             if (nombreInsumo) {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        var datos = JSON.parse(this.responseText);
-                        document.getElementById('marca').value = datos.marca;
-                        document.getElementById('cantidad').value = datos.cantidad;
+                    if (this.readyState == 4) {
+                        if (this.status == 200) {
+                            try {
+                                var datos = JSON.parse(this.responseText);
+                                document.getElementById('marca').value = datos.marca;
+                                document.getElementById('cantidad').value = datos.cantidad;
+                            } catch (e) {
+                                console.error("Error al parsear JSON:", e);
+                                console.log("Respuesta del servidor:", this.responseText);
+                                alert("Hubo un error al obtener los datos del insumo. Por favor, revisa la consola para más detalles.");
+                            }
+                        } else {
+                            console.error("Error en la solicitud. Estado:", this.status);
+                            console.log("Respuesta del servidor:", this.responseText);
+                            alert("Hubo un error al obtener los datos del insumo. Por favor, revisa la consola para más detalles.");
+                        }
                     }
                 };
                 xhr.open("GET", "../controller/obtener_datos_compra.php?nombre_insumo=" + encodeURIComponent(nombreInsumo), true);
@@ -403,7 +415,7 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
             });
         }
     </script>
-    <script src="../js/validaciones.js"></script>
+    <!-- <script src="../js/validaciones.js"></script> -->
 </body>
 
 </html>
