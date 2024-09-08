@@ -377,7 +377,7 @@
             sendButton.innerHTML = '<span class="spinner" id="loading-spinner"></span>';
             spinner.style.display = 'inline-block';
 
-            fetch('https://exterminiofastfood.onrender.comcontroller/forgot_password.php', {
+            fetch('https://exterminiofastfood.onrender.com/controller/forgot_password.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
