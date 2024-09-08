@@ -167,7 +167,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
 
                                 <input type="submit" value="Guardar Cambios">
                             </form>
-
                         </div>
                     </div>
 
@@ -212,7 +211,14 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                         echo "<td>" . $row['total_compra'] . "</td>";
                                         echo "<td>" . $row['cantidad'] . "</td>";
                                         echo '<td class="actions">';
-                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' . $row['id_compra'] . ', \'' . $row['nombre_usuario'] . '\', \'' . $row['nombre_proveedor'] . '\', \'' . $row['nombre_insumos'] . '\', \'' . $row['fecha_compra'] . '\', ' . $row['total_compra'] . ', ' . $row['cantidad'] . ')"><i class="fa fa-edit"></i></button>';
+                                        echo '<button class="edit-btn" onclick="abrirModalEditar(' .
+                                            $row['id_compra'] . ', \'' .
+                                            htmlspecialchars($row['nombre_proveedor'], ENT_QUOTES) . '\', \'' .
+                                            htmlspecialchars($row['nombre_insumos'], ENT_QUOTES) . '\', \'' .
+                                            $row['fecha_compra'] . '\', ' .
+                                            $row['total_compra'] . ', ' .
+                                            $row['cantidad'] .
+                                            ')"><i class="fa fa-edit"></i></button>';
                                         echo '<button class="delete-btn" onclick="eliminarCompra(' . $row['id_compra'] . ')"><i class="fa fa-trash"></i></button>';
                                         echo '<button class="details-btn" onclick="abrirModalDetalle(' . $row['id_compra'] . ')"><i class="fa fa-eye"></i></button>';
                                         echo '</td>';
@@ -289,7 +295,7 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
             }
         };
 
-        function abrirModalEditar(idCompra, nombreUsuario, nombreProveedor, nombreInsumos, fechaCompra, totalCompra, cantidad) {
+        function abrirModalEditar(idCompra, nombreProveedor, nombreInsumos, fechaCompra, totalCompra, cantidad) {
             document.getElementById('edit_id_compra').value = idCompra;
             document.getElementById('edit_nombre_insumos').value = nombreInsumos;
             document.getElementById('edit_fecha_compra').value = fechaCompra;
@@ -480,24 +486,24 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
         //         .catch(error => console.error('Error:', error));
         // }
 
-        function cargarProveedores() {
+        function cargarProveedoresEditar(nombreProveedorSeleccionado) {
             fetch('../controller/proveedores_controller.php')
                 .then(response => response.json())
                 .then(data => {
-                    const select = document.getElementById('id_proveedor');
-                    if (select) { // Verifica si el elemento existe
-                        select.innerHTML = '';
-                        data.forEach(proveedor => {
-                            const option = document.createElement('option');
-                            option.value = proveedor.id_proveedor;
-                            option.textContent = proveedor.nombre_proveedor;
-                            select.appendChild(option);
-                        });
-                    }
+                    const select = document.getElementById('edit_id_proveedor');
+                    select.innerHTML = '';
+                    data.forEach(proveedor => {
+                        const option = document.createElement('option');
+                        option.value = proveedor.id_proveedor;
+                        option.textContent = proveedor.nombre_proveedor;
+                        if (proveedor.nombre_proveedor === nombreProveedorSeleccionado) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                    });
                 })
                 .catch(error => console.error('Error:', error));
         }
-
 
 
         // function cargarUsuariosEditar(idUsuarioSeleccionado) {
