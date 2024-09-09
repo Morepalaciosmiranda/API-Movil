@@ -394,12 +394,14 @@ a {
 
 .whatsapp-item {
     margin-left: 70px;
+    align-items: center;
 }
 
 .whatsapp {
     color: var(--form-twitter-color);
     font-size: 30px;
     transition: 0.5s;
+    align-items: center;
 }
 
 
