@@ -1,5 +1,4 @@
 /* ALERTAS PEDIDOS */
-
 document.addEventListener('DOMContentLoaded', function() {
     // Validación de nombre del cliente
     const nombreClienteInput = document.getElementById('nombreCliente');
@@ -198,18 +197,6 @@ document.addEventListener('DOMContentLoaded', function() {
         validarCantidadInsumo(this);
     });
 
-    const formAgregarProducto = document.getElementById('formAgregarProducto');
-    formAgregarProducto.addEventListener('submit', function(event) {
-        if (!validarNombreProducto(nombreProductoInput) ||
-            !validarFoto(fotoInput) ||
-            !validarDescripcionProducto(descripcionProductoInput) ||
-            !validarValorUnitario(valorUnitarioInput) ||
-            !validarNombreInsumo(nombreInsumoInput) ||
-            !validarCantidadInsumo(cantidadInsumoInput)) {
-            event.preventDefault(); // Detener el envío si hay errores
-        }
-    });
-
     // Validaciones para el formulario de edición
     const editNombreProductoInput = document.getElementById('edit-nombre');
     editNombreProductoInput.addEventListener('blur', function() {
@@ -231,15 +218,6 @@ document.addEventListener('DOMContentLoaded', function() {
         validarFoto(this);
     });
 
-    const formEditarProducto = document.getElementById('formEditarProducto');
-    formEditarProducto.addEventListener('submit', function(event) {
-        if (!validarNombreProducto(editNombreProductoInput) ||
-            !validarFoto(editFotoInput) ||
-            !validarDescripcionProducto(editDescripcionProductoInput) ||
-            !validarValorUnitario(editValorUnitarioInput)) {
-            event.preventDefault(); // Detener el envío si hay errores
-        }
-    });
 });
 
 function validarNombreProducto(input) {

@@ -452,7 +452,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
         });
     }
     </script>
-    <script src="../js/validaciones.js"></script> 
+    <script src="../js/validaciones_2.js"></script>
 </body>
 
 </html>
