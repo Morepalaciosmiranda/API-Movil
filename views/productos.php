@@ -439,6 +439,7 @@ $insumos = obtenerInsumos();
                 }
             });
         </script>
+        <script src="../js/validaciones_2.js"></script> 
     </div>
 </body>
 
