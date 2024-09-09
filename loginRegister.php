@@ -68,13 +68,7 @@
                 <span class="social-title">Nuestras Redes Sociales</span>
                 <div class="social-icons-box">
                     <div class="social-item">
-                        <i class='bx bxl-facebook facebook'></i>
-                    </div>
-                    <div class="social-item">
                         <i class='bx bxl-whatsapp whatsapp'></i>
-                    </div>
-                    <div class="social-item">
-                        <i class='bx bxl-linkedin linkedin'></i>
                     </div>
                 </div>
             </div>
@@ -82,7 +76,7 @@
 
         <div class="form-col-image">
             <img src="./img/LogoExterminio.png" alt="">
-            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cupiditate nostrum architecto quas inventore, eligendi dolorem omnis repellendus quaerat aperiam dolorum vero eum officiis atque sequi necessitatibus error beatae at iste?</p>
+            <p>Exterminio es un puesto de comidas rápidas que ahora te ofrece la facilidad de hacer pedidos a domicilio y gestionar tus compras de manera rápida y segura. ¡Inicia sesión o Regístrate y disfruta de la mejor comida sin moverte de casa!</p>
         </div>
     </section>
 
