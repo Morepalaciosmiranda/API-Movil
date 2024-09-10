@@ -281,13 +281,10 @@ function validarValorUnitario(input) {
     const valor = parseFloat(input.value);
 
     if (isNaN(valor)) {
-        mostrarAlerta('El valor unitario debe ser un número.');
+        mostrarAlerta('El precio debe ser un número.');
         return false;
     } else if (valor <= 0) {
-        mostrarAlerta('El valor unitario debe ser un número positivo.');
-        return false;
-    } else if (valor.toFixed(2).length > valor.toString().length) {
-        mostrarAlerta('El valor unitario no puede tener más de dos decimales.');
+        mostrarAlerta('El precio debe ser un número positivo.');
         return false;
     }
     return true;
