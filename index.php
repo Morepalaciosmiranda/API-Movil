@@ -12,6 +12,7 @@ if ($_SESSION['rol'] !== 'Usuario') {
     header('Location: ./no_autorizado.php');
     exit();
 }
+error_log("Ruta de imagen: " . $ruta_imagen);
 ?>
 <!DOCTYPE html>
 <html lang="en">

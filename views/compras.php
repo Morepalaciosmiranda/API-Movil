@@ -220,7 +220,6 @@ $total_paginas = ceil($total_compras / $items_por_pagina);
                                             $row['cantidad'] .
                                             ')"><i class="fa fa-edit"></i></button>';
                                         echo '<button class="delete-btn" onclick="eliminarCompra(' . $row['id_compra'] . ')"><i class="fa fa-trash"></i></button>';
-                                        // echo '<button class="details-btn" onclick="abrirModalDetalle(' . $row['id_compra'] . ')"><i class="fa fa-eye"></i></button>';
                                         echo '</td>';
                                         echo "</tr>";
                                     }
