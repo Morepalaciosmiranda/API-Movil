@@ -71,7 +71,7 @@ if ($_SESSION['rol'] !== 'Usuario') {
             <?php
             include './includes/conexion.php';
 
-            $sql = "SELECT * FROM productos";
+            $sql = "SELECT * FROM productos WHERE activo = 1";
 
             if ($result = $conn->query($sql)) {
                 $tarjetasPorFila = 3;

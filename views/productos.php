@@ -15,6 +15,23 @@ if ($_SESSION['rol'] === 'Usuario') {
 include_once('../controller/productos_controller.php');
 include_once('../controller/insumos_controller.php');
 
+// Función para activar/desactivar producto
+if (isset($_POST['toggle_active'])) {
+    $id_producto = $_POST['id_producto'];
+    $nuevo_estado = $_POST['nuevo_estado'];
+
+    $sql = "UPDATE productos SET activo = ? WHERE id_producto = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $nuevo_estado, $id_producto);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => $conn->error]);
+    }
+    exit;
+}
+
 // Asegúrate de que obtenerProductos() esté definida en tu controlador
 $productos = obtenerProductos(); // Esta función debe devolver un array de productos
 $items_por_pagina = 10;
@@ -97,6 +114,7 @@ $insumos = obtenerInsumos();
                                         echo '<td class="actions">';
                                         echo '<button class="edit-btn" onclick="abrirModalEditar(\'' . htmlspecialchars($producto['id_producto']) . '\', \'' . htmlspecialchars($producto['nombre_producto']) . '\', \'' . htmlspecialchars($producto['descripcion_producto']) . '\', \'' . htmlspecialchars($producto['valor_unitario']) . '\')"><i class="fa fa-edit"></i></button>';
                                         echo '<button class="delete-btn" onclick="confirmarEliminacion(' . htmlspecialchars($producto['id_producto']) . ')"><i class="fa fa-trash"></i></button>';
+                                        echo '<button class="toggle-btn" onclick="toggleActive(' . htmlspecialchars($producto['id_producto']) . ', ' . ($producto['activo'] ? 'false' : 'true') . ')">' . ($producto['activo'] ? 'Desactivar' : 'Activar') . '</button>';
                                         echo '</td>';
                                         echo "</tr>";
                                     }
@@ -438,8 +456,26 @@ $insumos = obtenerInsumos();
                     }
                 }
             });
+
+            function toggleActive(id_producto, nuevo_estado) {
+                fetch('productos.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `toggle_active=1&id_producto=${id_producto}&nuevo_estado=${nuevo_estado ? 1 : 0}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Error al cambiar el estado del producto');
+                        }
+                    });
+            }
         </script>
-        <script src="../js/validaciones_2.js"></script> 
+        <script src="../js/validaciones_2.js"></script>
     </div>
 </body>
 
