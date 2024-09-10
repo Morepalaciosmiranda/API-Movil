@@ -114,7 +114,6 @@ $insumos = obtenerInsumos();
                                         echo '<td class="actions">';
                                         echo '<button class="edit-btn" onclick="abrirModalEditar(\'' . htmlspecialchars($producto['id_producto']) . '\', \'' . htmlspecialchars($producto['nombre_producto']) . '\', \'' . htmlspecialchars($producto['descripcion_producto']) . '\', \'' . htmlspecialchars($producto['valor_unitario']) . '\')"><i class="fa fa-edit"></i></button>';
                                         echo '<button class="delete-btn" onclick="confirmarEliminacion(' . htmlspecialchars($producto['id_producto']) . ')"><i class="fa fa-trash"></i></button>';
-                                        echo '<button class="toggle-btn" onclick="toggleActive(' . htmlspecialchars($producto['id_producto']) . ', ' . ($producto['activo'] ? 'false' : 'true') . ')">' . ($producto['activo'] ? 'Desactivar' : 'Activar') . '</button>';
                                         echo '</td>';
                                         echo "</tr>";
                                     }
