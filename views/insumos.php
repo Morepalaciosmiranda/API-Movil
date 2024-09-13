@@ -216,240 +216,225 @@ $total_pag = ceil($total_insumos / $items_por_pagina);;
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-                    var modalAgregarInsumo = document.getElementById('modalAgregarInsumo');
-                    var modalEditarInsumo = document.getElementById('modalEditarInsumo');
-                    var btnAgregarInsumo = document.getElementById('btnAgregarInsumo');
-                    var spanAgregar = modalAgregarInsumo.getElementsByClassName('close')[0];
-                    var spanEditar = modalEditarInsumo.getElementsByClassName('close')[0];
+            var modalAgregarInsumo = document.getElementById('modalAgregarInsumo');
+            var modalEditarInsumo = document.getElementById('modalEditarInsumo');
+            var btnAgregarInsumo = document.getElementById('btnAgregarInsumo');
+            var spanAgregar = modalAgregarInsumo.getElementsByClassName('close')[0];
+            var spanEditar = modalEditarInsumo.getElementsByClassName('close')[0];
 
-                    btnAgregarInsumo.onclick = function() {
-                        modalAgregarInsumo.style.display = 'block';
-                    }
+            btnAgregarInsumo.onclick = function() {
+                modalAgregarInsumo.style.display = 'block';
+            }
 
-                    spanAgregar.onclick = function() {
-                        modalAgregarInsumo.style.display = 'none';
-                    }
+            spanAgregar.onclick = function() {
+                modalAgregarInsumo.style.display = 'none';
+            }
 
-                    spanEditar.onclick = function() {
-                        modalEditarInsumo.style.display = 'none';
-                    }
+            spanEditar.onclick = function() {
+                modalEditarInsumo.style.display = 'none';
+            }
 
-                    window.onclick = function(event) {
-                        if (event.target == modalAgregarInsumo) {
-                            modalAgregarInsumo.style.display = 'none';
-                        } else if (event.target == modalEditarInsumo) {
-                            modalEditarInsumo.style.display = 'none';
-                        }
-                    }
+            window.onclick = function(event) {
+                if (event.target == modalAgregarInsumo) {
+                    modalAgregarInsumo.style.display = 'none';
+                } else if (event.target == modalEditarInsumo) {
+                    modalEditarInsumo.style.display = 'none';
+                }
+            }
 
-                    document.getElementById('formAgregarInsumo').addEventListener('submit', function(event) {
-                        event.preventDefault();
+            document.getElementById('formAgregarInsumo').addEventListener('submit', function(event) {
+                event.preventDefault();
 
-                        var nombreInsumo = document.getElementById('nombre_insumo').value;
-                        var marca = document.getElementById('marca').value;
-                        var cantidad = document.getElementById('cantidad').value;
-                        var fechaVencimiento = document.getElementById('fecha_vencimiento').value;
-                        var estadoInsumo = document.getElementById('estado_insumo').value;
+                var nombreInsumo = document.getElementById('nombre_insumo').value;
+                var marca = document.getElementById('marca').value;
+                var cantidad = document.getElementById('cantidad').value;
+                var fechaVencimiento = document.getElementById('fecha_vencimiento').value;
+                var estadoInsumo = document.getElementById('estado_insumo').value;
 
-                        if (nombreInsumo && marca && cantidad && fechaVencimiento && estadoInsumo) {
+                if (nombreInsumo && marca && cantidad && fechaVencimiento && estadoInsumo) {
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¿Deseas agregar este insumo?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, agregarlo!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
                             Swal.fire({
-                                title: '¿Estás seguro?',
-                                text: "¿Deseas agregar este insumo?",
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Sí, agregarlo!'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    Swal.fire({
-                                        title: 'Insumo agregado',
-                                        text: 'El insumo se ha agregado exitosamente.',
-                                        icon: 'success',
-                                        confirmButtonText: 'OK'
-                                    }).then(() => {
-                                        event.target.submit();
-                                    });
-                                }
-                            });
-                        }
-                    });
-
-                    document.getElementById('formEditarInsumo').addEventListener('submit', function(event) {
-                        event.preventDefault();
-
-                        var nombreInsumo = document.getElementById('edit-nombre_insumo');
-                        var marca = document.getElementById('edit-marca');
-                        var cantidad = document.getElementById('edit-cantidad');
-                        var fechaVencimiento = document.getElementById('edit-fecha_vencimiento');
-                        var estadoInsumo = document.getElementById('edit-estado_insumo');
-
-                        // Verificar si todos los elementos existen antes de acceder a sus valores
-                        if (nombreInsumo && marca && cantidad && fechaVencimiento && estadoInsumo) {
-                            var nombreInsumoValue = nombreInsumo.value;
-                            var marcaValue = marca.value;
-                            var cantidadValue = cantidad.value;
-                            var fechaVencimientoValue = fechaVencimiento.value;
-                            var estadoInsumoValue = estadoInsumo.value;
-
-                            if (nombreInsumoValue && marcaValue && cantidadValue && fechaVencimientoValue && estadoInsumoValue) {
-                                Swal.fire({
-                                    title: '¿Confirmar edición?',
-                                    text: "¿Estás seguro de que deseas guardar los cambios?",
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonColor: '#3085d6',
-                                    cancelButtonColor: '#d33',
-                                    confirmButtonText: 'Sí, guardar cambios',
-                                    cancelButtonText: 'Cancelar'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        Swal.fire({
-                                            title: 'Insumo editado',
-                                            text: 'El insumo se ha editado exitosamente.',
-                                            icon: 'success',
-                                            confirmButtonText: 'OK'
-                                        }).then(() => {
-                                            this.submit();
-                                        });
-                                    }
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Por favor, complete todos los campos requeridos.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        } else {
-                            console.error('Uno o más elementos del formulario no se encontraron');
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'Ha ocurrido un error al procesar el formulario. Por favor, inténtelo de nuevo.',
-                                icon: 'error',
+                                title: 'Insumo agregado',
+                                text: 'El insumo se ha agregado exitosamente.',
+                                icon: 'success',
                                 confirmButtonText: 'OK'
+                            }).then(() => {
+                                event.target.submit();
                             });
                         }
                     });
-                });
+                }
+            });
 
-                    function openEditModal(insumo) {
-                        var modalEditar = document.getElementById("modalEditarInsumo");
-                        document.getElementById("edit-id").value = insumo.id_insumo;
-                        document.getElementById("edit-nombre_insumo").value = insumo.nombre_insumo;
-                        document.getElementById("edit-marca").value = insumo.marca;
-                        document.getElementById("edit-cantidad").value = insumo.cantidad;
-                        document.getElementById("edit-fecha_vencimiento").value = insumo.fecha_vencimiento;
-                        document.getElementById("edit-estado_insumo").value = insumo.estado_insumo;
+            document.getElementById('formEditarInsumo').addEventListener('submit', function(event) {
+                event.preventDefault();
 
-                        modalEditar.style.display = "block";
-                    }
+                var nombreInsumo = document.getElementById('edit-nombre_insumo');
+                var marca = document.getElementById('edit-marca');
+                var cantidad = document.getElementById('edit-cantidad');
+                var fechaVencimiento = document.getElementById('edit-fecha_vencimiento');
+                var estadoInsumo = document.getElementById('edit-estado_insumo');
 
-                    function confirmarEliminacion(idInsumo) {
+                // Verificar si todos los elementos existen antes de acceder a sus valores
+                if (nombreInsumo && marca && cantidad && fechaVencimiento && estadoInsumo) {
+                    var nombreInsumoValue = nombreInsumo.value;
+                    var marcaValue = marca.value;
+                    var cantidadValue = cantidad.value;
+                    var fechaVencimientoValue = fechaVencimiento.value;
+                    var estadoInsumoValue = estadoInsumo.value;
+
+                    if (nombreInsumoValue && marcaValue && cantidadValue && fechaVencimientoValue && estadoInsumoValue) {
                         Swal.fire({
-                            title: '¿Estás seguro?',
-                            text: "No podrás revertir esto!",
+                            title: '¿Confirmar edición?',
+                            text: "¿Estás seguro de que deseas guardar los cambios?",
                             icon: 'warning',
                             showCancelButton: true,
                             confirmButtonColor: '#3085d6',
                             cancelButtonColor: '#d33',
-                            confirmButtonText: 'Sí, eliminarlo!'
+                            confirmButtonText: 'Sí, guardar cambios',
+                            cancelButtonText: 'Cancelar'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                // Redirigimos a la URL del controlador
-                                window.location.href = '../controller/insumos_controller.php?eliminar=' + idInsumo;
+                                Swal.fire({
+                                    title: 'Insumo editado',
+                                    text: 'El insumo se ha editado exitosamente.',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    this.submit();
+                                });
                             }
                         });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Por favor, complete todos los campos requeridos.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     }
-
-                    // Manejo de alertas basado en los parámetros de la URL
-                    document.addEventListener("DOMContentLoaded", function() {
-                        const urlParams = new URLSearchParams(window.location.search);
-
-                        if (urlParams.has('error') && urlParams.get('error') === 'relacion') {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'No se puede eliminar',
-                                text: 'Este insumo está relacionado con un producto y no se puede eliminar.',
-                                confirmButtonText: 'Entendido'
-                            });
-                        } else if (urlParams.has('eliminar') && urlParams.get('eliminar') === 'exito') {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Eliminado!',
-                                text: 'El insumo ha sido eliminado correctamente.',
-                                confirmButtonText: 'OK'
-                            });
-                        }
+                } else {
+                    console.error('Uno o más elementos del formulario no se encontraron');
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al procesar el formulario. Por favor, inténtelo de nuevo.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
                     });
+                }
+            });
+        });
 
-                    function autocompletarDatos() {
-                        var nombreInsumo = document.getElementById('nombre_insumo').value;
-                        if (nombreInsumo) {
-                            var xhr = new XMLHttpRequest();
-                            xhr.onreadystatechange = function() {
-                                if (this.readyState == 4 && this.status == 200) {
-                                    try {
-                                        var datos = JSON.parse(this.responseText);
-                                        console.log("Datos recibidos:", datos);
+        function openEditModal(insumo) {
+            var modalEditar = document.getElementById("modalEditarInsumo");
+            document.getElementById("edit-id").value = insumo.id_insumo;
+            document.getElementById("edit-nombre_insumo").value = insumo.nombre_insumo;
+            document.getElementById("edit-marca").value = insumo.marca;
+            document.getElementById("edit-cantidad").value = insumo.cantidad;
+            document.getElementById("edit-fecha_vencimiento").value = insumo.fecha_vencimiento;
+            document.getElementById("edit-estado_insumo").value = insumo.estado_insumo;
 
-                                        if (datos.cantidad !== undefined && datos.cantidad !== null) {
-                                            document.getElementById('cantidad').value = datos.cantidad;
-                                        } else {
-                                            document.getElementById('cantidad').value = '';
-                                            console.warn("La cantidad es undefined o null");
-                                        }
-                                    } catch (e) {
-                                        console.error("Error al parsear JSON:", e);
-                                        console.log("Respuesta del servidor:", this.responseText);
-                                    }
-                                }
-                            };
-                            xhr.open("GET", "../controller/obtener_datos_compra.php?nombre_insumo=" + encodeURIComponent(nombreInsumo), true);
-                            xhr.send();
-                        }
-                    }
+            modalEditar.style.display = "block";
+        }
 
-                    function autocompletarDatosEdicion() {
-                        var nombreInsumo = document.getElementById('edit-nombre_insumo').value;
-                        if (nombreInsumo) {
-                            var xhr = new XMLHttpRequest();
-                            xhr.onreadystatechange = function() {
-                                if (this.readyState == 4 && this.status == 200) {
-                                    var datos = JSON.parse(this.responseText);
-                                    if (datos.cantidad !== undefined && datos.cantidad !== null) {
-                                        document.getElementById('edit-cantidad').value = datos.cantidad;
-                                    } else {
-                                        document.getElementById('edit-cantidad').value = '';
-                                    }
-                                }
-                            };
-                            xhr.open("GET", "../controller/obtener_datos_compra.php?nombre_insumo=" + encodeURIComponent(nombreInsumo), true);
-                            xhr.send();
-                        }
-                    }
+        function confirmarEliminacion(idInsumo) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminarlo!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Eliminado!',
+                        text: 'El insumo ha sido eliminado.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '../controller/insumos_controller.php?eliminar=' + idInsumo;
+                    });
+                }
+            });
+        }
 
-                    function buscarInsumo() {
-                        const input = document.getElementById('searchInsumos').value.toLowerCase();
-                        const tableRows = document.querySelectorAll('tbody tr'); // Asegúrate de que 'tbody tr' selecciona las filas correctas
+        function autocompletarDatos() {
+            var nombreInsumo = document.getElementById('nombre_insumo').value;
+            if (nombreInsumo) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        try {
+                            var datos = JSON.parse(this.responseText);
+                            console.log("Datos recibidos:", datos);
 
-                        tableRows.forEach(row => {
-                            // Concatenar todo el texto de la fila para buscar en todos los campos
-                            const rowText = Array.from(row.getElementsByTagName('td'))
-                                .map(td => td.textContent.toLowerCase())
-                                .join(' ');
-
-                            // Verificar si el texto de búsqueda está en alguna parte de la fila
-                            if (rowText.includes(input)) {
-                                row.style.display = '';
+                            if (datos.cantidad !== undefined && datos.cantidad !== null) {
+                                document.getElementById('cantidad').value = datos.cantidad;
                             } else {
-                                row.style.display = 'none';
+                                document.getElementById('cantidad').value = '';
+                                console.warn("La cantidad es undefined o null");
                             }
-                        });
+                        } catch (e) {
+                            console.error("Error al parsear JSON:", e);
+                            console.log("Respuesta del servidor:", this.responseText);
+                        }
                     }
+                };
+                xhr.open("GET", "../controller/obtener_datos_compra.php?nombre_insumo=" + encodeURIComponent(nombreInsumo), true);
+                xhr.send();
+            }
+        }
+
+        function autocompletarDatosEdicion() {
+            var nombreInsumo = document.getElementById('edit-nombre_insumo').value;
+            if (nombreInsumo) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var datos = JSON.parse(this.responseText);
+                        if (datos.cantidad !== undefined && datos.cantidad !== null) {
+                            document.getElementById('edit-cantidad').value = datos.cantidad;
+                        } else {
+                            document.getElementById('edit-cantidad').value = '';
+                        }
+                    }
+                };
+                xhr.open("GET", "../controller/obtener_datos_compra.php?nombre_insumo=" + encodeURIComponent(nombreInsumo), true);
+                xhr.send();
+            }
+        }
+
+        function buscarInsumo() {
+            const input = document.getElementById('searchInsumos').value.toLowerCase();
+            const tableRows = document.querySelectorAll('tbody tr'); // Asegúrate de que 'tbody tr' selecciona las filas correctas
+
+            tableRows.forEach(row => {
+                // Concatenar todo el texto de la fila para buscar en todos los campos
+                const rowText = Array.from(row.getElementsByTagName('td'))
+                    .map(td => td.textContent.toLowerCase())
+                    .join(' ');
+
+                // Verificar si el texto de búsqueda está en alguna parte de la fila
+                if (rowText.includes(input)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
     </script>
-    <script src="../js/validaciones.js"></script> 
+    <script src="../js/validaciones.js"></script>
 </body>
 
 </html>
