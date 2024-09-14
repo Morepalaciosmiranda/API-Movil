@@ -67,7 +67,7 @@ function updateCart() {
     cart.forEach((product, index) => {
         const cartCard = document.createElement('div');
         cartCard.classList.add('order-card');
-        cartCard.setAttribute('data-product-id', product.id);;
+        cartCard.setAttribute('data-product-id', product.id);
 
         const productImage = document.createElement('img');
         productImage.classList.add('order-image');
@@ -96,7 +96,7 @@ function updateCart() {
         const minusButton = document.createElement('button');
         minusButton.classList.add('quantity-btn', 'minus');
         minusButton.textContent = '-';
-        minusButton.addEventListener('click', () => updateQuantity(index, -1));
+        minusButton.onclick = () => updateQuantity(index, -1);
 
         const cartCounter = document.createElement('span');
         cartCounter.classList.add('cart-counter');
@@ -105,7 +105,7 @@ function updateCart() {
         const plusButton = document.createElement('button');
         plusButton.classList.add('quantity-btn', 'plus');
         plusButton.textContent = '+';
-        plusButton.addEventListener('click', () => updateQuantity(index, 1));
+        plusButton.onclick = () => updateQuantity(index, 1);
 
         quantityControls.appendChild(minusButton);
         quantityControls.appendChild(cartCounter);
@@ -161,8 +161,6 @@ document.querySelector('.order-wrapper').addEventListener('click', function(even
     }
 });
 
-updateCart();
-
 function removeFromCart(index) {
     cart.splice(index, 1);
     updateCart();
@@ -171,7 +169,10 @@ function removeFromCart(index) {
 
 function updateCartIcon() {
     const cartBadge = document.querySelector('.cart-badge');
-    cartBadge.innerText = cart.length;
+    cartBadge.innerText = cart.reduce((total, product) => total + product.quantity, 0);
+}
+
+updateCart();
 
     // También actualizamos los contadores individuales
     const orderCards = document.querySelectorAll('.order-card');
@@ -181,7 +182,7 @@ function updateCartIcon() {
             counter.innerText = cart[index].quantity;
         }
     });
-}
+
 
 const payButton = document.querySelector('.checkout');
 const modalContainer = document.getElementById('modalContainer');
