@@ -67,7 +67,7 @@ function updateCart() {
     cart.forEach((product, index) => {
         const cartCard = document.createElement('div');
         cartCard.classList.add('order-card');
-        cartCard.setAttribute('data-product-id', product.id);
+        cartCard.setAttribute('data-product-id', product.id);;
 
         const productImage = document.createElement('img');
         productImage.classList.add('order-image');
@@ -112,6 +112,7 @@ function updateCart() {
         quantityControls.appendChild(plusButton);
 
         cartCard.appendChild(quantityControls);
+
 
         const removeButton = document.createElement('span');
         removeButton.classList.add('order-remove');
