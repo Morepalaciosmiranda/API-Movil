@@ -67,6 +67,7 @@ function updateCart() {
     cart.forEach((product, index) => {
         const cartCard = document.createElement('div');
         cartCard.classList.add('order-card');
+        cartCard.setAttribute('data-product-id', product.id);
 
         const productImage = document.createElement('img');
         productImage.classList.add('order-image');
@@ -89,10 +90,28 @@ function updateCart() {
         cartCard.appendChild(productImage);
         cartCard.appendChild(orderDetails);
 
-        const cartCounter = document.createElement('div');
+        const quantityControls = document.createElement('div');
+        quantityControls.classList.add('quantity-controls');
+
+        const minusButton = document.createElement('button');
+        minusButton.classList.add('quantity-btn', 'minus');
+        minusButton.textContent = '-';
+        minusButton.addEventListener('click', () => updateQuantity(index, -1));
+
+        const cartCounter = document.createElement('span');
         cartCounter.classList.add('cart-counter');
         cartCounter.textContent = product.quantity;
-        cartCard.appendChild(cartCounter);
+
+        const plusButton = document.createElement('button');
+        plusButton.classList.add('quantity-btn', 'plus');
+        plusButton.textContent = '+';
+        plusButton.addEventListener('click', () => updateQuantity(index, 1));
+
+        quantityControls.appendChild(minusButton);
+        quantityControls.appendChild(cartCounter);
+        quantityControls.appendChild(plusButton);
+
+        cartCard.appendChild(quantityControls);
 
         const removeButton = document.createElement('span');
         removeButton.classList.add('order-remove');
@@ -105,6 +124,21 @@ function updateCart() {
         totalPrice += product.price * product.quantity;
     });
 
+    updateTotalPrice();
+    updateCartIcon();
+}
+
+function updateQuantity(index, change) {
+    cart[index].quantity += change;
+    if (cart[index].quantity < 1) {
+        removeFromCart(index);
+    } else {
+        updateCart();
+        localStorage.setItem('shoppingCart', JSON.stringify(cart));
+    }
+}
+
+function updateTotalPrice() {
     const roundedTotal = Math.round(totalPrice * 100) / 100;
     const totalPriceFormatted = roundedTotal.toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
     const totalPriceElement = document.createElement('h3');
@@ -112,9 +146,19 @@ function updateCart() {
     const totalContainer = document.querySelector('#total-container');
     totalContainer.innerHTML = '';
     totalContainer.appendChild(totalPriceElement);
-
-    updateCartIcon();
 }
+
+document.querySelector('.order-wrapper').addEventListener('click', function(event) {
+    if (event.target.classList.contains('quantity-btn')) {
+        const productCard = event.target.closest('.order-card');
+        const productId = productCard.getAttribute('data-product-id');
+        const change = event.target.classList.contains('plus') ? 1 : -1;
+        const index = cart.findIndex(item => item.id === productId);
+        if (index !== -1) {
+            updateQuantity(index, change);
+        }
+    }
+});
 
 updateCart();
 
