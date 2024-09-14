@@ -67,7 +67,6 @@ function updateCart() {
     cart.forEach((product, index) => {
         const cartCard = document.createElement('div');
         cartCard.classList.add('order-card');
-        cartCard.setAttribute('data-product-id', product.id);
 
         const productImage = document.createElement('img');
         productImage.classList.add('order-image');
@@ -90,28 +89,10 @@ function updateCart() {
         cartCard.appendChild(productImage);
         cartCard.appendChild(orderDetails);
 
-        const quantityControls = document.createElement('div');
-        quantityControls.classList.add('quantity-controls');
-
-        const minusButton = document.createElement('button');
-        minusButton.classList.add('quantity-btn', 'minus');
-        minusButton.textContent = '-';
-        minusButton.onclick = () => updateQuantity(index, -1);
-
-        const cartCounter = document.createElement('span');
+        const cartCounter = document.createElement('div');
         cartCounter.classList.add('cart-counter');
         cartCounter.textContent = product.quantity;
-
-        const plusButton = document.createElement('button');
-        plusButton.classList.add('quantity-btn', 'plus');
-        plusButton.textContent = '+';
-        plusButton.onclick = () => updateQuantity(index, 1);
-
-        quantityControls.appendChild(minusButton);
-        quantityControls.appendChild(cartCounter);
-        quantityControls.appendChild(plusButton);
-
-        cartCard.appendChild(quantityControls);
+        cartCard.appendChild(cartCounter);
 
         const removeButton = document.createElement('span');
         removeButton.classList.add('order-remove');
@@ -124,21 +105,6 @@ function updateCart() {
         totalPrice += product.price * product.quantity;
     });
 
-    updateTotalPrice();
-    updateCartIcon();
-}
-
-function updateQuantity(index, change) {
-    cart[index].quantity += change;
-    if (cart[index].quantity < 1) {
-        removeFromCart(index);
-    } else {
-        updateCart();
-        localStorage.setItem('shoppingCart', JSON.stringify(cart));
-    }
-}
-
-function updateTotalPrice() {
     const roundedTotal = Math.round(totalPrice * 100) / 100;
     const totalPriceFormatted = roundedTotal.toLocaleString('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
     const totalPriceElement = document.createElement('h3');
@@ -146,19 +112,11 @@ function updateTotalPrice() {
     const totalContainer = document.querySelector('#total-container');
     totalContainer.innerHTML = '';
     totalContainer.appendChild(totalPriceElement);
+
+    updateCartIcon();
 }
 
-document.querySelector('.order-wrapper').addEventListener('click', function(event) {
-    if (event.target.classList.contains('quantity-btn')) {
-        const productCard = event.target.closest('.order-card');
-        const productId = productCard.getAttribute('data-product-id');
-        const change = event.target.classList.contains('plus') ? 1 : -1;
-        const index = cart.findIndex(item => item.id === productId);
-        if (index !== -1) {
-            updateQuantity(index, change);
-        }
-    }
-});
+updateCart();
 
 function removeFromCart(index) {
     cart.splice(index, 1);
@@ -168,10 +126,17 @@ function removeFromCart(index) {
 
 function updateCartIcon() {
     const cartBadge = document.querySelector('.cart-badge');
-    cartBadge.innerText = cart.reduce((total, product) => total + product.quantity, 0);
-}
+    cartBadge.innerText = cart.length;
 
-updateCart();
+    // También actualizamos los contadores individuales
+    const orderCards = document.querySelectorAll('.order-card');
+    orderCards.forEach((card, index) => {
+        const counter = card.querySelector('.cart-counter');
+        if (counter) {
+            counter.innerText = cart[index].quantity;
+        }
+    });
+}
 
 const payButton = document.querySelector('.checkout');
 const modalContainer = document.getElementById('modalContainer');
@@ -200,44 +165,43 @@ function pagarAhora() {
     const carrito = cart.map(producto => ({
         id_producto: producto.id,
         nombre_producto: producto.name,
-        precio_producto: Number(producto.price).toLocaleString('es-CO', { minimumFractionDigits: 0 }),
+        precio_producto: Number(producto.price).toLocaleString('es-CO', { minimumFractionDigits: 0 }), // Asegúrate de que el precio no tenga decimales
         cantidad_producto: producto.quantity,
-        nombre: document.getElementById('nombre_cliente').value,
-        direccion: document.getElementById('calle').value,
-        barrio: document.getElementById('barrio_cliente').value,
-        telefono: document.getElementById('telefono_cliente').value
+        nombre: document.getElementById('nombre').value,
+        direccion: document.getElementById('direccion').value,
+        barrio: document.getElementById('barrio').value,
+        telefono: document.getElementById('telefono').value
     }));
 
     document.getElementById('productos').value = JSON.stringify(carrito);
 
-    // Aquí deberías usar fetch en lugar de $.ajax para mantener consistencia con el resto del código
-    fetch("./controller/pedidos_controller.php", {
-        method: "POST",
-        body: new FormData(document.getElementById('pedidoFormulario'))
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Pedido realizado con éxito:", data);
-        cart = [];
-        updateCart();
-        localStorage.removeItem('shoppingCart');
-        Swal.fire({
-            position: 'bottom-end',
-            icon: 'success',
-            iconColor: '#4CAF50',
-            background: '#020202',
-            confirmButtonColor: '#f15d07',
-            title: 'Pedido realizado con éxito',
-            text: '¡Gracias por tu compra!',
-            showConfirmButton: false,
-            customClass: {
-                popup: 'alert-text-color'
-            },
-            timer: 1500
-        });
-    })
-    .catch(error => {
-        console.error("Error al realizar el pedido:", error);
+    $.ajax({
+        type: "POST",
+        url: "./controller/pedidos_controller.php",
+        data: $('#pedidoFormulario').serialize(),
+        success: function (response) {
+            console.log("Pedido realizado con éxito:", response);
+            cart = [];
+            updateCart();
+            localStorage.removeItem('shoppingCart');
+            Swal.fire({
+                position: 'bottom-end',
+                icon: 'success',
+                iconColor: '#4CAF50',
+                background: '#020202',
+                confirmButtonColor: '#f15d07',
+                title: 'Pedido realizado con éxito',
+                text: '¡Gracias por tu compra!',
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'alert-text-color'
+                },
+                timer: 1500
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error al realizar el pedido:", error);
+        }
     });
 }
 
@@ -246,3 +210,4 @@ function obtenerCarrito() {
 }
 
 updateCart();
+

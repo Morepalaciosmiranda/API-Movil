@@ -127,22 +127,21 @@ if ($_SESSION['rol'] !== 'Usuario') {
             </div>
             <div class="order-wrapper">
                 <?php
-                session_start();
+                session_start(); // Asegúrate de iniciar la sesión
+
+                // Suponiendo que los productos ya se han añadido al carrito en $_SESSION['carritos'][$_SESSION['id_usuario']]
                 $productos = isset($_SESSION['carritos'][$_SESSION['id_usuario']]) ? $_SESSION['carritos'][$_SESSION['id_usuario']] : array();
 
                 foreach ($productos as $producto) {
+                    // Formatear el precio con dos decimales para mostrarlo correctamente
                     $precio_formateado = number_format($producto['precio'], 2, '.', ',');
-                    echo '<div class="order-card" data-product-id="' . htmlspecialchars($producto['id']) . '">';
+                    echo '<div class="order-card">';
                     echo '<img class="order-image" src="' . htmlspecialchars($producto['imagen']) . '" />';
                     echo '<div class="order-details">';
                     echo '<p class="order-name">' . htmlspecialchars($producto['nombre']) . '</p>';
                     echo '<p class="order-price">$' . htmlspecialchars($precio_formateado) . '</p>';
                     echo '</div>';
-                    echo '<div class="quantity-controls">';
-                    echo '<button class="quantity-btn minus">-</button>';
-                    echo '<span class="cart-counter">' . htmlspecialchars($producto['cantidad']) . '</span>';
-                    echo '<button class="quantity-btn plus">+</button>';
-                    echo '</div>';
+                    echo '<div class="cart-counter">' . htmlspecialchars($producto['cantidad']) . '</div>';
                     echo '<span class="order-remove">&times;</span>';
                     echo '</div>';
                 }
