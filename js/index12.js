@@ -113,7 +113,6 @@ function updateCart() {
 
         cartCard.appendChild(quantityControls);
 
-
         const removeButton = document.createElement('span');
         removeButton.classList.add('order-remove');
         removeButton.innerHTML = '&times;';
@@ -174,16 +173,6 @@ function updateCartIcon() {
 
 updateCart();
 
-    // También actualizamos los contadores individuales
-    const orderCards = document.querySelectorAll('.order-card');
-    orderCards.forEach((card, index) => {
-        const counter = card.querySelector('.cart-counter');
-        if (counter) {
-            counter.innerText = cart[index].quantity;
-        }
-    });
-
-
 const payButton = document.querySelector('.checkout');
 const modalContainer = document.getElementById('modalContainer');
 
@@ -211,43 +200,44 @@ function pagarAhora() {
     const carrito = cart.map(producto => ({
         id_producto: producto.id,
         nombre_producto: producto.name,
-        precio_producto: Number(producto.price).toLocaleString('es-CO', { minimumFractionDigits: 0 }), // Asegúrate de que el precio no tenga decimales
+        precio_producto: Number(producto.price).toLocaleString('es-CO', { minimumFractionDigits: 0 }),
         cantidad_producto: producto.quantity,
-        nombre: document.getElementById('nombre').value,
-        direccion: document.getElementById('direccion').value,
-        barrio: document.getElementById('barrio').value,
-        telefono: document.getElementById('telefono').value
+        nombre: document.getElementById('nombre_cliente').value,
+        direccion: document.getElementById('calle').value,
+        barrio: document.getElementById('barrio_cliente').value,
+        telefono: document.getElementById('telefono_cliente').value
     }));
 
     document.getElementById('productos').value = JSON.stringify(carrito);
 
-    $.ajax({
-        type: "POST",
-        url: "./controller/pedidos_controller.php",
-        data: $('#pedidoFormulario').serialize(),
-        success: function (response) {
-            console.log("Pedido realizado con éxito:", response);
-            cart = [];
-            updateCart();
-            localStorage.removeItem('shoppingCart');
-            Swal.fire({
-                position: 'bottom-end',
-                icon: 'success',
-                iconColor: '#4CAF50',
-                background: '#020202',
-                confirmButtonColor: '#f15d07',
-                title: 'Pedido realizado con éxito',
-                text: '¡Gracias por tu compra!',
-                showConfirmButton: false,
-                customClass: {
-                    popup: 'alert-text-color'
-                },
-                timer: 1500
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error("Error al realizar el pedido:", error);
-        }
+    // Aquí deberías usar fetch en lugar de $.ajax para mantener consistencia con el resto del código
+    fetch("./controller/pedidos_controller.php", {
+        method: "POST",
+        body: new FormData(document.getElementById('pedidoFormulario'))
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Pedido realizado con éxito:", data);
+        cart = [];
+        updateCart();
+        localStorage.removeItem('shoppingCart');
+        Swal.fire({
+            position: 'bottom-end',
+            icon: 'success',
+            iconColor: '#4CAF50',
+            background: '#020202',
+            confirmButtonColor: '#f15d07',
+            title: 'Pedido realizado con éxito',
+            text: '¡Gracias por tu compra!',
+            showConfirmButton: false,
+            customClass: {
+                popup: 'alert-text-color'
+            },
+            timer: 1500
+        });
+    })
+    .catch(error => {
+        console.error("Error al realizar el pedido:", error);
     });
 }
 
@@ -256,4 +246,3 @@ function obtenerCarrito() {
 }
 
 updateCart();
-
