@@ -106,6 +106,7 @@ if (isset($_GET['error'])) {
 
 <body>
     <nav class="navbar">
+        <a href="index.php" class="flecha-retorno"><i class="fas fa-arrow-left"></i></a>
         <div class="logo">
             <img src="./img/LogoExterminio.png" alt="Logo">
         </div>
