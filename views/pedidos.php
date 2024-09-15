@@ -76,8 +76,8 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <h1>Pedidos</h1>
                     <div class="search-bar">
                         <div class="search-bar">
-                        <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarPedido()"  />
-                        <button type="button" onclick="buscarPedido()"><i class="fa fa-search"></i></button>
+                            <input type="text" id="search" placeholder="Buscar..." onkeyup="buscarPedido()" />
+                            <button type="button" onclick="buscarPedido()"><i class="fa fa-search"></i></button>
                         </div>
 
                     </div>
@@ -107,7 +107,7 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     </form>
                 </div>
                 <table class="content">
-                <button id="agregarPedido" class="add-pedido-btn" onclick="abrirModalNuevoPedido()">Agregar Pedido</button>
+                    <button id="agregarPedido" class="add-pedido-btn" onclick="abrirModalNuevoPedido()">Agregar Pedido</button>
                     <tr>
                         <th>ID Pedido</th>
                         <th>Nombre Usuario</th>
@@ -115,26 +115,26 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
-                <tbody id="pedidoTableBody">
-                    <?php
-                    if (count($pedidos) > 0) {
-                        foreach ($pedidos as $row) {
-                            echo "<tr>";
-                            echo "<td>" . htmlspecialchars($row['id_pedido']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['nombre_usuario']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['fecha_pedido']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['estado_pedido']) . "</td>";
-                            echo '<td class="actions">';
-                            echo '<button class="details-btn" onclick="verDetallesPedido(' . $row['id_pedido'] . ')"><i class="fa fa-info-circle"></i></button>';
-                            echo '<button class="edit-btn" onclick="abrirModalEstado(' . $row['id_pedido'] . ', \'' . htmlspecialchars($row['estado_pedido'], ENT_QUOTES) . '\')"><i class="fa fa-edit"></i></button>';
-                            echo '</td>';
-                            echo "</tr>";
+                    <tbody id="pedidoTableBody">
+                        <?php
+                        if (count($pedidos) > 0) {
+                            foreach ($pedidos as $row) {
+                                echo "<tr>";
+                                echo "<td>" . htmlspecialchars($row['id_pedido']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['nombre_usuario']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['fecha_pedido']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['estado_pedido']) . "</td>";
+                                echo '<td class="actions">';
+                                echo '<button class="details-btn" onclick="verDetallesPedido(' . $row['id_pedido'] . ')"><i class="fa fa-info-circle"></i></button>';
+                                echo '<button class="edit-btn" onclick="abrirModalEstado(' . $row['id_pedido'] . ', \'' . htmlspecialchars($row['estado_pedido'], ENT_QUOTES) . '\')"><i class="fa fa-edit"></i></button>';
+                                echo '</td>';
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='5'>No hay pedidos disponibles.</td></tr>";
                         }
-                    } else {
-                        echo "<tr><td colspan='5'>No hay pedidos disponibles.</td></tr>";
-                    }
-                    ?>
-                </tbody>
+                        ?>
+                    </tbody>
                 </table>
                 <div class="pagination">
                     <?php
@@ -152,7 +152,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
             </div>
         </div>
     </div>
-
     <div id="modalNuevoPedido" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeNuevoPedidoModal()">&times;</span>
@@ -161,23 +160,6 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                 <div class="form-group">
                     <label for="nombreCliente">Nombre del Cliente:</label>
                     <input type="text" id="nombreCliente" name="nombreCliente" required>
-                </div>
-                <div class="form-group">
-                    <label for="producto">Producto:</label>
-                    <select id="producto" name="producto" required>
-                        <option value="">Selecciona un producto</option>
-                        <?php
-                        $sql_productos = "SELECT id_producto, nombre_producto FROM productos";
-                        $result_productos = mysqli_query($conn, $sql_productos);
-                        while ($row_producto = mysqli_fetch_assoc($result_productos)) {
-                            echo "<option value='" . $row_producto['id_producto'] . "'>" . $row_producto['nombre_producto'] . "</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="cantidad">Cantidad:</label>
-                    <input type="number" id="cantidad" name="cantidad" min="1" required>
                 </div>
                 <div class="form-group">
                     <label for="calle">Dirección:</label>
@@ -205,6 +187,23 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                     <label for="telefono_cliente">Teléfono:</label>
                     <input type="text" id="telefono_cliente" name="telefono_cliente" required>
                 </div>
+                <div id="productos-container">
+                    <div class="producto-item">
+                        <select name="producto[]" required>
+                            <option value="">Selecciona un producto</option>
+                            <?php
+                            $sql_productos = "SELECT id_producto, nombre_producto FROM productos";
+                            $result_productos = mysqli_query($conn, $sql_productos);
+                            while ($row_producto = mysqli_fetch_assoc($result_productos)) {
+                                echo "<option value='" . $row_producto['id_producto'] . "'>" . $row_producto['nombre_producto'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                        <input type="number" name="cantidad[]" min="1" value="1" required>
+                    </div>
+                </div>
+                <button type="button" onclick="agregarProducto()">Agregar Producto</button>
+                <button type="button" onclick="quitarProducto()">Quitar Producto</button>
                 <button type="submit" class="btnGuardar">Guardar</button>
             </form>
         </div>
@@ -248,19 +247,19 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
     </div>
 
     <script>
-    function verDetallesPedido(idPedido) {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    try {
-                        var response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                            var cliente = response.cliente;
-                            var detallesHtml = '';
+        function verDetallesPedido(idPedido) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                var cliente = response.cliente;
+                                var detallesHtml = '';
 
-                            response.detalles.forEach(function(detalle) {
-                                detallesHtml += `
+                                response.detalles.forEach(function(detalle) {
+                                    detallesHtml += `
                                 <div class="producto-item">
                                     <span class="producto-nombre">${detalle.nombre_producto}</span>
                                     <div class="producto-detalles">
@@ -270,9 +269,9 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                                     </div>
                                 </div>
                             `;
-                            });
+                                });
 
-                            detallesHtml += `
+                                detallesHtml += `
                             <div class="producto-item total-compra">
                                 <span class="producto-nombre">Total Compra:</span>
                                 <div class="producto-detalles">
@@ -283,174 +282,201 @@ $total_paginas = ceil($total_pedidos / $items_por_pagina);
                             </div>
                         `;
 
-                            document.getElementById("detalles-pedido").innerHTML = detallesHtml;
-                            document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
-                            document.getElementById("cliente-direccion").innerText = cliente.direccion ||
-                                'No disponible';
-                            document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
-                            document.getElementById("cliente-telefono").innerText = cliente.telefono ||
-                                'No disponible';
+                                document.getElementById("detalles-pedido").innerHTML = detallesHtml;
+                                document.getElementById("cliente-nombre").innerText = cliente.nombre || 'No disponible';
+                                document.getElementById("cliente-direccion").innerText = cliente.direccion ||
+                                    'No disponible';
+                                document.getElementById("cliente-barrio").innerText = cliente.barrio || 'No disponible';
+                                document.getElementById("cliente-telefono").innerText = cliente.telefono ||
+                                    'No disponible';
 
-                            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-                            modalDetallesPedido.style.display = "block";
-                            modalDetallesPedido.classList.add('show');
-                            modalDetallesPedido.querySelector('.modal-content').classList.add('show');
-                        } else {
-                            console.error("Error del servidor:", response.message);
-                            alert("Error al obtener detalles del pedido: " + response.message);
+                                var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+                                modalDetallesPedido.style.display = "block";
+                                modalDetallesPedido.classList.add('show');
+                                modalDetallesPedido.querySelector('.modal-content').classList.add('show');
+                            } else {
+                                console.error("Error del servidor:", response.message);
+                                alert("Error al obtener detalles del pedido: " + response.message);
+                            }
+                        } catch (e) {
+                            console.error("Error al parsear JSON:", xhr.responseText);
+                            alert("Error inesperado al obtener detalles del pedido");
                         }
-                    } catch (e) {
-                        console.error("Error al parsear JSON:", xhr.responseText);
-                        alert("Error inesperado al obtener detalles del pedido");
+                    } else {
+                        console.error("Error HTTP:", xhr.status);
+                        alert("Error de conexión al obtener detalles del pedido");
                     }
-                } else {
-                    console.error("Error HTTP:", xhr.status);
-                    alert("Error de conexión al obtener detalles del pedido");
                 }
-            }
+            };
+            xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
+            xhr.send();
+        }
+
+        function closeDetailsModal() {
+            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+            modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
+            setTimeout(function() {
+                modalDetallesPedido.style.display = "none";
+            }, 300);
+        }
+
+        function abrirModalEstado(idPedido, estadoPedido) {
+            document.getElementById("estadoPedidoId").value = idPedido;
+            document.getElementById("estado_pedido").value = estadoPedido;
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            modalEstadoPedido.style.display = "block";
+            modalEstadoPedido.querySelector('.modal-content').classList.add('show');
+            modalEstadoPedido.classList.add('show');
+        }
+
+        function closeEstadoModal() {
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            modalEstadoPedido.querySelector('.modal-content').classList.remove('show');
+            setTimeout(function() {
+                modalEstadoPedido.style.display = "none";
+            }, 300);
+        }
+
+        document.getElementById("formEstadoPedido").onsubmit = function(event) {
+            event.preventDefault();
+            var idPedido = document.getElementById("estadoPedidoId").value;
+            var estadoPedido = document.getElementById("estado_pedido").value;
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    console.log("Respuesta del servidor:", xhr.responseText); // Agregar este log
+                    if (xhr.status == 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                alertify.success(response.message || "Pedido actualizado correctamente");
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                alertify.error(response.message || "Error al procesar el pedido");
+                            }
+                        } catch (e) {
+                            console.error("Error al analizar la respuesta JSON:", e);
+                            console.error("Respuesta recibida:", xhr.responseText);
+                            alertify.error("Error inesperado en el servidor");
+                        }
+                    } else {
+                        console.error("Error HTTP:", xhr.status);
+                        alertify.error("Error de conexión al actualizar el pedido");
+                    }
+                }
+            };
+
+            xhr.open("POST", "../controller/pedidos_controller.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("pedido_id=" + encodeURIComponent(idPedido) + "&nuevo_estado=" + encodeURIComponent(estadoPedido));
         };
-        xhr.open("GET", "../controller/obtener_detalles_pedido.php?idPedido=" + idPedido, true);
-        xhr.send();
-    }
 
-    function closeDetailsModal() {
-        var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-        modalDetallesPedido.querySelector('.modal-content').classList.remove('show');
-        setTimeout(function() {
-            modalDetallesPedido.style.display = "none";
-        }, 300);
-    }
+        function abrirModalNuevoPedido() {
+            var modalNuevoPedido = document.getElementById("modalNuevoPedido");
+            modalNuevoPedido.style.display = "block";
+            modalNuevoPedido.querySelector('.modal-content').classList.add('show');
+            modalNuevoPedido.classList.add('show');
+        }
 
-    function abrirModalEstado(idPedido, estadoPedido) {
-        document.getElementById("estadoPedidoId").value = idPedido;
-        document.getElementById("estado_pedido").value = estadoPedido;
-        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-        modalEstadoPedido.style.display = "block";
-        modalEstadoPedido.querySelector('.modal-content').classList.add('show');
-        modalEstadoPedido.classList.add('show');
-    }
+        function closeNuevoPedidoModal() {
+            var modalNuevoPedido = document.getElementById("modalNuevoPedido");
+            modalNuevoPedido.querySelector('.modal-content').classList.remove('show');
+            setTimeout(function() {
+                modalNuevoPedido.style.display = "none";
+            }, 300);
+        }
 
-    function closeEstadoModal() {
-        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-        modalEstadoPedido.querySelector('.modal-content').classList.remove('show');
-        setTimeout(function() {
-            modalEstadoPedido.style.display = "none";
-        }, 300);
-    }
+        function agregarProducto() {
+            var container = document.getElementById('productos-container');
+            var nuevoProducto = document.createElement('div');
+            nuevoProducto.className = 'producto-item';
+            nuevoProducto.innerHTML = `
+        <select name="producto[]" required>
+            <option value="">Selecciona un producto</option>
+            <?php
+            $sql_productos = "SELECT id_producto, nombre_producto FROM productos";
+            $result_productos = mysqli_query($conn, $sql_productos);
+            while ($row_producto = mysqli_fetch_assoc($result_productos)) {
+                echo "<option value='" . $row_producto['id_producto'] . "'>" . $row_producto['nombre_producto'] . "</option>";
+            }
+            ?>
+        </select>
+        <input type="number" name="cantidad[]" min="1" value="1" required>
+    `;
+            container.appendChild(nuevoProducto);
+        }
 
-    document.getElementById("formEstadoPedido").onsubmit = function(event) {
-        event.preventDefault();
-        var idPedido = document.getElementById("estadoPedidoId").value;
-        var estadoPedido = document.getElementById("estado_pedido").value;
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                console.log("Respuesta del servidor:", xhr.responseText); // Agregar este log
-                if (xhr.status == 200) {
+        function quitarProducto() {
+            var container = document.getElementById('productos-container');
+            if (container.children.length > 1) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        document.getElementById("formNuevoPedido").onsubmit = function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
                     try {
                         var response = JSON.parse(xhr.responseText);
                         if (response.success) {
-                            alertify.success(response.message || "Pedido actualizado correctamente");
+                            alertify.success(response.message || "Pedido creado correctamente");
                             setTimeout(function() {
                                 location.reload();
                             }, 1000);
                         } else {
-                            alertify.error(response.message || "Error al procesar el pedido");
+                            alertify.error(response.message || "Error al crear el pedido");
                         }
                     } catch (e) {
                         console.error("Error al analizar la respuesta JSON:", e);
                         console.error("Respuesta recibida:", xhr.responseText);
-                        alertify.error("Error inesperado en el servidor");
+                        alertify.error("Error inesperado en el servidor: " + xhr.responseText);
                     }
-                } else {
-                    console.error("Error HTTP:", xhr.status);
-                    alertify.error("Error de conexión al actualizar el pedido");
                 }
-            }
+            };
+
+            xhr.open("POST", "../controller/pedidos_controller.php", true);
+            xhr.send(formData);
         };
 
-        xhr.open("POST", "../controller/pedidos_controller.php", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send("pedido_id=" + encodeURIComponent(idPedido) + "&nuevo_estado=" + encodeURIComponent(estadoPedido));
-    };
-
-    function abrirModalNuevoPedido() {
-        var modalNuevoPedido = document.getElementById("modalNuevoPedido");
-        modalNuevoPedido.style.display = "block";
-        modalNuevoPedido.querySelector('.modal-content').classList.add('show');
-        modalNuevoPedido.classList.add('show');
-    }
-
-    function closeNuevoPedidoModal() {
-        var modalNuevoPedido = document.getElementById("modalNuevoPedido");
-        modalNuevoPedido.querySelector('.modal-content').classList.remove('show');
-        setTimeout(function() {
-            modalNuevoPedido.style.display = "none";
-        }, 300);
-    }
-
-    document.getElementById("formNuevoPedido").onsubmit = function(event) {
-        event.preventDefault();
-        var formData = new FormData(this);
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                try {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        alertify.success(response.message || "Pedido creado correctamente");
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        alertify.error(response.message || "Error al crear el pedido");
-                    }
-                } catch (e) {
-                    console.error("Error al analizar la respuesta JSON:", e);
-                    console.error("Respuesta recibida:", xhr.responseText);
-                    alertify.error("Error inesperado en el servidor: " + xhr.responseText);
-                }
-            }
-        };
-
-        xhr.open("POST", "../controller/pedidos_controller.php", true);
-        xhr.send(formData);
-    };
-
-    function toggleUserOptions() {
-        var userOptionsContainer = document.getElementById("userOptionsContainer");
-        if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
-            userOptionsContainer.style.display = "block";
-        } else {
-            userOptionsContainer.style.display = "none";
-        }
-    }
-
-    window.onclick = function(event) {
-        var modalDetallesPedido = document.getElementById("modalDetallesPedido");
-        if (event.target == modalDetallesPedido) {
-            closeDetailsModal();
-        }
-        var modalEstadoPedido = document.getElementById("modalEstadoPedido");
-        if (event.target == modalEstadoPedido) {
-            closeEstadoModal();
-        }
-    }
-
-    function buscarPedido() {
-        var searchInput = document.getElementById('search').value.toLowerCase();
-        var rows = document.querySelectorAll('#pedidoTableBody tr');
-        rows.forEach(row => {
-            var rowText = Array.from(row.getElementsByTagName('td'))
-                .map(td => td.textContent.toLowerCase())
-                .join(' ');
-            if (rowText.includes(searchInput)) {
-                row.style.display = '';
+        function toggleUserOptions() {
+            var userOptionsContainer = document.getElementById("userOptionsContainer");
+            if (userOptionsContainer.style.display === "none" || userOptionsContainer.style.display === "") {
+                userOptionsContainer.style.display = "block";
             } else {
-                row.style.display = 'none';
+                userOptionsContainer.style.display = "none";
             }
-        });
-    }
+        }
+
+        window.onclick = function(event) {
+            var modalDetallesPedido = document.getElementById("modalDetallesPedido");
+            if (event.target == modalDetallesPedido) {
+                closeDetailsModal();
+            }
+            var modalEstadoPedido = document.getElementById("modalEstadoPedido");
+            if (event.target == modalEstadoPedido) {
+                closeEstadoModal();
+            }
+        }
+
+        function buscarPedido() {
+            var searchInput = document.getElementById('search').value.toLowerCase();
+            var rows = document.querySelectorAll('#pedidoTableBody tr');
+            rows.forEach(row => {
+                var rowText = Array.from(row.getElementsByTagName('td'))
+                    .map(td => td.textContent.toLowerCase())
+                    .join(' ');
+                if (rowText.includes(searchInput)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
     </script>
     <script src="../js/validaciones_2.js"></script>
 </body>

@@ -82,15 +82,15 @@ function actualizarInsumosPorPedido($pedido_id)
 }
 
 try {
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['producto']) && isset($_POST['cantidad']) && isset($_POST['nombreCliente'])) {
-        $producto_id = $_POST['producto'];
-        $cantidad = $_POST['cantidad'];
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nombreCliente'])) {
         $nombre_cliente = $_POST['nombreCliente'];
         $calle = isset($_POST['calle']) ? $_POST['calle'] : '';
         $interior = isset($_POST['interior']) ? $_POST['interior'] : '';
         $barrio = isset($_POST['barrio_cliente']) ? $_POST['barrio_cliente'] : '';
         $telefono = isset($_POST['telefono_cliente']) ? $_POST['telefono_cliente'] : '';
         $id_usuario = $_SESSION['id_usuario'];
+        $productos = $_POST['producto'];
+        $cantidades = $_POST['cantidad'];
 
         // Iniciar transacción
         $conn->begin_transaction();
@@ -102,26 +102,32 @@ try {
             $stmt->execute();
             $pedido_id = $stmt->insert_id;
 
-            // Obtener información del producto
-            $stmt = $conn->prepare("SELECT nombre_producto, valor_unitario FROM productos WHERE id_producto = ?");
-            $stmt->bind_param("i", $producto_id);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $producto = $result->fetch_assoc();
-
-            $nombre_producto = $producto['nombre_producto'];
-            $precio_unitario = $producto['valor_unitario'];
-            $subtotal = $precio_unitario * $cantidad;
-
             // Construir dirección completa
             $direccion = $calle;
             if (!empty($interior)) {
                 $direccion .= ", " . $interior;
             }
-            // Insertar detalle del pedido
+
+            // Insertar detalles del pedido
             $stmt = $conn->prepare("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, valor_unitario, subtotal, nombre, direccion, barrio, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiiddssss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion, $barrio, $telefono);
-            $stmt->execute();
+            
+            for ($i = 0; $i < count($productos); $i++) {
+                $producto_id = $productos[$i];
+                $cantidad = $cantidades[$i];
+
+                // Obtener información del producto
+                $stmt_producto = $conn->prepare("SELECT nombre_producto, valor_unitario FROM productos WHERE id_producto = ?");
+                $stmt_producto->bind_param("i", $producto_id);
+                $stmt_producto->execute();
+                $result = $stmt_producto->get_result();
+                $producto = $result->fetch_assoc();
+
+                $precio_unitario = $producto['valor_unitario'];
+                $subtotal = $precio_unitario * $cantidad;
+
+                $stmt->bind_param("iiiddssss", $pedido_id, $producto_id, $cantidad, $precio_unitario, $subtotal, $nombre_cliente, $direccion, $barrio, $telefono);
+                $stmt->execute();
+            }
 
             // Confirmar transacción
             $conn->commit();
