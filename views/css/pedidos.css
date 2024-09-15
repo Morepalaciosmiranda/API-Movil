@@ -978,6 +978,46 @@ button[type="submit"]:hover {
     transform: scale(1.05); /* Agrandar ligeramente */
 }
 
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+/* Estilos para el botón de agregar producto */
+button[onclick="agregarProducto()"] {
+    background-color: #4CAF50;
+    color: white;
+}
+
+button[onclick="agregarProducto()"]:hover {
+    background-color: #45a049;
+}
+
+/* Estilos para el botón de quitar producto */
+button[onclick="quitarProducto()"] {
+    background-color: #f44336;
+    color: white;
+}
+
+button[onclick="quitarProducto()"]:hover {
+    background-color: #da190b;
+}
+
+/* Estilos para el botón de guardar */
+.btnGuardar {
+    background-color: #008CBA;
+    color: white;
+}
+
+.btnGuardar:hover {
+    background-color: #007399;
+}
+
 /* Responsive design */
 @media (max-width: 600px) {
     #modalNuevoPedido .modal-content {
